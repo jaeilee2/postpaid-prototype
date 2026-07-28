@@ -9,6 +9,7 @@ import paySamsung from '../assets/pay-samsung.png'
 import { AppBar, CardTotal, PaymentProgress, useEnsureCardMethod } from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { Ic123, IcNfc } from '../components/Icon'
+import { useNfcTap } from '../hooks/useNfc'
 
 /* 카드 결제 · NFC (1723:157653 기본 / 1723:157654 툴팁 노출)
  *
@@ -33,14 +34,16 @@ export function CardNfc() {
     window.setTimeout(() => setNotice(null), 2600)
   }
 
-  /* 실제로는 카드를 폰 뒷면에 대면 진행됩니다.
-   * 프로토타입에서는 일러스트를 눌러 태그를 대신합니다. */
+  /* 카드를 폰 뒷면에 대면 진행됩니다.
+   * 안드로이드 크롬에서는 실제 태그 감지로, 그 외에는 일러스트를 눌러 대신합니다. */
   function handleTag() {
     if (paying) return
     setTooltipVisible(false)
     setPaying(true)
     window.setTimeout(() => navigate('/complete'), 1500)
   }
+
+  useNfcTap(!paying, handleTag)
 
   return (
     <div className="card-screen">

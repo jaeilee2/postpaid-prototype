@@ -66,19 +66,13 @@ export function CardTotal() {
  * 원형 진행 표시는 아이콘이 아니라 도형이므로, 디자인과 같은 호를 SVG로 그리고 CSS로 회전시킵니다.
  * 지름 40px, 선 두께 4px, 둥근 끝, 약 90° 호.
  */
-export function Spinner({
-  size = 40,
-  className = 'progress-dialog__spinner',
-}: {
-  size?: number
-  className?: string
-}) {
+function Spinner() {
   const radius = 17
   const circumference = 2 * Math.PI * radius
 
   return (
-    <div className={className}>
-      <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true">
+    <div className="progress-dialog__spinner">
+      <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
         <circle
           cx="20"
           cy="20"

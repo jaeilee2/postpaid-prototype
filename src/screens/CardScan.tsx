@@ -7,7 +7,7 @@ import {
   CameraViewport,
   FlashlightButton,
 } from '../components/CameraChrome'
-import { AppBar, PaymentProgress, Spinner, useEnsureCardMethod } from '../components/CardChrome'
+import { AppBar, PaymentProgress, useEnsureCardMethod } from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { Ic123, IcClose, IcCreditCard } from '../components/Icon'
 import { SCANNED_CARD } from '../data/order'
@@ -23,9 +23,12 @@ import { useOrder } from '../state/OrderContext'
 
 type Step = 'permission' | 'scanning' | 'reading' | 'confirm' | 'paying'
 
-/** 카메라 이미지 영역 · 스캔 네모 좌표 (컨테이너 top=80 기준) */
-const CAMERA_HEIGHT = 572
-const FRAME = { top: 164, width: 328, height: 207 }
+/*
+ * 디자인(740 높이)에서 미리보기는 80..652, 네모는 244..451, 아래 버튼 띠는 88입니다.
+ * 네모 중심(347.5)이 미리보기 중심(366)보다 18.5px 위에 있습니다.
+ */
+const BOTTOM_BAND = 88
+const FRAME = { offsetY: -18.5, width: 328, height: 207 }
 
 export function CardScan() {
   const navigate = useNavigate()
@@ -74,23 +77,20 @@ export function CardScan() {
       />
 
       <CameraViewport
-        cameraHeight={CAMERA_HEIGHT}
+        bottomBand={BOTTOM_BAND}
         /* 카메라를 쓸 수 없을 때만 디자인의 캡처 이미지를 씁니다 — 인식되면 카드가 놓인 캡처로 바뀝니다. */
         still={scanned ? cameraCard : undefined}
         cameraState={cameraState}
         videoRef={videoRef}
         frame={{ ...FRAME, scanned }}
         frameChildren={
-          <>
-            {step === 'scanning' && (
-              <button
-                className="scan__hit"
-                onClick={() => setStep('reading')}
-                aria-label="카드 인식 (프로토타입에서는 눌러서 진행)"
-              />
-            )}
-            {step === 'reading' && <Spinner size={20} className="scan__spinner" />}
-          </>
+          step === 'scanning' && (
+            <button
+              className="scan__hit"
+              onClick={() => setStep('reading')}
+              aria-label="카드 인식 (프로토타입에서는 눌러서 진행)"
+            />
+          )
         }
       >
         <div className="scan__text">
@@ -98,7 +98,7 @@ export function CardScan() {
           <p className="scan__sub t-body2-16-regular">카메라로 자동 촬영돼요</p>
         </div>
 
-        <FlashlightButton top={403} onClick={() => showNotice('플래시는 디자인 범위 밖이에요')} />
+        <FlashlightButton bottom={209} onClick={() => showNotice('플래시는 디자인 범위 밖이에요')} />
 
         <button className="scan__keyin btn-tertiary" onClick={() => navigate('/card/keyin')}>
           <span className="scan__keyin-inner t-body2-16-medium">
@@ -170,7 +170,9 @@ export function CardScan() {
       )}
 
       {notice && <Snackbar text={notice} bottom={120} />}
-      {step === 'paying' && <PaymentProgress />}
+
+      {/* 인식 중과 결제 중 모두 같은 "결제 진행중" 다이얼로그입니다 (1730:197562 / 1723:157658) */}
+      {(step === 'reading' || step === 'paying') && <PaymentProgress />}
     </div>
   )
 }

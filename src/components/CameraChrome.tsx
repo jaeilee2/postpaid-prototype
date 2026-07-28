@@ -80,7 +80,7 @@ export function CameraPermissionDialog({
  * (`overflow: hidden`이라 딤이 카메라 영역 밖으로 새지 않습니다).
  */
 export function CameraViewport({
-  cameraHeight,
+  bottomBand,
   still = cameraFloor,
   cameraState,
   videoRef,
@@ -88,18 +88,19 @@ export function CameraViewport({
   frameChildren,
   children,
 }: {
-  /** 카메라 이미지 영역 높이 — 카드 스캔 572, QR 660 */
-  cameraHeight: number
+  /** 미리보기 아래에 남길 흰 띠의 높이 — 카드 스캔 88(버튼 자리), QR 0 */
+  bottomBand: number
   still?: string
   cameraState: CameraState
   videoRef: React.RefObject<HTMLVideoElement | null>
-  frame: { top: number; width: number; height: number; scanned?: boolean }
+  /** offsetY는 네모를 미리보기 가운데에서 얼마나 올릴지 — 디자인 좌표에서 계산한 값입니다. */
+  frame: { offsetY: number; width: number; height: number; scanned?: boolean }
   frameChildren?: ReactNode
   children?: ReactNode
 }) {
   return (
     <div className="scan__stage">
-      <div className="scan__camera" style={{ height: cameraHeight }}>
+      <div className="scan__camera" style={{ bottom: bottomBand }}>
         <img className="scan__still" src={still} alt="" />
         <video
           ref={videoRef}
@@ -111,7 +112,11 @@ export function CameraViewport({
         />
         <div
           className={`scan__frame ${frame.scanned ? 'scan__frame--scanned' : ''}`}
-          style={{ top: frame.top, width: frame.width, height: frame.height }}
+          style={{
+            width: frame.width,
+            height: frame.height,
+            ['--scan-frame-offset' as string]: `${frame.offsetY}px`,
+          }}
         >
           {frameChildren}
         </div>
@@ -122,9 +127,9 @@ export function CameraViewport({
 }
 
 /** 플래시 버튼 (1742:54085) — 켜고 끄는 동작은 디자인에 없어 표시만 합니다. */
-export function FlashlightButton({ top, onClick }: { top: number; onClick: () => void }) {
+export function FlashlightButton({ bottom, onClick }: { bottom: number; onClick: () => void }) {
   return (
-    <button className="scan__flash" style={{ top }} onClick={onClick} aria-label="플래시">
+    <button className="scan__flash" style={{ bottom }} onClick={onClick} aria-label="플래시">
       <img src={icFlashlight} alt="" />
     </button>
   )

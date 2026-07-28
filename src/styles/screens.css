@@ -1259,36 +1259,34 @@
 }
 
 /*
- * 카메라 미리보기 영역. 카드 스캔은 572, QR은 660 높이입니다.
+ * 카메라 미리보기 영역. 아래에 남길 띠(카드 스캔 88, QR 0)만 비우고 나머지를 다 채웁니다 —
+ * 화면이 길어지면 미리보기가 함께 늘어나서 아래에 빈 흰 여백이 생기지 않습니다.
+ * 디자인 높이(740)에서는 각각 572 / 660이 되어 좌표가 그대로 재현됩니다.
  * 딤은 이 안에서만 적용되므로 아래 흰 영역과 앱바로 새지 않습니다.
  */
 .scan__camera {
   position: absolute;
   left: 0;
+  right: 0;
   top: 0;
-  width: 360px;
   overflow: hidden;
   background: var(--vds-dimmed);
 }
 
+/* 디자인의 카메라 캡처 / 실제 카메라 영상 — 둘 다 위를 기준으로 채웁니다. */
 .scan__still,
 .scan__video {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 360px;
+  inset: 0;
   display: block;
-}
-
-/* 디자인의 카메라 캡처 — 폭 360에 맞추면 Figma의 잘림이 그대로 재현됩니다. */
-.scan__still {
-  height: auto;
-}
-
-/* 실제 카메라 영상 — 권한이 있으면 캡처 위에 덮입니다. */
-.scan__video {
+  width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center;
+}
+
+/* 실제 카메라 영상은 권한이 있으면 캡처 위에 덮입니다. */
+.scan__video {
   transition: opacity 200ms linear;
 }
 
@@ -1299,7 +1297,9 @@
 .scan__frame {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  /* 미리보기 영역 가운데 — 디자인의 살짝 위쪽 배치(--scan-frame-offset)를 유지합니다. */
+  top: 50%;
+  transform: translate(-50%, calc(-50% + var(--scan-frame-offset, 0px)));
   box-sizing: border-box;
   border: 4px solid var(--vds-text-inverse-100);
   border-radius: var(--vds-radius-card);
@@ -1317,23 +1317,6 @@
 .scan__hit {
   position: absolute;
   inset: 0;
-}
-
-/* 인식 중 원형 진행 표시 (1286:74748 · 20px) */
-.scan__spinner {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  animation: spin-plain 900ms linear infinite;
-}
-
-@keyframes spin-plain {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* QR 스캔 라인 (1663:94226) — 디자인은 가운데에 멈춘 한 장면이고, 실제로는 위아래로 움직입니다. */
@@ -1363,10 +1346,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scan__spinner {
-    animation-duration: 2.4s;
-  }
-
   .scan__line {
     animation: none;
     transform: translateY(93px);
@@ -1387,9 +1366,10 @@
   text-align: center;
 }
 
-/* QR은 네모 아래에 문구가 옵니다. */
+/* QR은 네모 아래에 문구가 옵니다 — 아래에서부터 재서 붙입니다. */
 .scan__text--qr {
-  top: 434px;
+  top: auto;
+  bottom: 174px;
 }
 
 .scan__headline {
@@ -1402,7 +1382,7 @@
   color: var(--vds-text-inverse-tertiary-65);
 }
 
-/* 플래시 / 닫기 원형 버튼 (1742:54085 · 1663:94227) */
+/* 플래시 / 닫기 원형 버튼 (1742:54085 · 1663:94227) — 아래에서부터 재서 붙입니다. */
 .scan__flash {
   position: absolute;
   left: 50%;
@@ -1422,11 +1402,11 @@
   height: 32px;
 }
 
-/* 카드 직접 입력 (1742:54084) — Button_Tertiary 320×48 */
+/* 카드 직접 입력 (1742:54084) — Button_Tertiary 320×48, 화면 아래에 붙습니다. */
 .scan__keyin {
   position: absolute;
   left: 20px;
-  top: 592px;
+  bottom: 20px;
   width: 320px;
   padding: 13px 12px;
   border-radius: var(--vds-radius-button-md);
@@ -1536,10 +1516,14 @@
  * 색·좌표는 디자인에 붙은 안드로이드 캡처에서 재서 맞췄습니다.
  */
 
+/*
+ * 화면 아래에 붙습니다 — 디자인(740 높이)에서는 top 486이지만 top으로 고정하면 화면이 길어질 때
+ * 가운데에 떠 있고, 짧아지면 아래가 잘립니다. 디자인의 아래 여백(740 - 731.353)을 그대로 씁니다.
+ */
 .perm {
   position: absolute;
   left: 8px;
-  top: 486px;
+  bottom: 8.647px;
   width: 344px;
   height: 245.353px;
   border-radius: 32px;
