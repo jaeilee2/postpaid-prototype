@@ -14,6 +14,7 @@ import icCashB from '../assets/ic-cash-b.svg'
 import icCashReceipt from '../assets/ic-cash-receipt.svg'
 import icChevronRight from '../assets/ic-chevron-right.svg'
 import icClose from '../assets/ic-close.svg'
+import icCloseWhite from '../assets/ic-close-white.svg'
 import icFabMylocation from '../assets/ic-fab-mylocation.svg'
 import icMissionA from '../assets/ic-mission-a.svg'
 import icMissionB from '../assets/ic-mission-b.svg'
@@ -130,6 +131,15 @@ export const IcSplit = () => (
 
 export const IcClose = () => (
   <IconBase size={24} layers={[{ src: icClose, style: inset(23.57, 23.57) }]} />
+)
+
+/** QR 스캔 화면을 닫는 버튼 안의 X (32px 컨테이너, 흰색 65%) */
+export const IcCloseWhite = () => (
+  <span className="icon" style={{ width: 32, height: 32 }}>
+    <span style={{ position: 'absolute', ...inset(23.57, 23.57) }}>
+      <img src={icCloseWhite} alt="" style={{ width: '100%', height: '100%' }} />
+    </span>
+  </span>
 )
 
 export const IcChevronRight = () => (

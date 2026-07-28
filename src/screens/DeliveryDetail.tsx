@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { MapPickupBackground, Snackbar } from '../components/Chrome'
 import { IcCall, IcCash, IcChevronRight, IcNavigate, IcSms, IcVcc } from '../components/Icon'
@@ -14,6 +14,7 @@ type Overlay = null | 'method' | 'cash-confirm'
 
 export function DeliveryDetail() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { method, setMethod } = useOrder()
   const [overlay, setOverlay] = useState<Overlay>(null)
   const [notice, setNotice] = useState<string | null>(null)
@@ -22,6 +23,15 @@ export function DeliveryDetail() {
     setNotice(text)
     window.setTimeout(() => setNotice(null), 2600)
   }
+
+  // 카메라 권한을 허용하지 않아 결제를 못 하고 돌아온 경우 (1747:121729의 "허용 안함")
+  const returnNotice = (location.state as { notice?: string } | null)?.notice
+  useEffect(() => {
+    if (!returnNotice) return
+    showNotice(returnNotice)
+    navigate('/delivery', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [returnNotice])
 
   /** 선택된 결제 방법으로 결제를 시작합니다. */
   function startPayment(next = method) {
@@ -34,7 +44,12 @@ export function DeliveryDetail() {
       navigate('/card')
       return
     }
-    // QR 간편·분할의 후속 화면은 아직 디자인 범위에 없습니다.
+    if (next === 'qr') {
+      // QR은 카메라를 쓰므로 권한 확인부터 시작합니다 (1747:121729).
+      navigate('/qr')
+      return
+    }
+    // 분할 결제의 후속 화면은 아직 디자인 범위에 없습니다.
     setOverlay(null)
     showNotice(`${PAYMENT_METHOD_LABEL[next]} 결제 화면은 디자인 범위 밖이에요`)
   }

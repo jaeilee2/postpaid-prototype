@@ -32,6 +32,23 @@ export const ORDER = {
   paidAt: '2026. 07. 28. 19:42',
 }
 
+/** 완료 화면의 결제 금액 라벨 (1723:157236 현금 / 1723:157270 카드 / 1730:197353 QR) */
+export const COMPLETE_PRICE_LABEL: Record<PaymentMethod, string> = {
+  cash: '현금 결제 금액 (M캐시 차감)',
+  card: '카드 결제 금액',
+  qr: 'QR 결제 금액',
+  split: '분할 결제 금액',
+}
+
+/**
+ * 카드 스캔(OCR)으로 읽어낸 값.
+ * 디자인(1742:54183)에 적힌 값 그대로입니다 — 실제 OCR이 아니라 인식된 결과를 보여주는 화면입니다.
+ */
+export const SCANNED_CARD = {
+  number: '1234 - 1234 - 1234 - 1234',
+  expiry: '12 / 30',
+}
+
 /** 현금영수증 발급 유형별 입력 안내 */
 export const CASH_RECEIPT_PLACEHOLDER = {
   personal: '휴대폰번호 또는 사업자등록번호',

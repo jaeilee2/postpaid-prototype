@@ -19,15 +19,18 @@ export function useEnsureCardMethod() {
   }, [method, setMethod])
 }
 
-/** 상단 앱바 — 제목은 왼쪽 정렬(x=66)이고, 오른쪽에 "카드 리더기로 결제"가 있습니다. */
+/** 상단 앱바 — 제목은 왼쪽 정렬(x=66)이고, 오른쪽에 보조 액션이 있습니다. */
 export function AppBar({
   title,
   onBack,
   onAction,
+  actionLabel = '카드 리더기로 결제',
 }: {
   title: string
   onBack: () => void
-  onAction: () => void
+  onAction?: () => void
+  /** 오른쪽 텍스트 버튼. 없으면(null) 앱바에 제목만 남습니다 (QR 간편 결제 화면). */
+  actionLabel?: string | null
 }) {
   return (
     <>
@@ -36,9 +39,11 @@ export function AppBar({
           <IcBack />
         </button>
         <p className="appbar__title t-subtitle2-16-bold">{title}</p>
-        <button className="appbar__action t-body3-14-medium" onClick={onAction}>
-          카드 리더기로 결제
-        </button>
+        {actionLabel && (
+          <button className="appbar__action t-body3-14-medium" onClick={onAction}>
+            {actionLabel}
+          </button>
+        )}
       </div>
       <StatusBar />
     </>
@@ -61,13 +66,19 @@ export function CardTotal() {
  * 원형 진행 표시는 아이콘이 아니라 도형이므로, 디자인과 같은 호를 SVG로 그리고 CSS로 회전시킵니다.
  * 지름 40px, 선 두께 4px, 둥근 끝, 약 90° 호.
  */
-function Spinner() {
+export function Spinner({
+  size = 40,
+  className = 'progress-dialog__spinner',
+}: {
+  size?: number
+  className?: string
+}) {
   const radius = 17
   const circumference = 2 * Math.PI * radius
 
   return (
-    <div className="progress-dialog__spinner">
-      <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+    <div className={className}>
+      <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true">
         <circle
           cx="20"
           cy="20"

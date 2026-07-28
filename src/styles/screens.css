@@ -645,6 +645,7 @@
   position: relative;
   display: flex;
   justify-content: center;
+  gap: 8px;
 }
 
 /* 툴팁 (1723:157654) — 버튼 위 8px에 겹쳐 뜹니다. */
@@ -1240,4 +1241,348 @@
 
 .textfield:focus {
   border-color: var(--vds-primary);
+}
+
+/* ======================================= 카드 스캔 (OCR) / QR 간편 결제 · 카메라 화면
+ * 1742:54122 스캔 전 · 1742:54182 인식 중 · 1742:54183 카드 정보 확인
+ * 1730:197575 QR 스캔 · 1747:121729 OS 카메라 권한 팝업
+ */
+
+/* 앱바 아래 전체 영역 (Figma의 Top app bar_Transparent, top=80 h=660) */
+.scan__stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  bottom: 0;
+  background: var(--vds-bg-1);
+  overflow: hidden;
+}
+
+/*
+ * 카메라 미리보기 영역. 카드 스캔은 572, QR은 660 높이입니다.
+ * 딤은 이 안에서만 적용되므로 아래 흰 영역과 앱바로 새지 않습니다.
+ */
+.scan__camera {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 360px;
+  overflow: hidden;
+  background: var(--vds-dimmed);
+}
+
+.scan__still,
+.scan__video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 360px;
+  display: block;
+}
+
+/* 디자인의 카메라 캡처 — 폭 360에 맞추면 Figma의 잘림이 그대로 재현됩니다. */
+.scan__still {
+  height: auto;
+}
+
+/* 실제 카메라 영상 — 권한이 있으면 캡처 위에 덮입니다. */
+.scan__video {
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 200ms linear;
+}
+
+/*
+ * 스캔 네모. 디자인은 "딤 처리된 이미지" 위에 "딤 없는 같은 이미지"를 한 번 더 얹어 구멍을
+ * 만들지만, 여기서는 이미지 한 장 + box-shadow로 같은 결과를 만듭니다.
+ */
+.scan__frame {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  border: 4px solid var(--vds-text-inverse-100);
+  border-radius: var(--vds-radius-card);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: border-color 200ms linear;
+}
+
+/* 인식되면 테두리가 Border_primary로 바뀝니다 (1742:54182) */
+.scan__frame--scanned {
+  border-color: var(--vds-border-primary);
+}
+
+/* 프로토타입에서 네모를 눌러 인식을 진행시키는 영역 */
+.scan__hit {
+  position: absolute;
+  inset: 0;
+}
+
+/* 인식 중 원형 진행 표시 (1286:74748 · 20px) */
+.scan__spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  animation: spin-plain 900ms linear infinite;
+}
+
+@keyframes spin-plain {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* QR 스캔 라인 (1663:94226) — 디자인은 가운데에 멈춘 한 장면이고, 실제로는 위아래로 움직입니다. */
+.scan__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 36px;
+  border-top: 1px solid var(--vds-bg-1);
+  background: linear-gradient(
+    to bottom,
+    rgba(217, 217, 217, 0.7) 0%,
+    rgba(217, 217, 217, 0) 29.167%
+  );
+  animation: scan-sweep 2.4s ease-in-out infinite;
+}
+
+@keyframes scan-sweep {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(186px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan__spinner {
+    animation-duration: 2.4s;
+  }
+
+  .scan__line {
+    animation: none;
+    transform: translateY(93px);
+  }
+}
+
+/* 안내 문구 (1742:54081 · 1663:94223) */
+.scan__text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 60px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* QR은 네모 아래에 문구가 옵니다. */
+.scan__text--qr {
+  top: 434px;
+}
+
+.scan__headline {
+  margin: 0;
+  color: var(--vds-text-inverse-100);
+}
+
+.scan__sub {
+  margin: 0;
+  color: var(--vds-text-inverse-tertiary-65);
+}
+
+/* 플래시 / 닫기 원형 버튼 (1742:54085 · 1663:94227) */
+.scan__flash {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--vds-radius-pill);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.scan__flash > img {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+/* 카드 직접 입력 (1742:54084) — Button_Tertiary 320×48 */
+.scan__keyin {
+  position: absolute;
+  left: 20px;
+  top: 592px;
+  width: 320px;
+  padding: 13px 12px;
+  border-radius: var(--vds-radius-button-md);
+}
+
+.scan__keyin-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* QR 총 결제 금액 (1663:94229) */
+.qr__price {
+  position: absolute;
+  left: 122px;
+  top: 60px;
+  width: 114px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.qr__price p {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.qr__price-label {
+  color: var(--vds-text-inverse-tertiary-65);
+}
+
+.qr__price-amount {
+  color: var(--vds-text-inverse-100);
+}
+
+/* ---- 카드 정보 확인 시트 (1742:54183) — 높이 340 */
+
+.cs__sheet {
+  height: min(340px, calc(100% - 40px));
+}
+
+.cs__header {
+  height: 56px;
+}
+
+.cs__info {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 8px 20px 0;
+  padding: 20px;
+  border-radius: var(--vds-radius-card);
+  background: var(--vds-surface-10);
+}
+
+.cs__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cs__label {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.cs__value {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--vds-text-primary-100);
+}
+
+/* 카드 아이콘은 입력 필드용(40px)이 아니라 디자인의 20px 래퍼로 씁니다. */
+.cs__value .ic-credit-card {
+  height: 20px;
+  padding: 0;
+}
+
+.cs__help {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0 20px;
+  color: var(--vds-text-tertiary-60);
+}
+
+.cs__help-link {
+  color: var(--vds-text-focus);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cs__actions {
+  margin-top: auto;
+}
+
+/* ---- OS 카메라 권한 팝업 (1747:121729)
+ * 부릉플러스가 아니라 OS가 그리는 팝업이라 DS 토큰을 쓰지 않습니다 —
+ * 색·좌표는 디자인에 붙은 안드로이드 캡처에서 재서 맞췄습니다.
+ */
+
+.perm {
+  position: absolute;
+  left: 8px;
+  top: 486px;
+  width: 344px;
+  height: 245.353px;
+  border-radius: 32px;
+  background: #fcfcfc;
+  z-index: 95;
+}
+
+.perm__icon {
+  position: absolute;
+  left: 160.8px;
+  top: 33px;
+  width: 23.65px;
+  height: 18.02px;
+  display: block;
+}
+
+.perm__question {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 66.1px;
+  margin: 0;
+  text-align: center;
+  font: 400 12px / 13px var(--vds-font-family);
+  letter-spacing: -0.2427px;
+  color: #000000;
+}
+
+.perm__question b {
+  font-weight: 700;
+}
+
+.perm__option {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+}
+
+.perm__option:active {
+  background: rgba(0, 0, 0, 0.06);
 }

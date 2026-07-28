@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import check from '../assets/check.gif'
 import { MapMainBackground, Snackbar } from '../components/Chrome'
 import { IcCashReceipt, IcMission, IcReceipt } from '../components/Icon'
-import { MISSIONS, MISSION_COUNT, ORDER, formatWon } from '../data/order'
+import { COMPLETE_PRICE_LABEL, MISSIONS, MISSION_COUNT, ORDER, formatWon } from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { CashReceiptSheet } from './CashReceiptSheet'
 
@@ -84,9 +84,9 @@ export function Complete() {
             <div className="cp__price-group">
               <div className="cp__price-card">
                 <div className="cp__price-row">
-                  {/* 현금은 "현금 결제 금액 (M캐시 차감)"(157236), 카드는 "카드 결제 금액"(157270) */}
+                  {/* 결제 방법마다 라벨이 다릅니다 — 현금 157236 / 카드 157270 / QR 1730:197353 */}
                   <span className="cp__price-label t-body3-14-medium">
-                    {isCash ? '현금 결제 금액 (M캐시 차감)' : '카드 결제 금액'}
+                    {COMPLETE_PRICE_LABEL[method]}
                   </span>
                   <Amount value={ORDER.amount} />
                 </div>

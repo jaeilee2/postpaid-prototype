@@ -16,6 +16,13 @@ type OrderState = {
    */
   feeToastShown: boolean
   markFeeToastShown: () => void
+  /**
+   * 카메라 권한을 "앱 사용 중에만 허용"으로 받아둔 상태인지 (1747:121729).
+   * true면 카드 스캔·QR 스캔에 들어갈 때 권한 팝업을 다시 띄우지 않습니다.
+   * "이번만 허용"은 기억하지 않으므로 다음에 다시 물어봅니다 — 안드로이드와 같습니다.
+   */
+  cameraAllowed: boolean
+  allowCamera: () => void
   /** 프로토타입을 처음 상태로 되돌립니다. */
   reset: () => void
 }
@@ -26,14 +33,17 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const [method, setMethod] = useState<PaymentMethod>('cash')
   const [cashReceiptIssued, setCashReceiptIssued] = useState(false)
   const [feeToastShown, setFeeToastShown] = useState(false)
+  const [cameraAllowed, setCameraAllowed] = useState(false)
 
   const issueCashReceipt = useCallback(() => setCashReceiptIssued(true), [])
   const markFeeToastShown = useCallback(() => setFeeToastShown(true), [])
+  const allowCamera = useCallback(() => setCameraAllowed(true), [])
 
   const reset = useCallback(() => {
     setMethod('cash')
     setCashReceiptIssued(false)
     setFeeToastShown(false)
+    setCameraAllowed(false)
   }, [])
 
   const value = useMemo(
@@ -44,9 +54,20 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       issueCashReceipt,
       feeToastShown,
       markFeeToastShown,
+      cameraAllowed,
+      allowCamera,
       reset,
     }),
-    [method, cashReceiptIssued, issueCashReceipt, feeToastShown, markFeeToastShown, reset],
+    [
+      method,
+      cashReceiptIssued,
+      issueCashReceipt,
+      feeToastShown,
+      markFeeToastShown,
+      cameraAllowed,
+      allowCamera,
+      reset,
+    ],
   )
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>

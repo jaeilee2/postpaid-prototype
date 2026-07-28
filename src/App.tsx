@@ -3,9 +3,11 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 
 import { CardKeyin } from './screens/CardKeyin'
 import { CardNfc } from './screens/CardNfc'
+import { CardScan } from './screens/CardScan'
 import { Complete } from './screens/Complete'
 import { DeliveryDetail } from './screens/DeliveryDetail'
 import { MainMap } from './screens/MainMap'
+import { QrScan } from './screens/QrScan'
 import { SmsApp } from './screens/SmsApp'
 import { OrderProvider, useOrder } from './state/OrderContext'
 
@@ -13,6 +15,8 @@ const SCREEN_NAMES: Record<string, string> = {
   '/delivery': '배달지 상세 · 픽업후 · 후불현금',
   '/card': '카드 결제 · NFC',
   '/card/keyin': '카드 결제 · 카드 직접 입력',
+  '/card/scan': '카드 결제 · 카드 스캔 (OCR)',
+  '/qr': 'QR 간편 결제 · 스캔',
   '/complete': '결제·배달 완료',
   '/sms': '문자 앱 (영수증 발송) · 디자인 없음',
   '/main': '메인 지도 · 신규배차 ON',
@@ -106,6 +110,8 @@ export default function App() {
               <Route path="/delivery" element={<DeliveryDetail />} />
               <Route path="/card" element={<CardNfc />} />
               <Route path="/card/keyin" element={<CardKeyin />} />
+              <Route path="/card/scan" element={<CardScan />} />
+              <Route path="/qr" element={<QrScan />} />
               <Route path="/complete" element={<Complete />} />
               <Route path="/sms" element={<SmsApp />} />
               <Route path="/main" element={<MainMap />} />

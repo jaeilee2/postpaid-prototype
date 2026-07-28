@@ -65,6 +65,7 @@
   --vds-text-tertiary-60: rgba(18, 20, 23, 0.6);
   --vds-text-option-45: rgba(18, 20, 23, 0.45);
   --vds-text-inverse-100: #ffffff;
+  --vds-text-inverse-tertiary-65: rgba(255, 255, 255, 0.65); /* 카메라 화면의 보조 문구 */
   --vds-text-inverse-disabled-40: rgba(255, 255, 255, 0.4);
   --vds-text-warning: #f76b08;
   --vds-text-accent: #073c78;
