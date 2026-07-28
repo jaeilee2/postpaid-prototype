@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 파비콘도 인라인해서 index.html 파일 하나만으로 완결되게 합니다. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d6dd8'/%3E%3Crect x='8' y='12' width='16' height='10' rx='2' fill='white'/%3E%3Crect x='8' y='15' width='16' height='2' fill='%230d6dd8'/%3E%3C/svg%3E"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!--
+      폰트는 tokens.css의 @font-face로 파일에서 직접 불러옵니다 (외부 CDN 없음).
+      단일 HTML로 배포하면 외부 요청이 차단되기 때문입니다.
+    -->
+    <!--
+      아이폰에서 "홈 화면에 추가"로 열면 주소창·탭바 없이 전체화면으로 실행됩니다.
+      실제 앱처럼 보려면 이 방법이 가장 가깝습니다 (README의 "폰에서 보기" 참고).
+    -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="부릉플러스" />
+    <meta name="theme-color" content="#e9ebee" />
+    <title>후불결제 프로토타입 · 부릉플러스</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+/*
+ * 부릉플러스 디자인시스템 토큰
+ * Figma: 후불결제 (u3qTdSzPaWpS6P6AlGdR8w) → 부릉플러스 디자인시스템 라이브러리
+ * 값은 Figma variable 정의에서 그대로 가져왔습니다. 임의로 정한 값은 없습니다.
+ */
+
+/* ---- Noto Sans KR (서브셋) ------------------------------------------------
+ * DS 타이포그래피 variable이 지정하는 폰트입니다.
+ * 외부 CDN을 쓰지 않고 파일로 넣었습니다 — 단일 HTML로 배포하면 외부 요청이 막히기 때문입니다.
+ * 이 프로토타입에 실제로 등장하는 181자 + ASCII만 서브셋해서 굵기당 20KB입니다.
+ * 원본: 맥에 설치된 NotoSansCJKkr-{Regular,Medium,Bold}.otf
+ * 문자열을 새로 추가하면 서브셋을 다시 만들어야 합니다 — README의 "폰트 서브셋 갱신" 참고.
+ */
+@font-face {
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../assets/fonts/noto-sans-kr-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../assets/fonts/noto-sans-kr-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../assets/fonts/noto-sans-kr-700.woff2") format("woff2");
+}
+
+:root {
+  /* ---- Font family -------------------------------------------------------
+   * DS의 타이포그래피 variable은 전부 "Noto Sans KR"로 정의되어 있습니다.
+   * 실제 지정 폰트가 다르면(예: Pretendard) 이 한 줄만 바꾸면 전체가 따라옵니다.
+   */
+  --vds-font-family: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+
+  /* ---- Core palette ---- */
+  --vds-primary: #0d6dd8;
+  --vds-tertiary: #ecf1f8;
+
+  --vds-surface-1: #ffffff;
+  --vds-surface-2: #b7d7fb;
+  --vds-surface-5: #292e33; /* 툴팁 배경 */
+  --vds-surface-6: #606b76;
+  --vds-surface-8: #dde0e3;
+  --vds-surface-10: #f7f7f8;
+
+  --vds-bg-1: #ffffff;
+  --vds-bg-2: #f7f7f8;
+
+  --vds-dimmed: #000000;
+  --vds-divider: #000000;
+
+  --vds-border-10: rgba(18, 20, 23, 0.1);
+  --vds-border-15: rgba(18, 20, 23, 0.15);
+  --vds-border-25: rgba(18, 20, 23, 0.25);
+  --vds-border-primary: #2786f2; /* 포커스된 입력 필드 테두리 */
+
+  /* ---- Text palette ---- */
+  --vds-text-primary-100: #121417;
+  --vds-text-secondary-85: rgba(18, 20, 23, 0.85);
+  --vds-text-tertiary-60: rgba(18, 20, 23, 0.6);
+  --vds-text-option-45: rgba(18, 20, 23, 0.45);
+  --vds-text-inverse-100: #ffffff;
+  --vds-text-inverse-disabled-40: rgba(255, 255, 255, 0.4);
+  --vds-text-warning: #f76b08;
+  --vds-text-accent: #073c78;
+  --vds-text-focus: #2786f2;
+
+  /* ---- Spot / Base palette ---- */
+  --vds-badge-2: #0e9694; /* 후불현금 / 현금 */
+  --vds-badge-3: #d33cb8; /* 카드 */
+  --vds-icon-accent: #073c78;
+  --vds-icon-focus: #2786f2;
+  --vds-blue-050: #e7f2fe;
+  --vds-blue-100: #b7d7fb;
+  --vds-blue-200: #87bcf8;
+  --vds-blue-400: #2786f2;
+
+  /* ---- Radius ---- */
+  --vds-radius-sheet: 20px;
+  --vds-radius-dialog: 20px;
+  --vds-radius-button-lg: 12px;
+  --vds-radius-button-md: 10px;
+  --vds-radius-card: 12px;
+  --vds-radius-sm: 8px;
+  --vds-radius-badge: 4px;
+  --vds-radius-pill: 30px;
+
+  /* ---- Elevation (Figma effect styles) ---- */
+  --vds-elev-fab: 0 0 1px rgba(32, 36, 39, 0.15), 0 5px 2.5px rgba(32, 36, 39, 0.05),
+    0 5px 2.5px rgba(32, 36, 39, 0.05);
+  --vds-elev-100: 0 0 2px rgba(32, 36, 39, 0.15), 0 5px 5px rgba(32, 36, 39, 0.05),
+    0 5px 5px rgba(32, 36, 39, 0.05);
+  --vds-elev-300: 0 0 5px rgba(32, 36, 39, 0.2), 0 10px 20px rgba(32, 36, 39, 0.1),
+    0 10px 10px rgba(32, 36, 39, 0.1);
+  --vds-elev-1200: 0 0 10px rgba(32, 36, 39, 0.25), 0 25px 40px rgba(32, 36, 39, 0.15),
+    0 30px 30px rgba(32, 36, 39, 0.2);
+}
+
+/* ---- Typography ----------------------------------------------------------
+ * 각 클래스는 DS의 텍스트 스타일 하나에 1:1 대응합니다.
+ * 이름은 Figma 스타일명을 그대로 옮겼습니다.
+ */
+
+.t-h1-32-bold {
+  font: 700 32px / 38px var(--vds-font-family);
+  letter-spacing: -1px;
+}
+.t-h2-28-bold {
+  font: 700 28px / 34px var(--vds-font-family);
+  letter-spacing: -0.7px;
+}
+.t-h4-20-bold {
+  font: 700 20px / 25px var(--vds-font-family);
+  letter-spacing: -0.25px;
+}
+.t-subtitle1-18-bold {
+  font: 700 18px / 22px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-subtitle1-18-medium {
+  font: 500 18px / 22px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-subtitle2-16-bold {
+  font: 700 16px / 20px var(--vds-font-family);
+  letter-spacing: -0.05px;
+}
+.t-body1-18-bold {
+  font: 700 18px / 24px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-body1-18-medium {
+  font: 500 18px / 24px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-body2-16-bold {
+  font: 700 16px / 22px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-body2-16-medium {
+  font: 500 16px / 22px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-body2-16-regular {
+  font: 400 16px / 22px var(--vds-font-family);
+  letter-spacing: -0.1px;
+}
+.t-body3-14-bold {
+  font: 700 14px / 20px var(--vds-font-family);
+  letter-spacing: -0.05px;
+}
+.t-body3-14-medium {
+  font: 500 14px / 20px var(--vds-font-family);
+  letter-spacing: -0.05px;
+}
+.t-body3-14-regular {
+  font: 400 14px / 20px var(--vds-font-family);
+  letter-spacing: -0.05px;
+}
+.t-body4-13-regular {
+  font: 400 13px / 18px var(--vds-font-family);
+  letter-spacing: 0;
+}
+.t-body4-13-medium {
+  font: 500 13px / 18px var(--vds-font-family);
+  letter-spacing: 0;
+}
+.t-caption1-12-bold {
+  font: 700 12px / 18px var(--vds-font-family);
+  letter-spacing: 0;
+}
+.t-caption1-12-medium {
+  font: 500 12px / 18px var(--vds-font-family);
+  letter-spacing: 0;
+}
+.t-caption2-10-bold {
+  font: 700 10px / 15px var(--vds-font-family);
+  letter-spacing: 0.12px;
+}

@@ -1,0 +1,1243 @@
+/* 화면별 스타일 — Figma 프레임 좌표를 그대로 옮겼습니다. */
+
+/* ================================================ 배달지 상세 (1723:158379) */
+
+/* 시트가 프레임 상단 28px을 남기고 덮습니다. */
+.dd__sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 28px;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--vds-bg-1);
+  border-top-left-radius: var(--vds-radius-sheet);
+  border-top-right-radius: var(--vds-radius-sheet);
+  box-shadow: var(--vds-elev-300);
+  overflow: hidden;
+}
+
+/* 내용은 프레임보다 길어서 스크롤됩니다. */
+.dd__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: var(--vds-bg-2);
+}
+
+.dd__top {
+  position: relative;
+  background: var(--vds-bg-1);
+  border-top-left-radius: var(--vds-radius-sheet);
+  border-top-right-radius: var(--vds-radius-sheet);
+  padding: 8px 16px 16px;
+}
+
+.dd__handle {
+  width: 48px;
+  height: 5px;
+  margin: 0 auto;
+  border-radius: 20px;
+  background: var(--vds-surface-8);
+}
+
+.dd__status {
+  margin-top: 13px;
+  color: var(--vds-text-warning);
+}
+
+.dd__address {
+  margin-top: 8px;
+  color: var(--vds-text-primary-100);
+}
+
+.dd__address-detail {
+  margin-top: 4px;
+  color: var(--vds-text-primary-100);
+}
+
+.dd__copy {
+  position: absolute;
+  right: 16px;
+  top: 84px;
+  color: var(--vds-text-tertiary-60);
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+.dd__top-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.dd__top-actions .btn-outline {
+  width: 160px;
+  border-radius: var(--vds-radius-button-md);
+}
+
+.dd__blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dd__block {
+  position: relative;
+  background: var(--vds-surface-1);
+  padding: 16px;
+}
+
+.dd__block-label {
+  color: var(--vds-text-tertiary-60);
+}
+
+.dd__block-value {
+  margin-top: 4px;
+  color: var(--vds-text-primary-100);
+}
+
+.dd__block .btn-outline {
+  margin-top: 16px;
+  align-self: flex-start;
+  width: max-content;
+}
+
+/* 상품픽업번호 블록 */
+.dd__store {
+  margin-top: 4px;
+  color: var(--vds-text-primary-100);
+}
+
+.dd__pay-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  margin-top: 16px;
+  padding: 0 12px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-10);
+  color: var(--vds-text-primary-100);
+}
+
+.dd__pay-card .badge {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 하단 결제 바 */
+.dd__action {
+  position: relative;
+  flex: none;
+  height: 124px;
+  background: var(--vds-bg-1);
+}
+
+.dd__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--vds-divider);
+  opacity: 0.1;
+}
+
+.dd__method {
+  position: absolute;
+  left: 20px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--vds-text-primary-100);
+}
+
+.dd__method-change {
+  position: absolute;
+  right: 20px;
+  top: 14px;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  color: var(--vds-text-tertiary-60);
+}
+
+.dd__method-change .icon {
+  margin-left: 0;
+}
+
+.dd__cta {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 52px;
+}
+
+/* ============================================ 결제 방법 선택 (1723:157638) */
+
+.pm__sheet {
+  /* 화면이 짧아지면 시트도 함께 줄어듭니다 (디자인 높이 400). */
+  height: min(400px, calc(100% - 40px));
+}
+
+.pm__header {
+  height: 62px;
+}
+
+.pm__total-label {
+  margin-top: 12px;
+  text-align: center;
+  color: var(--vds-text-option-45);
+}
+
+.pm__amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 2px;
+  color: var(--vds-text-primary-100);
+}
+
+.pm__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 8px;
+  padding: 0 20px;
+  margin-top: 24px;
+}
+
+.pm__buttons .btn-tertiary {
+  height: 56px;
+}
+
+.pm__btn--full {
+  width: 320px;
+}
+
+.pm__btn--half {
+  width: 156px;
+}
+
+.pm__btn-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* ============================================== 결제·배달 완료 (1723:157236) */
+
+.cp__sheet {
+  height: min(620px, calc(100% - 40px));
+}
+
+.cp__scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: var(--vds-bg-2);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp__summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 16px 0 32px;
+  background: var(--vds-bg-1);
+}
+
+.cp__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.cp__check {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.cp__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.cp__store {
+  color: var(--vds-text-secondary-85);
+}
+
+.cp__headline {
+  color: #000000;
+}
+
+.cp__price-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp__price-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 320px;
+  padding: 12px;
+  border-radius: var(--vds-radius-card);
+  background: var(--vds-surface-10);
+}
+
+.cp__price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cp__price-label {
+  color: var(--vds-text-tertiary-60);
+}
+
+.cp__price-value {
+  color: var(--vds-text-primary-100);
+}
+
+.cp__price-value--focus {
+  color: var(--vds-text-focus);
+}
+
+/* 금액은 숫자만 Bold, "원"은 Regular */
+.cp__price-value .unit {
+  font-weight: 400;
+}
+
+.cp__price-divider {
+  height: 1px;
+  background: var(--vds-border-15);
+  opacity: 0.3;
+}
+
+.cp__receipt-buttons {
+  display: flex;
+  gap: 8px;
+  width: 320px;
+}
+
+.cp__receipt-buttons .btn-outline {
+  flex: 1 0 0;
+  min-width: 0;
+  border-radius: var(--vds-radius-button-md);
+  /* Figma 라벨은 whitespace-nowrap입니다 — 156px 안에서 줄바꿈하지 않습니다. */
+  white-space: nowrap;
+}
+
+.cp__missions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 20px;
+  background: var(--vds-bg-1);
+}
+
+.cp__missions-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--vds-text-secondary-85);
+}
+
+.cp__missions-icon {
+  display: inline-block;
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.cp__missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp__mission {
+  position: relative;
+  width: 320px;
+  height: 32px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-10);
+  border: 1px solid var(--vds-border-10);
+  overflow: hidden;
+}
+
+.cp__mission-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--vds-blue-050);
+  border-top-left-radius: var(--vds-radius-sm);
+  border-bottom-left-radius: var(--vds-radius-sm);
+}
+
+.cp__mission-label {
+  position: absolute;
+  left: 12px;
+  top: 6px;
+  color: var(--vds-text-accent);
+  white-space: nowrap;
+}
+
+.cp__mission-count {
+  position: absolute;
+  right: 12px;
+  top: 6px;
+  color: var(--vds-text-tertiary-60);
+  white-space: nowrap;
+}
+
+.cp__action {
+  position: relative;
+  flex: none;
+  height: 88px;
+  padding: 16px 20px;
+  background: var(--vds-bg-1);
+}
+
+.cp__action .btn-primary {
+  width: 100%;
+}
+
+.cp__action-divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--vds-divider);
+  opacity: 0.1;
+}
+
+/* ============================ 카드 결제 · NFC / 직접 입력 (1723:157653 · 157655)
+ * 지도 위 시트가 아니라 독립된 흰 화면입니다.
+ */
+
+.card-screen {
+  position: absolute;
+  inset: 0;
+  background: var(--vds-surface-1);
+  overflow: hidden;
+}
+
+/* 상단 앱바 — 뒤로, 제목, "카드 리더기로 결제" */
+.appbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  height: 56px;
+  background: var(--vds-surface-1);
+  overflow: hidden;
+}
+
+.appbar__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--vds-divider);
+  opacity: 0.1;
+}
+
+.appbar__back {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+}
+
+.appbar__title {
+  position: absolute;
+  left: 66px;
+  right: 68px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  color: var(--vds-text-primary-100);
+}
+
+.appbar__action {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--vds-text-primary-100);
+  white-space: nowrap;
+}
+
+/*
+ * 앱바 아래의 본문. 화면 높이가 달라져도 하단 요소가 밑에 붙어 있도록
+ * 절대 위치 대신 흐름 레이아웃 + 신축 여백(spacer)으로 배치합니다.
+ * 디자인 높이(740)에서는 여백이 basis 값 그대로여서 좌표가 정확히 재현됩니다.
+ */
+.card-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 늘어나는 여백 — 남는 높이를 1 : 2 : 2 로 나눠 가집니다. */
+.spacer {
+  flex: none;
+}
+
+.spacer--a {
+  flex: 1 1 60px;
+}
+
+.spacer--b {
+  flex: 2 1 60px;
+}
+
+.spacer--c {
+  flex: 0 1 32px;
+}
+
+/* 툴팁(32px)이 위 아이콘과 겹치지 않도록 최소 간격을 확보합니다. */
+.spacer--d {
+  flex: 2 1 68px;
+  min-height: 44px;
+}
+
+/*
+ * 카드 직접 입력은 필드가 위쪽에 고정되고 남는 높이는 아래에서만 흡수합니다 —
+ * 그래야 디자인의 필드 좌표(252 / 346)가 화면 높이와 무관하게 유지됩니다.
+ */
+.spacer--k1 {
+  flex: 0 1 60px;
+}
+
+.spacer--k2 {
+  flex: 0 1 54px;
+}
+
+.spacer--fill {
+  flex: 1 1 0;
+}
+
+/* 화면 하단 여백 (디자인 60px) — 짧은 화면에서는 함께 줄어듭니다. */
+.spacer--e {
+  flex: 0 1 60px;
+}
+
+/* 키패드가 올라오면 내용이 가려질 수 있으므로 스크롤을 허용합니다 (실제 앱과 같은 동작). */
+.card-body--keyin {
+  overflow-y: auto;
+}
+
+/* 총 결제 금액 */
+.card-total {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px; /* 디자인의 라벨↔금액 간격 */
+  text-align: center;
+}
+
+.card-total__label {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.card-total__amount {
+  margin: 0;
+  color: var(--vds-text-primary-100);
+}
+
+/* NFC 화면 */
+/*
+ * 화면이 짧으면 일러스트가 비율을 유지하며 줄어듭니다.
+ * 디자인 높이에서는 249×200 그대로입니다.
+ */
+.nfc__illustration {
+  flex: 0 1 200px;
+  /* flex item의 기본 min-height: auto를 풀어야 실제로 줄어듭니다. */
+  min-height: 130px;
+  width: auto;
+  max-width: 249px;
+  aspect-ratio: 249 / 200;
+}
+
+.nfc__illustration img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.nfc__text {
+  flex: none;
+  width: 320px;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.nfc__headline {
+  margin: 0;
+  color: var(--vds-text-primary-100);
+}
+
+/* "카드를 휴대폰 뒷면"만 focus 컬러입니다 */
+.nfc__headline em {
+  font-style: normal;
+  color: var(--vds-text-focus);
+}
+
+.nfc__sub {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.nfc__pay-icons {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14.71px;
+}
+
+.nfc__pay-icons img {
+  display: block;
+  object-fit: cover;
+}
+
+/* 툴팁이 버튼 위에 겹쳐 뜨도록 감싸는 요소 */
+.nfc__keyin-wrap {
+  flex: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* 툴팁 (1723:157654) — 버튼 위 8px에 겹쳐 뜹니다. */
+.nfc__tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 8px);
+  padding: 7px 12px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-5);
+  color: var(--vds-text-inverse-100);
+  white-space: nowrap;
+  box-shadow: var(--vds-elev-100);
+}
+
+/* 아이콘+텍스트 소형 tertiary 버튼 (카드 직접 입력 / 카드 스캔하기) */
+.btn-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-tertiary);
+  color: var(--vds-text-accent);
+  white-space: nowrap;
+}
+
+.ic-123__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 14px;
+  border: 1.5px solid var(--vds-icon-accent);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ic-123__digits {
+  position: absolute;
+  left: 1.5px;
+  top: 3px;
+  width: 12.001px;
+  height: 5.005px;
+  display: block;
+}
+
+/* 카드 직접 입력 화면 */
+.keyin__field {
+  flex: none;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 유효기간 필드는 카드번호 아래 16px에 붙습니다 (1723:157657). */
+.keyin__field--expiry {
+  margin-top: 16px;
+}
+
+.keyin__label {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.keyin__input-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  height: 56px;
+  padding: 12px;
+  border: 1px solid var(--vds-border-25);
+  border-radius: var(--vds-radius-button-lg);
+  background: var(--vds-surface-1);
+  text-align: left;
+  overflow: hidden;
+}
+
+/* 활성(포커스) 필드는 2px primary 테두리입니다. 안쪽 여백을 1px 줄여 크기를 유지합니다. */
+.keyin__input-row--active {
+  border: 2px solid var(--vds-border-primary);
+  padding: 11px;
+}
+
+.keyin__value {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  color: var(--vds-text-primary-100);
+  white-space: nowrap;
+}
+
+.keyin__value--placeholder {
+  color: var(--vds-text-option-45);
+}
+
+/* 보안키패드로 입력하므로 실제 input이 없습니다 — 캐럿을 직접 그립니다. */
+.keyin__caret {
+  flex: none;
+  width: 1px;
+  height: 19px;
+  background: var(--vds-text-focus);
+  animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .keyin__caret {
+    animation: none;
+  }
+}
+
+.keyin__clear {
+  flex: none;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+
+.keyin__clear img {
+  position: absolute;
+  display: block;
+}
+
+.keyin__clear-ring {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.keyin__clear-x {
+  inset: 25%;
+  width: 50%;
+  height: 50%;
+}
+
+/* 하단 결제 바 (1663:64480) — 화면 맨 아래에 붙습니다. */
+.keyin__action-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  background: var(--vds-bg-1);
+  overflow: hidden;
+}
+
+.keyin__action-bar .btn-primary {
+  position: absolute;
+  left: 20px;
+  width: 320px;
+  top: 20px;
+}
+
+/* ---- 보안키패드 -------------------------------------------------------------
+ * 앱이 그리지만 OS 키패드 모양을 따르는 요소라 DS 토큰을 쓰지 않습니다.
+ * 숫자는 보안키패드 특성대로 무작위 배치되고, 셔플 키로 재배치됩니다.
+ */
+
+.keypad {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 250px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  background: #111111;
+}
+
+.keypad__grid {
+  flex: none;
+  height: 200px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 6px 4px;
+  padding: 3px;
+}
+
+.keypad__key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #222222;
+  color: #ffffff;
+  font: 400 20px / 1 system-ui, -apple-system, sans-serif;
+  text-align: center;
+}
+
+.keypad__key:active {
+  background: #333333;
+}
+
+/* 무작위 배치 때문에 생기는 빈칸 */
+.keypad__key--empty {
+  background: none;
+}
+
+.keypad__key--fn {
+  background: #454545;
+}
+
+.keypad__key--fn:active {
+  background: #565656;
+}
+
+.keypad__key--wide {
+  grid-column: span 2;
+}
+
+.keypad__key svg {
+  display: block;
+}
+
+/* OS 내비게이션 바 — 디자인 스크린샷에 함께 들어있습니다. */
+.keypad__navbar {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #010101;
+}
+
+.keypad__navbar span {
+  color: #c9c9c9;
+  font: 400 16px / 1 system-ui, sans-serif;
+}
+
+.ic-credit-card {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 40px;
+  padding: 4px 8px;
+}
+
+.ic-credit-card img {
+  display: block;
+  width: 24px;
+  height: 16px;
+}
+
+.keyin__input {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--vds-text-primary-100);
+  caret-color: var(--vds-text-focus);
+}
+
+.keyin__input::placeholder {
+  color: var(--vds-text-option-45);
+}
+
+.keyin__scan {
+  flex: none;
+  align-self: flex-start;
+  margin: 8px 0 0 20px;
+}
+
+/* ================================================ 결제 진행중 (1723:157658) */
+
+.progress-dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 178px;
+  height: 158px;
+  background: var(--vds-bg-1);
+  border-radius: var(--vds-radius-dialog);
+  box-shadow: var(--vds-elev-1200);
+  z-index: 60;
+}
+
+.progress-dialog__spinner {
+  position: absolute;
+  left: calc(50% + 1px);
+  transform: translateX(-50%);
+  top: 40px;
+  width: 40px;
+  height: 40px;
+  animation: spin 900ms linear infinite;
+}
+
+.progress-dialog__spinner svg {
+  display: block;
+}
+
+.progress-dialog__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 96px;
+  margin: 0;
+  text-align: center;
+  color: var(--vds-text-primary-100);
+}
+
+@keyframes spin {
+  to {
+    transform: translateX(-50%) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-dialog__spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ========================================== OS 기본 문자 앱 (디자인 없음)
+ * 부릉플러스가 아닌 단말의 문자 앱이라 DS 토큰을 쓰지 않습니다.
+ */
+
+.sms {
+  display: flex;
+  flex-direction: column;
+  background: #f2f3f5;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Noto Sans KR',
+    sans-serif;
+}
+
+.sms__appbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  margin-top: 24px; /* 상태바 */
+  padding: 0 12px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sms__back {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  line-height: 1;
+  text-align: center;
+  color: #1f1f1f;
+}
+
+.sms__appbar-title {
+  flex: 1 1 auto;
+  font: 600 17px / 22px inherit;
+  color: #1f1f1f;
+}
+
+.sms__appbar-app {
+  font: 500 12px / 16px inherit;
+  color: #6b7280;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.sms__recipient {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sms__recipient-label {
+  font: 400 13px / 18px inherit;
+  color: #6b7280;
+}
+
+.sms__recipient-number {
+  font: 600 16px / 22px inherit;
+  color: #1f1f1f;
+}
+
+.sms__chip {
+  font: 600 11px / 15px inherit;
+  color: #0d6dd8;
+  background: #e7f2fe;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.sms__thread {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 16px;
+}
+
+.sms__bubble {
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 16px 16px 4px 16px;
+  background: #d5e8ff;
+}
+
+.sms__bubble-text {
+  margin: 0;
+  font: 400 14px / 20px inherit;
+  color: #1f2937;
+  text-align: left;
+}
+
+.sms__bubble-meta {
+  font: 400 11px / 15px inherit;
+  color: #6b7280;
+}
+
+.sms__compose {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 20px;
+  background: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sms__attachment {
+  flex: 1 1 auto;
+  font: 400 14px / 20px inherit;
+  color: #6b7280;
+}
+
+.sms__send {
+  flex: none;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: #0d6dd8;
+  color: #ffffff;
+  font: 600 15px / 40px inherit;
+  text-align: center;
+}
+
+.sms__send:disabled {
+  background: #a9c7ec;
+}
+
+/* 첨부된 영수증 이미지 */
+.receipt {
+  width: 240px;
+  padding: 14px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #1f2937;
+  text-align: left;
+}
+
+.receipt__store {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.receipt__date {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.receipt__rule {
+  margin: 10px 0;
+  border-top: 1px dashed rgba(0, 0, 0, 0.25);
+}
+
+.receipt__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.receipt__row--total {
+  font-weight: 700;
+}
+
+.receipt__pickup {
+  margin: 10px 0 0;
+  font-size: 10px;
+  color: #6b7280;
+}
+
+/* ====================================== 현금영수증 발급번호 입력 (1723:157212) */
+
+.cr__sheet {
+  height: min(320px, calc(100% - 40px));
+  /* 완료 화면의 시트(z-index 60) 위에 올라갑니다. */
+  z-index: 80;
+}
+
+.cr__header {
+  height: 56px;
+}
+
+.cr__list {
+  padding: 8px 20px 0;
+}
+
+.cr__option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  width: 100%;
+  color: var(--vds-text-primary-100);
+}
+
+.radio {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 200px;
+}
+
+.radio img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.radio__dot {
+  position: absolute;
+  inset: 25%;
+}
+
+.radio__dot img {
+  width: 100%;
+  height: 100%;
+}
+
+.cr__field {
+  margin: 8px 20px 0;
+}
+
+.textfield {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 56px;
+  padding: 12px;
+  border-radius: var(--vds-radius-button-lg);
+  border: 1px solid var(--vds-border-25);
+  background: var(--vds-surface-1);
+  color: var(--vds-text-primary-100);
+  outline: none;
+}
+
+.textfield::placeholder {
+  color: var(--vds-text-option-45);
+}
+
+.textfield:focus {
+  border-color: var(--vds-primary);
+}

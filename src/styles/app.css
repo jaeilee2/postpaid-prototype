@@ -1,0 +1,626 @@
+/* 후불결제 프로토타입 — 레이아웃 & 컴포넌트
+ * 360 x 740 (Android 360dp) 기준. Figma 프레임의 좌표/치수를 그대로 씁니다.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* 프레임을 transform으로 축소하므로 iOS의 자동 글자 확대를 끕니다. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  /*
+   * 이 프로토타입은 라이트 모드 안드로이드 앱 화면을 그대로 재현한 것이라
+   * 다크 모드 대응을 하지 않습니다 (디자인에 다크 테마가 없습니다).
+   * 보는 사람의 기기가 다크 모드여도 배경이 비치지 않게 html에도 명시합니다.
+   */
+  background: #e9ebee;
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--vds-font-family);
+  background: #e9ebee;
+  color: var(--vds-text-primary-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+input {
+  font-family: inherit;
+}
+
+/* ---------------------------------------------------------------- 기기 프레임 */
+
+.stage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 16px;
+}
+
+/*
+ * 화면(360×740)은 그대로 두고 프레임 전체를 축소해 뷰포트에 맞춥니다.
+ * 폰에서 볼 때 디자인 비율과 픽셀 위치가 그대로 유지됩니다.
+ * --device-scale은 App.tsx의 useDeviceScale이 계산합니다.
+ */
+.device-frame {
+  position: relative;
+  flex: none;
+  width: calc(360px * var(--device-scale, 1));
+  height: calc(var(--screen-height, 740px) * var(--device-scale, 1));
+}
+
+.stage__caption {
+  margin: 0;
+  font: 500 13px / 18px var(--vds-font-family);
+  color: rgba(18, 20, 23, 0.5);
+  text-align: center;
+}
+
+.stage__caption code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  background: rgba(18, 20, 23, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.device {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: var(--screen-height, 740px);
+  transform: scale(var(--device-scale, 1));
+  transform-origin: top left;
+  overflow: hidden;
+  background: var(--vds-surface-1);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(18, 20, 23, 0.15), 0 18px 50px rgba(18, 20, 23, 0.22);
+}
+
+/*
+ * 폰에서는 프레임 장식 없이 화면만 보여주고, 폭을 꽉 채웁니다.
+ * 높이가 모자라면 세로로 스크롤됩니다 (프레임을 작게 줄이지 않습니다).
+ */
+@media (max-width: 480px) {
+  .stage {
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 0 0 6px;
+  }
+
+  .device {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .stage__caption {
+    font-size: 12px;
+  }
+}
+
+/* 모든 화면은 프레임을 꽉 채우는 절대 위치 레이어 */
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- 상태바 */
+
+.statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 24px;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.statusbar__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.statusbar__clock {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 10px;
+}
+
+.statusbar__signal-a {
+  position: absolute;
+  right: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px;
+  height: 10px;
+}
+
+.statusbar__signal-b {
+  position: absolute;
+  right: 55.5px;
+  top: calc(50% + 2.5px);
+  transform: translateY(-50%);
+  width: 5.5px;
+  height: 5px;
+}
+
+/* ---------------------------------------------------------------- 지도 배경 */
+
+.map {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #eef0f2;
+}
+
+/* Figma 프레임에서 지도 이미지는 프레임보다 크게 배치돼 있습니다. */
+.map__image {
+  position: absolute;
+  top: -4.86%;
+  left: -53.33%;
+  width: 238.89%;
+  height: 107.7%;
+  max-width: none;
+  pointer-events: none;
+}
+
+.map__marker {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+}
+
+.map__marker img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.map__marker-fill,
+.map__marker-stroke {
+  width: 26px;
+  height: 26px;
+}
+
+.map__marker-arrow {
+  width: 11.556px;
+  height: 11.556px;
+  margin-top: -0.96px;
+}
+
+.naver-logo {
+  position: absolute;
+  left: 297px;
+  top: 11px;
+  width: 47px;
+  height: 17px;
+  background: var(--vds-surface-1);
+  border: 0.7px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.naver-logo img {
+  position: absolute;
+  left: 6px;
+  top: 5px;
+  width: 36px;
+  height: 7px;
+  object-fit: cover;
+}
+
+/* ---------------------------------------------------------------- FAB */
+
+.fab {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 44px;
+  background: var(--vds-surface-1);
+  border-radius: var(--vds-radius-pill);
+  box-shadow: var(--vds-elev-fab);
+  color: var(--vds-text-primary-100);
+}
+
+.fab--label {
+  padding: 13px 12px;
+}
+
+.fab--icon {
+  width: 44px;
+  padding: 14px;
+}
+
+.fab__icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.toggle {
+  display: inline-block;
+  position: relative;
+  width: 37px;
+  height: 20px;
+  flex: none;
+}
+
+.toggle__surface {
+  position: absolute;
+  inset: 0;
+  background: var(--vds-primary);
+  border-radius: 200px;
+}
+
+.toggle__handle {
+  position: absolute;
+  top: 4.17%;
+  bottom: 4.17%;
+  left: 47.73%;
+  right: 2.27%;
+}
+
+.toggle__handle img {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------- 스낵바 / 배너 */
+
+.snackbar {
+  position: absolute;
+  left: 20px;
+  top: 90px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 320px;
+  height: 40px;
+  padding: 14px 16px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-6);
+  opacity: 0.95;
+  overflow: hidden;
+  box-shadow: var(--vds-elev-100);
+  color: var(--vds-text-inverse-100);
+  white-space: nowrap;
+}
+
+.snackbar__icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.banner {
+  position: absolute;
+  left: 20px;
+  top: 138px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 320px;
+  height: 40px;
+  padding: 14px 16px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-tertiary);
+  overflow: hidden;
+  box-shadow: 0 0 2px rgba(48, 53, 64, 0.15), 0 5px 5px rgba(48, 53, 64, 0.05),
+    0 5px 5px rgba(48, 53, 64, 0.05);
+  color: var(--vds-text-accent);
+  white-space: nowrap;
+}
+
+.banner__icon {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- 공통 버튼 */
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vds-primary);
+  color: var(--vds-text-inverse-100);
+  text-align: center;
+}
+
+.btn-primary:disabled {
+  background: var(--vds-surface-8);
+  color: var(--vds-text-inverse-disabled-40);
+}
+
+.btn-tertiary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vds-tertiary);
+  color: var(--vds-text-accent);
+  text-align: center;
+}
+
+.btn-outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--vds-surface-1);
+  border: 1px solid var(--vds-border-15);
+  color: var(--vds-text-secondary-85);
+  text-align: center;
+}
+
+.btn-outline:disabled {
+  color: var(--vds-text-option-45);
+}
+
+.btn-outline:disabled .icon {
+  opacity: 0.45;
+}
+
+/* Figma의 Button_Primary / Tertiary 사이즈 프리셋 */
+.btn--h56 {
+  height: 56px;
+  padding: 17px 12px;
+  border-radius: var(--vds-radius-button-lg);
+}
+
+.btn--h48 {
+  height: 48px;
+  padding: 13px 12px;
+  border-radius: var(--vds-radius-button-md);
+}
+
+.btn--h38 {
+  padding: 8px 12px;
+  border-radius: var(--vds-radius-sm);
+}
+
+/* span이므로 display를 지정해야 flex 컨테이너 밖에서도 width/height가 적용됩니다. */
+.icon {
+  display: inline-block;
+  position: relative;
+  flex: none;
+  overflow: hidden;
+}
+
+.icon--20 {
+  width: 20px;
+  height: 20px;
+}
+
+.icon--24 {
+  width: 24px;
+  height: 24px;
+}
+
+.icon img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+
+/* ---------------------------------------------------------------- 배지 */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--vds-radius-badge);
+  color: var(--vds-text-inverse-100);
+  white-space: nowrap;
+}
+
+.badge--cash {
+  background: var(--vds-badge-2);
+}
+
+.badge--card {
+  background: var(--vds-badge-3);
+}
+
+/* 후불현금 (Medium) — 결제필요금액 카드 안 */
+.badge--md {
+  height: 20px;
+  padding: 1px 8px;
+}
+
+/* 현금 / 카드 (Small) — 총 결제 금액 옆 */
+.badge--sm {
+  padding: 1px 4px;
+}
+
+/* ---------------------------------------------------------------- 딤 / 시트 */
+
+.dimmed {
+  position: absolute;
+  inset: 0;
+  background: var(--vds-dimmed);
+  opacity: 0.5;
+  z-index: 50;
+}
+
+/* 이미 시트가 떠 있는 화면 위에 시트를 하나 더 올릴 때 (완료 화면 → 현금영수증 시트) */
+.dimmed--top {
+  z-index: 70;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 360px;
+  background: var(--vds-bg-1);
+  border-top-left-radius: var(--vds-radius-sheet);
+  border-top-right-radius: var(--vds-radius-sheet);
+  box-shadow: var(--vds-elev-300);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sheet__header {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vds-bg-1);
+  border-top-left-radius: var(--vds-radius-sheet);
+  border-top-right-radius: var(--vds-radius-sheet);
+  color: var(--vds-text-primary-100);
+}
+
+.sheet__close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 24px;
+  height: 24px;
+}
+
+.sheet__actions {
+  flex: none;
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--vds-bg-1);
+}
+
+.sheet__actions .btn-primary,
+.sheet__actions .btn-tertiary {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- 다이얼로그 */
+
+.dialog {
+  position: absolute;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 296px;
+  height: 200px;
+  background: var(--vds-bg-1);
+  border-radius: var(--vds-radius-dialog);
+  box-shadow: var(--vds-elev-1200);
+  z-index: 60;
+}
+
+.dialog__title {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 24px;
+  color: var(--vds-text-primary-100);
+}
+
+.dialog__body {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 62px;
+  color: var(--vds-text-secondary-85);
+}
+
+.dialog__cancel {
+  position: absolute;
+  left: 20px;
+  bottom: 16px;
+  width: 124px;
+}
+
+.dialog__confirm {
+  position: absolute;
+  left: 152px;
+  bottom: 16px;
+  width: 124px;
+}
+
+/* ---------------------------------------------------------------- 토스트 (헤드업 알림) */
+
+.toast {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 340px;
+  min-height: 100px;
+  padding: 16px 20px;
+  background: var(--vds-surface-1);
+  border-radius: 16px;
+  box-shadow: var(--vds-elev-100);
+  overflow: hidden;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  animation: toast-in 260ms ease-out;
+}
+
+.toast__title {
+  color: var(--vds-text-primary-100);
+}
+
+.toast__body {
+  width: 300px;
+  color: var(--vds-text-secondary-85);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
