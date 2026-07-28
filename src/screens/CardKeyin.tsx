@@ -191,7 +191,7 @@ export function CardKeyin() {
         {!cardDone && (
           <button
             className="keyin__scan btn-chip t-body3-14-medium"
-            onClick={() => showNotice('카드 스캔 화면은 디자인 범위 밖이에요')}
+            onClick={() => navigate('/card/scan')}
           >
             <IcCamera />
             카드 스캔하기

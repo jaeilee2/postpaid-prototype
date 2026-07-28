@@ -8,7 +8,7 @@ import payApple from '../assets/pay-apple.png'
 import paySamsung from '../assets/pay-samsung.png'
 import { AppBar, CardTotal, PaymentProgress, useEnsureCardMethod } from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
-import { Ic123, IcCamera, IcNfc } from '../components/Icon'
+import { Ic123, IcNfc } from '../components/Icon'
 
 /* 카드 결제 · NFC (1723:157653 기본 / 1723:157654 툴팁 노출)
  *
@@ -92,12 +92,6 @@ export function CardNfc() {
           <button className="btn-chip t-body3-14-medium" onClick={() => navigate('/card/keyin')}>
             <Ic123 />
             카드 직접 입력
-          </button>
-          {/* 카드 스캔 화면(1742:54122)으로 들어가는 입구가 디자인에 없어 여기에 뒀습니다.
-              그 화면의 앱바 "카드 리더기로 결제"가 이 화면으로 돌아오는 짝입니다. */}
-          <button className="btn-chip t-body3-14-medium" onClick={() => navigate('/card/scan')}>
-            <IcCamera />
-            카드 스캔
           </button>
         </div>
 

@@ -645,7 +645,6 @@
   position: relative;
   display: flex;
   justify-content: center;
-  gap: 8px;
 }
 
 /* 툴팁 (1723:157654) — 버튼 위 8px에 겹쳐 뜹니다. */

@@ -65,9 +65,11 @@ export function CardScan() {
 
   return (
     <div className="card-screen">
+      {/* 이 화면으로 들어오는 입구는 카드 직접 입력의 "카드 스캔하기"입니다 (1723:157655).
+          앱바의 "카드 리더기로 결제"는 NFC 화면으로 돌아갑니다. */}
       <AppBar
         title="카드 스캔"
-        onBack={() => navigate('/card')}
+        onBack={() => navigate('/card/keyin')}
         onAction={() => navigate('/card')}
       />
 
