@@ -26,6 +26,7 @@ export function Complete() {
   const location = useLocation()
   const { method, cashReceiptIssued, issueCashReceipt, feeToastShown, markFeeToastShown } =
     useOrder()
+  const isCash = method === 'cash'
   const [sheetOpen, setSheetOpen] = useState(false)
   const [toastVisible, setToastVisible] = useState(!feeToastShown)
   const [notice, setNotice] = useState<string | null>(null)
@@ -82,9 +83,9 @@ export function Complete() {
             <div className="cp__price-group">
               <div className="cp__price-card">
                 <div className="cp__price-row">
-                  {/* 디자인은 현금 기준입니다. 카드로 결제하면 M캐시 차감이 없어 문구를 바꿉니다. */}
+                  {/* 현금은 "현금 결제 금액 (M캐시 차감)"(157236), 카드는 "카드 결제 금액"(157270) */}
                   <span className="cp__price-label t-body3-14-medium">
-                    {method === 'cash' ? '현금 결제 금액 (M캐시 차감)' : '카드 결제 금액'}
+                    {isCash ? '현금 결제 금액 (M캐시 차감)' : '카드 결제 금액'}
                   </span>
                   <Amount value={ORDER.amount} />
                 </div>
@@ -95,6 +96,10 @@ export function Complete() {
                 </div>
               </div>
 
+              {/*
+                현금 결제는 버튼 2개(1723:157236), 카드 결제는 영수증 발송만 있고
+                버튼이 전체 폭으로 늘어납니다(1723:157270). 카드는 현금영수증 발급이 없습니다.
+              */}
               <div className="cp__receipt-buttons">
                 {/* 영수증 발송은 단말의 문자 앱으로 넘어갑니다. */}
                 <button
@@ -105,15 +110,17 @@ export function Complete() {
                   <IcReceipt />
                   영수증 발송
                 </button>
-                <button
-                  className="btn-outline t-body2-16-medium"
-                  style={{ padding: '13px 12px' }}
-                  disabled={cashReceiptIssued}
-                  onClick={() => setSheetOpen(true)}
-                >
-                  <IcCashReceipt />
-                  현금영수증 발급
-                </button>
+                {isCash && (
+                  <button
+                    className="btn-outline t-body2-16-medium"
+                    style={{ padding: '13px 12px' }}
+                    disabled={cashReceiptIssued}
+                    onClick={() => setSheetOpen(true)}
+                  >
+                    <IcCashReceipt />
+                    현금영수증 발급
+                  </button>
+                )}
               </div>
             </div>
           </div>
