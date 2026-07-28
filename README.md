@@ -27,11 +27,11 @@ Claude Artifact로 배포된 현재 링크:
 | --- | --- |
 | 라우팅 | 해시 라우팅(`#/delivery`) — 새로고침·딥링크 동작 → [main.tsx](src/main.tsx) |
 | 지도 | 2.3MB PNG → WebP q85 **287KB** (2배 해상도 유지) |
-| 폰트 | 외부 CDN 제거, 실제 쓰는 181자만 서브셋해 굵기당 20KB 내장 |
+| 폰트 | 외부 CDN 제거, 실제 쓰는 195자만 서브셋해 굵기당 21KB 내장 |
 | 에셋 | 전부 data URI로 인라인 → [vite.config.ts](vite.config.ts) |
 | 문서 골격 | Artifact가 씌워주므로 벗겨냄 → [scripts/make-artifact.mjs](scripts/make-artifact.mjs) |
 
-최종 크기 **942KB** (gzip 510KB).
+최종 크기 **1,182KB** (gzip 약 683KB). NFC 애니메이션(137KB)과 지도(287KB)가 대부분입니다.
 
 ### 폰트 서브셋 갱신
 
@@ -67,9 +67,9 @@ Claude Artifact 링크로 볼 때는 claude.ai의 헤더가 화면 위쪽을 차
 터미널에 찍히는 `Network:` 주소를 폰 브라우저에 입력하세요 (예: `http://10.5.201.154:5173`).
 맥의 IP는 `ipconfig getifaddr en0`으로 확인합니다.
 
-360×740 프레임은 뷰포트에 맞춰 축소됩니다(확대는 안 함). 레이아웃을 바꾸는 대신 `transform: scale`로
-줄이기 때문에 폰에서도 디자인의 픽셀 위치와 비율이 그대로 유지됩니다. 480px 이하에서는 프레임 장식
-(라운드·그림자)을 없애 앱처럼 보입니다. → `useDeviceScale` in [App.tsx](src/App.tsx)
+폭은 `transform: scale`로 맞추므로 디자인의 픽셀 위치와 비율이 그대로 유지됩니다.
+480px 이하에서는 프레임 장식(라운드·그림자)을 없애고 화면 높이를 기기 높이에 맞춥니다.
+→ `useDeviceScale` in [App.tsx](src/App.tsx)
 
 `--host`는 0.0.0.0에 바인딩하므로 같은 네트워크의 누구나 접속할 수 있습니다. 사내 Wi-Fi에서 쓸 때는
 필요할 때만 켜두세요.
@@ -126,6 +126,7 @@ Claude Artifact 링크로 볼 때는 claude.ai의 헤더가 화면 위쪽을 차
 | `1723:157658` | 결제 진행중 | [CardChrome.tsx](src/components/CardChrome.tsx) |
 | `1723:157655` | 카드 직접 입력 (입력 전 + 보안키패드) | [CardKeyin.tsx](src/screens/CardKeyin.tsx) · [SecurityKeypad.tsx](src/components/SecurityKeypad.tsx) |
 | `1723:157657` | 카드 직접 입력 (유효기간까지 입력 완료) | 같은 컴포넌트 |
+| `1723:157270` | 결제·배달 완료 (카드) | [Complete.tsx](src/screens/Complete.tsx) — 결제 방법에 따라 분기 |
 | — | 문자 앱 (영수증 발송) — **디자인 없음** | [SmsApp.tsx](src/screens/SmsApp.tsx) |
 
 문자 앱은 부릉플러스가 아니라 단말의 앱이므로 일부러 DS를 쓰지 않고 OS 기본 앱처럼 만들었습니다.
@@ -145,7 +146,9 @@ DS의 타이포그래피 variable은 전부 `Noto Sans KR`로 정의되어 있�
 **실제 지정 폰트가 다르면** 두 곳만 바꾸면 전체가 따라옵니다:
 
 - [tokens.css](src/styles/tokens.css) → `--vds-font-family`
-- [index.html](index.html) → Google Fonts `<link>`
+
+Google Fonts는 쓰지 않습니다. 단일 HTML로 배포하면 외부 요청이 차단되므로 `@font-face`로
+서브셋 woff2를 직접 불러옵니다.
 
 ### 아이콘 / 이미지
 
@@ -154,6 +157,8 @@ Figma 에셋 URL은 7일 후 만료되므로 바이트를 저장소에 넣어뒀
 
 `check.gif`는 완료 화면의 체크 표시입니다 — 원본이
 [Lottie 애니메이션](https://lottiefiles.com/animations/check-tD5r7tZ8zu)이라 export 결과가 GIF입니다.
+export된 GIF는 **무한 루프**여서 1.8초마다 체크가 사라졌습니다. Netscape 루프 카운트만
+`0 → 1`로 무손실 패치해 1회 재생 후 마지막 프레임(체크 완성)에 멈춥니다.
 
 ## 디자인과 다르게 구현한 부분
 
@@ -213,9 +218,11 @@ Figma 에셋 URL은 7일 후 만료되므로 바이트를 저장소에 넣어뒀
     첫 프레임(점 하나)만 나옵니다. 원형 진행 표시는 아이콘이 아니라 도형이므로 디자인과 같은
     호를 SVG로 그렸습니다 (지름 40px, 두께 4px, 둥근 끝, 90°, `#0d6dd8`).
 
-15. **완료 화면의 금액 문구** — 디자인은 현금 기준(`현금 결제 금액 (M캐시 차감)`)입니다.
-    카드로 결제하면 M캐시 차감이 없어 `카드 결제 금액`으로 바꿉니다. 카드용 완료 화면
-    디자인이 나오면 교체가 필요합니다.
+15. **완료 화면은 결제 방법에 따라 갈립니다** — 현금은 `현금 결제 금액 (M캐시 차감)`과
+    버튼 2개(1723:157236), 카드는 `카드 결제 금액`과 `영수증 발송` 한 개가 전체 폭
+    (1723:157270). 카드는 현금영수증 발급이 없습니다.
+    단, 카드 완료 화면 디자인에는 "배송수수료 입금" 헤드업 알림이 없는데, 배송 완료 정산은
+    결제 방법과 무관한 이벤트라고 보고 카드에서도 띄웁니다.
 
 16. **카드 리더기로 결제 / 카드 스캔하기** — 후속 화면이 없어 안내 스낵바만 띄웁니다.
 
