@@ -28,7 +28,8 @@ export function Complete() {
     useOrder()
   const isCash = method === 'cash'
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [toastVisible, setToastVisible] = useState(!feeToastShown)
+  // "배송수수료 입금" 알림은 현금 결제일 때만 옵니다 (카드는 M캐시 차감이 없습니다).
+  const [toastVisible, setToastVisible] = useState(!feeToastShown && isCash)
   const [notice, setNotice] = useState<string | null>(null)
 
   function showNotice(text: string) {
@@ -44,11 +45,11 @@ export function Complete() {
   // 배송수수료 입금 헤드업 알림은 잠시 뜬 뒤 사라집니다.
   // 문자 앱에 다녀와 다시 이 화면으로 돌아올 때는 뜨지 않습니다.
   useEffect(() => {
-    if (feeToastShown) return
+    if (feeToastShown || !isCash) return
     const timer = window.setTimeout(dismissToast, 4500)
     return () => window.clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feeToastShown])
+  }, [feeToastShown, isCash])
 
   // 문자 앱에서 영수증을 보내고 돌아오면 결과를 알려줍니다.
   const returnNotice = (location.state as { notice?: string } | null)?.notice
