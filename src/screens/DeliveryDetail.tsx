@@ -2,13 +2,31 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { MapPickupBackground, Snackbar } from '../components/Chrome'
-import { IcCall, IcCash, IcChevronRight, IcNavigate, IcSms, IcVcc } from '../components/Icon'
+import {
+  IcCall,
+  IcCard,
+  IcCash,
+  IcChevronRight,
+  IcNavigate,
+  IcQr,
+  IcSms,
+  IcSplit,
+  IcVcc,
+} from '../components/Icon'
 import { ORDER, PAYMENT_METHOD_LABEL, formatWon } from '../data/order'
+import type { PaymentMethod } from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { CashConfirmDialog } from './CashConfirmDialog'
 import { PaymentMethodSheet } from './PaymentMethodSheet'
 
 /* 배달지 상세 · 픽업후 · 후불현금 (1723:158379) */
+
+const METHOD_ICON: Record<PaymentMethod, React.ReactNode> = {
+  cash: <IcCash />,
+  card: <IcCard />,
+  qr: <IcQr />,
+  split: <IcSplit />,
+}
 
 type Overlay = null | 'method' | 'cash-confirm'
 
@@ -142,7 +160,9 @@ export function DeliveryDetail() {
         <div className="dd__action">
           <div className="dd__divider" />
           <div className="dd__method">
-            <IcCash />
+            {/* 디자인은 후불현금 상태(1723:158379)뿐이라 현금 아이콘만 있습니다 —
+                결제 방법을 바꾸면 아이콘도 함께 바뀌는 게 맞아 시트와 같은 아이콘을 씁니다. */}
+            {METHOD_ICON[method]}
             <span className="t-body3-14-medium">{PAYMENT_METHOD_LABEL[method]} 결제</span>
           </div>
           <button className="dd__method-change" onClick={() => setOverlay('method')}>

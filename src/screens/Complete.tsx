@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-// Figma의 체크 표시는 Lottie 애니메이션(https://lottiefiles.com/animations/check-tD5r7tZ8zu)이라
-// export 결과가 애니메이션 GIF입니다.
-import check from '../assets/check.gif'
+/*
+ * Figma의 체크 표시는 Lottie 애니메이션(https://lottiefiles.com/animations/check-tD5r7tZ8zu)이라
+ * export 결과가 60프레임 GIF였습니다. 그런데 앞 프레임들이 거의 비어 있고 브라우저가 캐시된
+ * 애니메이션을 다시 재생하지 않아서, 완료 화면에 들어와도 체크가 안 보이고 위쪽이 빈 채로
+ * 남는 일이 잦았습니다. 그래서 **마지막 프레임을 PNG로 뽑아** 쓰고, 나타나는 느낌은 CSS로
+ * 대신합니다 (120KB → 4.7KB).
+ */
+import check from '../assets/check.png'
 import { MapMainBackground, Snackbar } from '../components/Chrome'
 import { IcCashReceipt, IcMission, IcReceipt } from '../components/Icon'
 import { COMPLETE_PRICE_LABEL, MISSIONS, MISSION_COUNT, ORDER, formatWon } from '../data/order'

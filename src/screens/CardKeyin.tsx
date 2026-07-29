@@ -38,6 +38,24 @@ function formatExpiry(digits: string) {
   return `${dots.slice(0, 2)} / ${dots.slice(2)}`
 }
 
+/**
+ * 입력 커서. 실제 `<input>`이 아니라 직접 그리므로 위치도 직접 잡습니다 —
+ * 비어 있을 때는 플레이스홀더 앞(맨 앞), 입력 중에는 마지막 글자 뒤입니다.
+ */
+function Caret({
+  visible,
+  at,
+  empty,
+}: {
+  visible: boolean
+  at: 'before' | 'after'
+  empty: boolean
+}) {
+  if (!visible) return null
+  if (at === 'before' ? !empty : empty) return null
+  return <span className="keyin__caret" />
+}
+
 export function CardKeyin() {
   const navigate = useNavigate()
   useEnsureCardMethod()
@@ -146,9 +164,11 @@ export function CardKeyin() {
                 card ? '' : 'keyin__value--placeholder'
               }`}
             >
+              {/* 캐럿은 실제 입력 커서 자리에 둡니다 — 비어 있으면 플레이스홀더 앞, 입력 중이면 뒤. */}
+              <Caret visible={field === 'card' && keypadOpen} at="before" empty={!card} />
               {card ? formatCardNumber(card) : '0000 - 0000 - 0000 - 0000'}
+              <Caret visible={field === 'card' && keypadOpen} at="after" empty={!card} />
             </span>
-            {field === 'card' && keypadOpen && <span className="keyin__caret" />}
           </button>
         </div>
 
@@ -166,8 +186,9 @@ export function CardKeyin() {
                   expiry ? '' : 'keyin__value--placeholder'
                 }`}
               >
+                <Caret visible={field === 'expiry' && keypadOpen} at="before" empty={!expiry} />
                 {expiry ? formatExpiry(expiry) : 'MM / YY'}
-                {field === 'expiry' && keypadOpen && <span className="keyin__caret" />}
+                <Caret visible={field === 'expiry' && keypadOpen} at="after" empty={!expiry} />
               </span>
               {expiry.length > 0 && (
                 <span

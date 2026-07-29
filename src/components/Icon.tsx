@@ -16,8 +16,7 @@ import icChevronRight from '../assets/ic-chevron-right.svg'
 import icClose from '../assets/ic-close.svg'
 import icCloseWhite from '../assets/ic-close-white.svg'
 import icFabMylocation from '../assets/ic-fab-mylocation.svg'
-import icMissionA from '../assets/ic-mission-a.svg'
-import icMissionB from '../assets/ic-mission-b.svg'
+import icMission from '../assets/ic-mission.svg'
 import icMore from '../assets/ic-more.svg'
 import icMypage from '../assets/ic-mypage.svg'
 import icNavigate from '../assets/ic-navigate.svg'
@@ -214,23 +213,15 @@ export const IcCamera = () => (
   <IconBase layers={[{ src: icCamera, style: inset(13.28, 7.81, 15.63, 7.81) }]} />
 )
 
-/** 진행한 미션 헤더의 불꽃 아이콘 (14px, Figma에서 뒤집힌 상태로 배치됨) */
+/**
+ * 진행한 미션 헤더의 불꽃 아이콘 (14px).
+ *
+ * export된 두 벡터(겉 빨간 불꽃 / 안 주황 불꽃)를 각각 <img>로 얹으면 14px에서 서로 따로
+ * 래스터화되어 안쪽 불꽃이 밖으로 삐져나옵니다. Figma의 배치 변환을 계산해 한 장의 SVG로
+ * 합쳐뒀습니다 → [ic-mission.svg](../assets/ic-mission.svg)
+ */
 export const IcMission = () => (
-  <span className="cp__missions-icon" style={{ transform: 'rotate(180deg) scaleY(-1)' }}>
-    <span style={{ position: 'absolute', top: 0, bottom: 0, left: '11.1%', right: '11.12%' }}>
-      <img src={icMissionA} alt="" style={{ width: '100%', height: '100%' }} />
-    </span>
-    <span
-      style={{
-        position: 'absolute',
-        top: '55.55%',
-        bottom: 0,
-        left: '32.7%',
-        right: '32.73%',
-        transform: 'scaleX(-1)',
-      }}
-    >
-      <img src={icMissionB} alt="" style={{ width: '100%', height: '100%' }} />
-    </span>
+  <span className="cp__missions-icon">
+    <img src={icMission} alt="" />
   </span>
 )

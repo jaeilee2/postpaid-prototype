@@ -107,13 +107,15 @@ export function MapMainBackground() {
 }
 
 /**
- * 임시 스낵바 — DS Snackbar 스타일 그대로, 프로토타입 범위 안내에 씁니다.
+ * 안내 스낵바 — DS Snackbar 스타일 그대로, 프로토타입 안내 문구에 씁니다.
  * 화면 높이가 달라져도 자리가 유지되도록 하단 기준으로 띄웁니다.
+ *
+ * 지도 화면의 "주변 오더를 찾고 있어요"(1730:197354)에는 `...` 아이콘이 붙어 있지만,
+ * 그건 오더를 찾는 중이라는 표시입니다. 결과를 알리는 안내에는 아이콘 없이 문구만 가운데 둡니다.
  */
 export function Snackbar({ text, bottom = 60 }: { text: string; bottom?: number }) {
   return (
-    <div className="snackbar" style={{ top: 'auto', bottom, zIndex: 90 }}>
-      <IcMore />
+    <div className="snackbar snackbar--notice" style={{ top: 'auto', bottom, zIndex: 90 }}>
       <span className="t-body3-14-medium">{text}</span>
     </div>
   )

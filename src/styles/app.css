@@ -347,10 +347,10 @@ input {
   white-space: nowrap;
 }
 
-.snackbar__icon {
-  width: 24px;
-  height: 24px;
-  flex: none;
+/* 안내 문구는 아이콘 없이 가운데 정렬입니다. */
+.snackbar--notice {
+  justify-content: center;
+  text-align: center;
 }
 
 .banner {
