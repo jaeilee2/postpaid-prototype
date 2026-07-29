@@ -260,7 +260,12 @@ input {
   background: #eef0f2;
 }
 
-/* Figma 프레임에서 지도 이미지는 프레임보다 크게 배치돼 있습니다. */
+/*
+ * Figma 프레임에서 지도 이미지는 프레임보다 크게 배치돼 있습니다.
+ * 배치 상자(860×797)는 이미지 원본(1720×1594)과 비율이 같아서 디자인 높이(740)에서는
+ * 잘리는 곳 없이 그대로 들어갑니다. 화면이 길어지거나 짧아질 때 **늘어나지 않게**
+ * cover로 채웁니다 — 비율을 지키고 남는 쪽만 잘립니다.
+ */
 .map__image {
   position: absolute;
   top: -4.86%;
@@ -268,6 +273,8 @@ input {
   width: 238.89%;
   height: 107.7%;
   max-width: none;
+  object-fit: cover;
+  object-position: center;
   pointer-events: none;
 }
 
