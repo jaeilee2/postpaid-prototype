@@ -120,7 +120,8 @@ export function usePaymentFlow() {
 
       {overlay === 'cash-confirm' && (
         <CashConfirmDialog
-          onCancel={() => setOverlay(null)}
+          onClose={() => setOverlay(null)}
+          onOtherMethod={() => setOverlay('method')}
           onConfirm={() =>
             // 한 번에 전액을 현금으로 받은 것도 결제 내역에 남습니다 (1730:196850).
             record('cash', amountToCollect())
@@ -129,13 +130,22 @@ export function usePaymentFlow() {
       )}
 
       {overlay === 'split' && (
-        <SplitPaymentSheet onClose={() => setOverlay(null)} onPay={handleSplitPay} />
+        <SplitPaymentSheet
+          initial={splitPart}
+          onClose={() => {
+            setSplitPart(null)
+            setOverlay(null)
+          }}
+          onPay={handleSplitPay}
+        />
       )}
 
-      {/* 분할 결제에서 현금을 고르면 같은 확인 얼럿이 뜹니다 (1730:195338). */}
+      {/* 분할 결제에서 현금을 고르면 같은 확인 얼럿이 뜹니다 (1730:195338).
+          여기서는 회차 금액을 잃지 않게 닫기·다른 방법 모두 분할 결제 시트로 돌아갑니다. */}
       {overlay === 'split-cash-confirm' && splitPart && (
         <CashConfirmDialog
-          onCancel={() => setOverlay('split')}
+          onClose={() => setOverlay('split')}
+          onOtherMethod={() => setOverlay('split')}
           onConfirm={() => record('cash', splitPart)}
         />
       )}

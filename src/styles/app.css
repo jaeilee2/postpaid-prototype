@@ -687,6 +687,44 @@ input {
   color: var(--vds-text-primary-100);
 }
 
+/* 오른쪽 위 X가 있으면 제목이 그 자리를 비켜갑니다 */
+.dialog__title--with-close {
+  right: 52px;
+}
+
+.dialog__close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  width: 24px;
+  height: 24px;
+}
+
+/*
+ * 버튼 한 줄. 왼쪽(다른 방법으로 결제)이 길어서 남는 폭을 차지하고
+ * 오른쪽(현금 결제)은 문구에 맞춰 고정입니다.
+ */
+.dialog__actions {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.dialog__actions .btn-tertiary {
+  flex: 1 0 0;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.dialog__actions-confirm {
+  flex: none;
+  width: 100px;
+}
+
 .dialog__body {
   position: absolute;
   left: 20px;

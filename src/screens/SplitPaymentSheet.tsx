@@ -21,17 +21,20 @@ function toNumber(text: string) {
 }
 
 export function SplitPaymentSheet({
+  initial,
   onClose,
   onPay,
 }: {
+  /** 현금 확인 얼럿에서 돌아왔을 때 입력했던 금액 (다시 입력하지 않게) */
+  initial?: Omit<SplitPayment, 'method'> | null
   onClose: () => void
   onPay: (method: SplitPayment['method'], part: Omit<SplitPayment, 'method'>) => void
 }) {
   const { splitPayments } = useOrder()
   const { remainingProduct, remainingCup } = splitProgress(splitPayments)
 
-  const [productText, setProductText] = useState('')
-  const [cup, setCup] = useState(0)
+  const [productText, setProductText] = useState(initial?.product ? formatWon(initial.product) : '')
+  const [cup, setCup] = useState(initial?.cup ?? 0)
   /* OS 키보드 대신 앱이 그리는 키패드를 씁니다 — NumberKeypad.tsx의 주석 참고. */
   const [keypadOpen, setKeypadOpen] = useState(false)
 
@@ -154,14 +157,14 @@ export function SplitPaymentSheet({
             onClick={() => onPay('qr', { product, cup })}
             aria-label="QR 간편 결제"
           >
-            <IcQr />
+            <IcQr off={!canPay} />
           </button>
           <button
             className="btn-tertiary sp__btn t-body2-16-medium"
             disabled={!canPay}
             onClick={() => onPay('cash', { product, cup })}
           >
-            <IcCash />
+            <IcCash off={!canPay} />
             현금
           </button>
           <button
@@ -169,7 +172,7 @@ export function SplitPaymentSheet({
             disabled={!canPay}
             onClick={() => onPay('card', { product, cup })}
           >
-            <IcCard />
+            <IcCard off={!canPay} />
             카드
           </button>
         </div>

@@ -26,7 +26,14 @@ import icReceipt from '../assets/ic-receipt.svg'
 import icSms from '../assets/ic-sms.svg'
 import icSplitA from '../assets/ic-split-a.svg'
 import icSplitB from '../assets/ic-split-b.svg'
+import icCardAOff from '../assets/ic-card-a-off.svg'
+import icCardBOff from '../assets/ic-card-b-off.svg'
+import icCardCOff from '../assets/ic-card-c-off.svg'
 import icCardCancel from '../assets/ic-card-cancel.svg'
+import icCashAOff from '../assets/ic-cash-a-off.svg'
+import icCashBOff from '../assets/ic-cash-b-off.svg'
+import icQrAOff from '../assets/ic-qr-a-off.svg'
+import icQrBOff from '../assets/ic-qr-b-off.svg'
 import icDropdown from '../assets/ic-dropdown.svg'
 import icEmojiHappy from '../assets/ic-emoji-happy.svg'
 import icRefresh from '../assets/ic-refresh.svg'
@@ -108,13 +115,19 @@ export const IcWarning = () => (
   <IconBase layers={[{ src: icWarning, style: inset(16.27, 10.52, 14.58, 10.52) }]} />
 )
 
+/*
+ * 결제 방법 아이콘은 **비활성용 회색 버전이 따로 있습니다** (1730:197778 — 분할 결제 시트의
+ * 금액을 정하기 전 상태). 글리프는 같고 색만 다르므로 `off`로 에셋만 갈아끼웁니다.
+ * CSS 필터로 회색을 만들면 디자인 색(#EBEDEF · #C7CCD1)과 어긋납니다.
+ */
+
 /** 현금 아이콘 — 지폐(Union) + 가운데 원(Vector Stroke) */
-export const IcCash = () => (
+export const IcCash = ({ off = false }: { off?: boolean }) => (
   <IconBase
     layers={[
-      { src: icCashA, style: inset(8.33, 8.33) },
+      { src: off ? icCashAOff : icCashA, style: inset(8.33, 8.33) },
       {
-        src: icCashB,
+        src: off ? icCashBOff : icCashB,
         style: {
           left: '22.22%',
           right: '21.64%',
@@ -127,21 +140,27 @@ export const IcCash = () => (
   />
 )
 
-export const IcCard = () => (
+export const IcCard = ({ off = false }: { off?: boolean }) => (
   <IconBase
     layers={[
-      { src: icCardA, style: { top: '33.33%', bottom: '50%', left: '8.33%', right: '8.33%' } },
-      { src: icCardB, style: inset(20.83, 8.33, 16.67, 8.33) },
-      { src: icCardC, style: { top: '54.17%', bottom: '37.5%', left: '25%', right: '54.17%' } },
+      {
+        src: off ? icCardAOff : icCardA,
+        style: { top: '33.33%', bottom: '50%', left: '8.33%', right: '8.33%' },
+      },
+      { src: off ? icCardBOff : icCardB, style: inset(20.83, 8.33, 16.67, 8.33) },
+      {
+        src: off ? icCardCOff : icCardC,
+        style: { top: '54.17%', bottom: '37.5%', left: '25%', right: '54.17%' },
+      },
     ]}
   />
 )
 
-export const IcQr = () => (
+export const IcQr = ({ off = false }: { off?: boolean }) => (
   <IconBase
     layers={[
-      { src: icQrA, style: inset(8.33, 8.33) },
-      { src: icQrB, style: inset(26.85, 26.85) },
+      { src: off ? icQrAOff : icQrA, style: inset(8.33, 8.33) },
+      { src: off ? icQrBOff : icQrB, style: inset(26.85, 26.85) },
     ]}
   />
 )
