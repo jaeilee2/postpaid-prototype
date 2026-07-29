@@ -34,7 +34,8 @@ type Step = 'permission' | 'scanning' | 'reading' | 'confirm' | 'paying'
  * 네모 중심(347.5)이 미리보기 중심(366)보다 18.5px 위에 있습니다.
  */
 const BOTTOM_BAND = 88
-const FRAME = { offsetY: -18.5, width: 328, height: 207 }
+/* minTop 128 = 문구 아래(카메라 기준 112) + 여백 16 */
+const FRAME = { offsetY: -18.5, width: 328, height: 207, minTop: 128 }
 
 export function CardScan() {
   const navigate = useNavigate()
@@ -124,7 +125,7 @@ export function CardScan() {
           <p className="scan__sub t-body2-16-regular">카메라로 자동 촬영돼요</p>
         </div>
 
-        <FlashlightButton bottom={209} onClick={() => showNotice('플래시는 디자인 범위 밖이에요')} />
+        <FlashlightButton onClick={() => showNotice('플래시는 디자인 범위 밖이에요')} />
 
         <button
           className="scan__keyin btn-tertiary"

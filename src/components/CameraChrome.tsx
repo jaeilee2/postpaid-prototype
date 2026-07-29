@@ -79,6 +79,9 @@ export function CameraPermissionDialog({
  * 구멍을 만듭니다. 여기서는 이미지를 한 장만 쓰고 네모의 box-shadow로 주변을 딤 처리합니다
  * (`overflow: hidden`이라 딤이 카메라 영역 밖으로 새지 않습니다).
  */
+
+/** 디자인(740)에서 카메라 영역의 높이 — 상태바 24 + 앱바 56을 뺀 나머지 */
+const STAGE_HEIGHT = 660
 export function CameraViewport({
   bottomBand,
   still = cameraFloor,
@@ -93,13 +96,31 @@ export function CameraViewport({
   still?: string
   cameraState: CameraState
   videoRef: React.RefObject<HTMLVideoElement | null>
-  /** offsetY는 네모를 미리보기 가운데에서 얼마나 올릴지 — 디자인 좌표에서 계산한 값입니다. */
-  frame: { offsetY: number; width: number; height: number; scanned?: boolean }
+  /**
+   * offsetY는 네모를 미리보기 가운데에서 얼마나 올릴지 — 디자인 좌표에서 계산한 값입니다.
+   * minTop은 네모가 위 문구를 침범하지 않는 한계선(카메라 영역 기준)입니다 —
+   * 주소창이 있는 브라우저처럼 화면이 짧을 때 가운데 배치가 문구까지 밀고 올라오는 것을 막습니다.
+   */
+  frame: { offsetY: number; width: number; height: number; minTop: number; scanned?: boolean }
   frameChildren?: ReactNode
   children?: ReactNode
 }) {
+  /*
+   * 네모의 위치는 세 값 중에서 고릅니다 (CSS의 max/min — screens.css의 `--frame-top`).
+   *   1. 디자인 위치 — 화면이 디자인(740)보다 길어도 그대로 둡니다.
+   *   2. 카메라 가운데 — 화면이 짧아지면 함께 올라옵니다.
+   *   3. 최소 위치 — 위 문구를 덮기 전에 멈춥니다.
+   */
+  const designCamera = STAGE_HEIGHT - bottomBand
+  const frameVars = {
+    ['--frame-h' as string]: `${frame.height}px`,
+    ['--frame-offset' as string]: `${frame.offsetY}px`,
+    ['--frame-top-design' as string]: `${designCamera / 2 + frame.offsetY - frame.height / 2}px`,
+    ['--frame-top-min' as string]: `${frame.minTop}px`,
+  }
+
   return (
-    <div className="scan__stage">
+    <div className="scan__stage" style={frameVars}>
       <div className="scan__camera" style={{ bottom: bottomBand }}>
         <img className="scan__still" src={still} alt="" />
         <video
@@ -112,11 +133,7 @@ export function CameraViewport({
         />
         <div
           className={`scan__frame ${frame.scanned ? 'scan__frame--scanned' : ''}`}
-          style={{
-            width: frame.width,
-            height: frame.height,
-            ['--scan-frame-offset' as string]: `${frame.offsetY}px`,
-          }}
+          style={{ width: frame.width, height: frame.height }}
         >
           {frameChildren}
         </div>
@@ -126,10 +143,17 @@ export function CameraViewport({
   )
 }
 
-/** 플래시 버튼 (1742:54085) — 켜고 끄는 동작은 디자인에 없어 표시만 합니다. */
-export function FlashlightButton({ bottom, onClick }: { bottom: number; onClick: () => void }) {
+/**
+ * 플래시 버튼 (1742:54085) — 켜고 끄는 동작은 디자인에 없어 표시만 합니다.
+ * 네모 바로 아래에 붙습니다. 화면 아래에서 재면 짧은 화면에서 네모 안으로 들어갑니다.
+ */
+export function FlashlightButton({ onClick }: { onClick: () => void }) {
   return (
-    <button className="scan__flash" style={{ bottom }} onClick={onClick} aria-label="플래시">
+    <button
+      className="scan__flash scan__flash--below-frame"
+      onClick={onClick}
+      aria-label="플래시"
+    >
       <img src={icFlashlight} alt="" />
     </button>
   )

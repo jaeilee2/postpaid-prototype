@@ -1735,6 +1735,16 @@
   bottom: 0;
   background: var(--vds-bg-1);
   overflow: hidden;
+
+  /*
+   * 스캔 네모의 위치 (CameraChrome.tsx의 주석 참고).
+   * 디자인 위치를 쓰다가, 화면이 짧아지면 가운데로 따라 올라오고, 위 문구 앞에서 멈춥니다.
+   * `50%`는 이 변수를 **쓰는 요소**의 부모 높이로 계산되므로 카메라 영역 기준이 됩니다.
+   */
+  --frame-top: max(
+    var(--frame-top-min),
+    min(calc(50% + var(--frame-offset) - var(--frame-h) / 2), var(--frame-top-design))
+  );
 }
 
 /*
@@ -1776,9 +1786,8 @@
 .scan__frame {
   position: absolute;
   left: 50%;
-  /* 미리보기 영역 가운데 — 디자인의 살짝 위쪽 배치(--scan-frame-offset)를 유지합니다. */
-  top: 50%;
-  transform: translate(-50%, calc(-50% + var(--scan-frame-offset, 0px)));
+  top: var(--frame-top);
+  transform: translateX(-50%);
   box-sizing: border-box;
   border: 4px solid var(--vds-text-inverse-100);
   border-radius: var(--vds-radius-card);
@@ -1845,10 +1854,13 @@
   text-align: center;
 }
 
-/* QR은 네모 아래에 문구가 옵니다 — 아래에서부터 재서 붙입니다. */
+/*
+ * QR은 네모 아래에 문구가 옵니다. 아래에서부터 재면 화면이 짧을 때 네모와 겹치므로
+ * **네모 바로 아래**에 붙입니다 — 디자인(740)에서는 원래 위치(top 514)와 같습니다.
+ */
 .scan__text--qr {
-  top: auto;
-  bottom: 174px;
+  top: calc(var(--frame-top) + var(--frame-h) + 32px);
+  bottom: auto;
 }
 
 .scan__headline {
@@ -1873,6 +1885,12 @@
   justify-content: center;
   border-radius: var(--vds-radius-pill);
   background: rgba(0, 0, 0, 0.3);
+}
+
+/* 네모 바로 아래 — 디자인(740)에서는 원래 위치(아래에서 209)와 같습니다. */
+.scan__flash--below-frame {
+  top: calc(var(--frame-top) + var(--frame-h) + 32px);
+  bottom: auto;
 }
 
 .scan__flash > img {

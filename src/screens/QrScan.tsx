@@ -20,7 +20,8 @@ type Step = 'permission' | 'scanning' | 'paying'
  * 디자인(740 높이)에서 미리보기는 80..740(화면 끝까지), 네모는 252..482입니다.
  * 네모 중심(367)이 미리보기 중심(410)보다 43px 위에 있습니다.
  */
-const FRAME = { offsetY: -43, width: 230, height: 230 }
+/* minTop 134 = 총 결제 금액 아래(카메라 기준 118) + 여백 16 */
+const FRAME = { offsetY: -43, width: 230, height: 230, minTop: 134 }
 
 export function QrScan() {
   const navigate = useNavigate()

@@ -37,6 +37,11 @@ const SCREEN_NAMES: Record<string, string> = {
 
 const SCREEN_WIDTH = 360
 const SCREEN_HEIGHT = 740
+/**
+ * 화면 높이의 최소선. 이보다 짧아지면 스캔 화면(카드 스캔·QR)의 문구·네모·버튼이 겹치므로,
+ * 폭을 다 채우는 대신 축소해서 이 높이를 지킵니다.
+ */
+const MIN_SCREEN_HEIGHT = 620
 
 /**
  * 360×740 프레임을 뷰포트에 맞게 조절합니다.
@@ -55,8 +60,14 @@ function useDeviceScale(immersive: boolean) {
       // 전체화면·홈 화면 실행 중에는 캡션을 감추므로 그만큼도 화면에 씁니다.
       const captionSpace = immersive ? 0 : isPhone ? 28 : 60
       const byWidth = (window.innerWidth - gutter) / SCREEN_WIDTH
+      /*
+       * 폰에서는 폭을 채우되 **디자인 높이의 최소선은 지킵니다.**
+       * 주소창이 있는 브라우저나 작은 폰에서는 화면이 620px보다 짧아지는데, 그러면 카드 스캔·QR
+       * 화면의 문구와 네모, 버튼이 서로 겹칩니다. 그럴 때만 축소해서(좌우에 약간 여백이 생깁니다)
+       * 620px를 확보합니다.
+       */
       const scale = isPhone
-        ? byWidth
+        ? Math.min(byWidth, (window.innerHeight - captionSpace) / MIN_SCREEN_HEIGHT)
         : Math.min(byWidth, (window.innerHeight - gutter - captionSpace) / SCREEN_HEIGHT, 1)
 
       /*
