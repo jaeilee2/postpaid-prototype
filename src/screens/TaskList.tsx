@@ -83,6 +83,13 @@ export function TaskList() {
   const { remainingTotal } = splitProgress(splitPayments)
   const paid = remainingTotal === 0
   /*
+   * 뒤로가기는 들어온 지도 화면으로 돌아갑니다.
+   * 결제를 다 받은 뒤에는 메인 지도에서(완료 → 확인) 들어오고,
+   * 그 전에는 배달지 상세에서 들어옵니다. history를 되짚지 않고 상태로 판단합니다 —
+   * 결제 내역을 거쳐 오면 history가 엉켜서 결제 내역으로 돌아가버립니다.
+   */
+  const mapScreen = paid && splitPayments.length > 0 ? '/main' : '/delivery'
+  /*
    * 디자인(1730:196848)은 후불카드 예시입니다. 배지는 실제로 받은 수단을 따라갑니다 —
    * 카드·QR이 한 건이라도 섞이면 후불카드, 전부 현금이면 후불현금.
    */
@@ -92,8 +99,7 @@ export function TaskList() {
   return (
     <div className="screen tl">
       <div className="appbar">
-        {/* 배달지 상세에서도, 완료 후 메인 지도에서도 들어오므로 온 곳으로 돌아갑니다. */}
-        <button className="appbar__back" onClick={() => navigate(-1)} aria-label="뒤로">
+        <button className="appbar__back" onClick={() => navigate(mapScreen)} aria-label="뒤로">
           <IcBack />
         </button>
         <p className="appbar__title t-subtitle2-16-bold">수행목록</p>
