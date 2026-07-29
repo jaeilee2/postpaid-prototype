@@ -28,9 +28,6 @@ function IconBackspace() {
   )
 }
 
-/** 키패드 높이 (px) — 시트를 이만큼 위로 올립니다. */
-export const KEYPAD_HEIGHT = 250
-
 export function NumberKeypad({
   onDigit,
   onBackspace,

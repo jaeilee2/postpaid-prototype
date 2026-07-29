@@ -878,7 +878,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 250px;
+  /* 시트를 올리는 높이와 같아야 합니다 — app.css의 `.sheet--lifted` */
+  height: var(--numpad-height);
   z-index: 85;
   display: flex;
   flex-direction: column;
@@ -901,13 +902,17 @@
   color: var(--vds-primary);
 }
 
+/*
+ * 맨 아랫줄(0 · 지우기)이 화면 끝에 붙으면 손가락으로 누르기 어려워서
+ * 아래에 20px 여백을 뒀습니다 (키 크기는 그대로).
+ */
 .numpad__grid {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
   gap: 7px 6px;
-  padding: 7px 5px;
+  padding: 7px 5px 20px;
 }
 
 .numpad__key {

@@ -89,6 +89,9 @@
   --vds-blue-200: #87bcf8;
   --vds-blue-400: #2786f2;
 
+  /* 앱이 그리는 숫자 키패드 높이 — 시트를 이만큼 올립니다 (NumberKeypad.tsx) */
+  --numpad-height: 264px;
+
   /* ---- Radius ---- */
   --vds-radius-sheet: 20px;
   --vds-radius-dialog: 20px;
