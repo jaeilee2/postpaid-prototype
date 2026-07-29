@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import { CardKeyin } from './screens/CardKeyin'
@@ -27,12 +27,13 @@ const SCREEN_WIDTH = 360
 const SCREEN_HEIGHT = 740
 
 /**
- * 360×740 프레임을 뷰포트에 맞게 축소합니다 (확대는 하지 않음).
+ * 360×740 프레임을 뷰포트에 맞게 조절합니다.
  * 폰에서도 디자인의 픽셀 위치가 그대로 유지되도록 레이아웃 대신 transform으로 처리합니다.
  *
- * 폰에서는 **폭만** 기준으로 맞춥니다. 높이까지 맞추면 브라우저 주소창이나 아티팩트 헤더가
+ * 폰에서는 **폭 기준**으로 맞춥니다 — 높이까지 맞추면 브라우저 주소창이나 아티팩트 헤더가
  * 차지한 만큼 프레임이 작아져서(70% 수준) 실제 앱처럼 보이지 않습니다.
- * 폭 기준이면 대부분의 폰에서 1:1 실제 크기로 꽉 차고, 대신 아래로 조금 스크롤됩니다.
+ * 폰 화면은 대부분 360dp보다 넓으므로(아이폰 15/16은 393·402dp) **1배를 넘겨 확대해서**
+ * 좌우 여백 없이 꽉 채웁니다. Figma 미러링과 같은 방식입니다.
  */
 function useDeviceScale(immersive: boolean) {
   useEffect(() => {
@@ -43,7 +44,7 @@ function useDeviceScale(immersive: boolean) {
       const captionSpace = immersive ? 0 : isPhone ? 28 : 60
       const byWidth = (window.innerWidth - gutter) / SCREEN_WIDTH
       const scale = isPhone
-        ? Math.min(byWidth, 1)
+        ? byWidth
         : Math.min(byWidth, (window.innerHeight - gutter - captionSpace) / SCREEN_HEIGHT, 1)
 
       /*
@@ -83,6 +84,46 @@ function CaptionLink({ children, onClick }: { children: string; onClick: () => v
       >
         {children}
       </button>
+    </>
+  )
+}
+
+/**
+ * 홈 화면·전체화면으로 실행하면 브라우저의 뒤로가기도, 아래 캡션도 없어서
+ * 처음으로 돌아갈 방법이 사라집니다. 그렇다고 프로토타입 버튼을 화면에 띄우면
+ * 실제 앱처럼 보이지 않으니, **맨 위 상태바를 탭하면** 컨트롤이 나타나게 했습니다.
+ * 상태바(0~24px)는 장식일 뿐이라 실제 조작과 겹치지 않습니다 (앱바는 24px부터 시작).
+ */
+function ImmersiveControls() {
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const { reset } = useOrder()
+
+  function restart() {
+    reset()
+    navigate('/delivery')
+    setOpen(false)
+  }
+
+  return (
+    <>
+      <button
+        className="stage__handle"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="프로토타입 컨트롤 열기"
+      />
+      {open && (
+        <div className="stage__controls">
+          <span className="stage__controls-name">{SCREEN_NAMES[pathname] ?? pathname}</span>
+          <button className="stage__controls-btn" onClick={restart}>
+            처음으로
+          </button>
+          <button className="stage__controls-btn" onClick={() => setOpen(false)}>
+            닫기
+          </button>
+        </div>
+      )}
     </>
   )
 }
@@ -138,6 +179,7 @@ export default function App() {
     <OrderProvider>
       <div className={`stage ${immersive ? 'stage--immersive' : ''}`}>
         <div className="device-frame">
+          {immersive && <ImmersiveControls />}
           <div className="device">
             <Routes>
               <Route path="/" element={<Navigate to="/delivery" replace />} />
