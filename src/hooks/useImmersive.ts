@@ -12,9 +12,16 @@ import { useCallback, useEffect, useState } from 'react'
  * 둘 중 하나로 들어오면 `immersive`가 true가 되고, 프레임 아래 캡션을 감춰서 화면을 꽉 채웁니다.
  */
 
+/*
+ * 홈 화면에서 실행된 상태인지.
+ * 안드로이드는 매니페스트의 `display`에 따라 fullscreen / standalone / minimal-ui 중 하나로
+ * 뜨므로 셋 다 봅니다 (매니페스트는 scripts/build-pages.mjs에서 만듭니다).
+ */
+const APP_MODES = ['fullscreen', 'standalone', 'minimal-ui']
+
 function isStandalone() {
   return (
-    window.matchMedia?.('(display-mode: standalone)').matches === true ||
+    APP_MODES.some((mode) => window.matchMedia?.(`(display-mode: ${mode})`).matches === true) ||
     // iOS 사파리는 표준 display-mode 대신 navigator.standalone을 씁니다.
     (navigator as Navigator & { standalone?: boolean }).standalone === true
   )
@@ -34,11 +41,11 @@ export function useImmersive() {
     }
     sync()
     document.addEventListener('fullscreenchange', sync)
-    const query = window.matchMedia?.('(display-mode: standalone)')
-    query?.addEventListener('change', sync)
+    const queries = APP_MODES.map((mode) => window.matchMedia?.(`(display-mode: ${mode})`))
+    queries.forEach((query) => query?.addEventListener('change', sync))
     return () => {
       document.removeEventListener('fullscreenchange', sync)
-      query?.removeEventListener('change', sync)
+      queries.forEach((query) => query?.removeEventListener('change', sync))
     }
   }, [])
 
