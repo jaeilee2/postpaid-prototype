@@ -57,7 +57,8 @@ export function CardNfc() {
     <div className="card-screen">
       <AppBar
         title="카드 결제"
-        onBack={() => navigate('/delivery')}
+        /* 결제하지 않고 나오면 어떤 방법으로 받을지 다시 물어봅니다 (1737:24157) */
+        onBack={() => navigate('/delivery', { state: { openMethod: true } })}
         onAction={() => navigate('/kispay')}
       />
 

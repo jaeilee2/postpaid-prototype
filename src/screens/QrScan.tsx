@@ -56,7 +56,12 @@ export function QrScan() {
 
   return (
     <div className="card-screen">
-      <AppBar title="QR 간편 결제" onBack={() => navigate('/delivery')} actionLabel={null} />
+      {/* 결제하지 않고 나오면 어떤 방법으로 받을지 다시 물어봅니다 (1737:24157) */}
+      <AppBar
+        title="QR 간편 결제"
+        onBack={() => navigate('/delivery', { state: { openMethod: true } })}
+        actionLabel={null}
+      />
 
       <CameraViewport
         bottomBand={0}
@@ -78,7 +83,7 @@ export function QrScan() {
         <button
           className="scan__flash"
           style={{ bottom: 40 }}
-          onClick={() => navigate('/delivery')}
+          onClick={() => navigate('/delivery', { state: { openMethod: true } })}
           aria-label="닫기"
         >
           <IcCloseWhite />

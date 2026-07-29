@@ -132,9 +132,10 @@ export function usePaymentFlow() {
       {overlay === 'split' && (
         <SplitPaymentSheet
           initial={splitPart}
+          /* 닫으면 어떤 방법으로 받을지 다시 물어봅니다 (1737:24157) */
           onClose={() => {
             setSplitPart(null)
-            setOverlay(null)
+            setOverlay('method')
           }}
           onPay={handleSplitPay}
         />
