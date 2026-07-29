@@ -141,10 +141,15 @@ export function usePaymentFlow() {
     /** 결제 방법 시트를 엽니다 (`어떻게 결제하시겠어요?`) */
     openMethodSheet: () => setOverlay('method'),
     /**
-     * 남은 금액이 있으면 어떤 방법으로 받을지 다시 물어봅니다 (1730:196113 → 1730:196101).
-     * 바로 지난번 방법으로 넘어가지 않습니다.
+     * 남은 금액이 있을 때의 `결제하기`.
+     *
+     * - **분할 결제 중**이면 분할 결제 시트를 바로 엽니다 (1730:196227 — 상품가액을 다 받았으면
+     *   금액 필드가 비활성되고 컵 보증금만 남은 상태로 뜹니다).
+     * - 그 밖에(취소해서 남은 경우 등)는 어떤 방법으로 받을지 다시 물어봅니다
+     *   (1730:196113 → 1730:196101) — 지난번 방법으로 바로 넘어가지 않습니다.
      */
-    payRemaining: () => (partial ? setOverlay('method') : startPayment()),
+    payRemaining: () =>
+      partial && method !== 'split' ? setOverlay('method') : startPayment(),
     /** 지금 선택된 방법으로 바로 결제를 시작합니다 */
     startPayment,
     showToast,
