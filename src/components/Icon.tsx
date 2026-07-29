@@ -26,6 +26,10 @@ import icReceipt from '../assets/ic-receipt.svg'
 import icSms from '../assets/ic-sms.svg'
 import icSplitA from '../assets/ic-split-a.svg'
 import icSplitB from '../assets/ic-split-b.svg'
+import icCardCancel from '../assets/ic-card-cancel.svg'
+import icDropdown from '../assets/ic-dropdown.svg'
+import icEmojiHappy from '../assets/ic-emoji-happy.svg'
+import icRefresh from '../assets/ic-refresh.svg'
 import icVcc from '../assets/ic-vcc.svg'
 import icWarning from '../assets/ic-warning.svg'
 import icWeatherA from '../assets/ic-weather-a.svg'
@@ -74,6 +78,26 @@ export const IcNavigate = () => (
 )
 
 export const IcSms = () => <IconBase layers={[{ src: icSms, style: inset(18.75, 10.42) }]} />
+
+/** 서명 등록 안내의 웃는 얼굴 (1730:197571) — 24px 컨테이너 안에 20px */
+export const IcEmojiHappy = () => (
+  <IconBase size={24} layers={[{ src: icEmojiHappy, style: inset(8.33, 8.33) }]} />
+)
+
+/** 할부 드롭다운 화살표 (1730:197149) */
+export const IcDropdown = () => (
+  <IconBase size={24} layers={[{ src: icDropdown, style: inset(42.71, 34.29, 40.07, 34.29) }]} />
+)
+
+/** 서명 다시 하기 (1730:197573) */
+export const IcRefresh = () => (
+  <IconBase layers={[{ src: icRefresh, style: inset(12.5, 12.69, 12.5, 12.69) }]} />
+)
+
+/** 카드 결제 취소 (1730:196903) */
+export const IcCardCancel = () => (
+  <IconBase layers={[{ src: icCardCancel, style: inset(10.95, 10.22, 5.81, 6.52) }]} />
+)
 
 export const IcVcc = () => (
   <IconBase layers={[{ src: icVcc, style: inset(10.42, 14.58, 7.53, 14.58) }]} />

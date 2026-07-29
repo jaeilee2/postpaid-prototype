@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
+import { INSTALLMENTS, PAYMENT_TIME } from '../data/order'
 import type { PaymentMethod, SplitPayment } from '../data/order'
 
 type OrderState = {
@@ -23,9 +24,20 @@ type OrderState = {
    */
   cameraAllowed: boolean
   allowCamera: () => void
-  /** 분할 결제로 지금까지 받은 내역 (1730:197705) */
+  /**
+   * 지금까지 받은 결제 내역. 분할이면 여러 건, 한 번에 다 받으면 한 건입니다 (1730:197705).
+   * 결제 내역 화면(1730:196892)이 이 목록을 보여주고 취소도 여기에 기록합니다.
+   */
   splitPayments: SplitPayment[]
   addSplitPayment: (payment: SplitPayment) => void
+  /** 결제 취소 (1730:197134 → 1730:198254) — 기록을 지우지 않고 취소일시를 남깁니다. */
+  cancelPayment: (index: number) => void
+  /** 서명 등록 결과 — 고객이 그린 서명 (1730:197573). null이면 아직 안 받았습니다. */
+  signature: string | null
+  setSignature: (value: string | null) => void
+  /** 카드 결제에서 고른 할부 (1730:197143) */
+  installment: string
+  setInstallment: (value: string) => void
   /**
    * 분할 결제에서 카드·QR을 골라 그 화면으로 넘어간 상태.
    * 카드/QR 화면이 "이번에 받을 금액"을 알아야 하고, 결제되면 이 값으로 내역을 추가합니다.
@@ -45,6 +57,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const [cameraAllowed, setCameraAllowed] = useState(false)
   const [splitPayments, setSplitPayments] = useState<SplitPayment[]>([])
   const [pendingSplit, setPendingSplit] = useState<Omit<SplitPayment, 'method'> | null>(null)
+  const [signature, setSignature] = useState<string | null>(null)
+  const [installment, setInstallment] = useState(INSTALLMENTS[0])
 
   const issueCashReceipt = useCallback(() => setCashReceiptIssued(true), [])
   const markFeeToastShown = useCallback(() => setFeeToastShown(true), [])
@@ -52,6 +66,13 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const addSplitPayment = useCallback((payment: SplitPayment) => {
     setSplitPayments((current) => [...current, payment])
     setPendingSplit(null)
+  }, [])
+  const cancelPayment = useCallback((index: number) => {
+    setSplitPayments((current) =>
+      current.map((payment, i) =>
+        i === index ? { ...payment, cancelledAt: PAYMENT_TIME.cancelled } : payment,
+      ),
+    )
   }, [])
 
   const reset = useCallback(() => {
@@ -61,6 +82,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     setCameraAllowed(false)
     setSplitPayments([])
     setPendingSplit(null)
+    setSignature(null)
+    setInstallment(INSTALLMENTS[0])
   }, [])
 
   const value = useMemo(
@@ -75,6 +98,11 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       allowCamera,
       splitPayments,
       addSplitPayment,
+      cancelPayment,
+      signature,
+      setSignature,
+      installment,
+      setInstallment,
       pendingSplit,
       setPendingSplit,
       reset,
@@ -89,6 +117,9 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       allowCamera,
       splitPayments,
       addSplitPayment,
+      cancelPayment,
+      signature,
+      installment,
       pendingSplit,
       reset,
     ],

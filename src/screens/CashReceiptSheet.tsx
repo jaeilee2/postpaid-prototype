@@ -2,11 +2,8 @@ import { useState } from 'react'
 
 import { IcClose } from '../components/Icon'
 import { NumberKeypad } from '../components/NumberKeypad'
+import { Radio } from '../components/Radio'
 import { CASH_RECEIPT_PLACEHOLDER } from '../data/order'
-import radioOffA from '../assets/radio-off-a.svg'
-import radioOffB from '../assets/radio-off-b.svg'
-import radioOnDot from '../assets/radio-on-dot.svg'
-import radioOnRing from '../assets/radio-on-ring.svg'
 
 /* 현금영수증 발급번호 입력 (1723:157212)
  *
@@ -20,20 +17,6 @@ const OPTIONS: { key: ReceiptType; label: string }[] = [
   { key: 'personal', label: '개인 소득공제용' },
   { key: 'business', label: '사업자 지출증빙' },
 ]
-
-function Radio({ checked }: { checked: boolean }) {
-  return (
-    <span className="radio">
-      <img src={radioOffA} alt="" />
-      <img src={checked ? radioOnRing : radioOffB} alt="" />
-      {checked && (
-        <span className="radio__dot">
-          <img src={radioOnDot} alt="" />
-        </span>
-      )}
-    </span>
-  )
-}
 
 export function CashReceiptSheet({
   onCancel,

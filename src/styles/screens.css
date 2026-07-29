@@ -637,6 +637,11 @@
   color: var(--vds-text-primary-100);
 }
 
+/* 카드 결제 취소 화면의 금액은 빨간색입니다 (1730:197613) */
+.card-total__amount--cancel {
+  color: var(--vds-text-critical);
+}
+
 /* NFC 화면 */
 /*
  * 화면이 짧으면 일러스트가 비율을 유지하며 줄어듭니다.
@@ -2040,4 +2045,609 @@
 
 .perm__option:active {
   background: rgba(0, 0, 0, 0.06);
+}
+
+/* ================================================== 서명 등록 (1730:197571)
+ * 앱바 아래 컨테이너가 y=80에서 시작하고, 그 안의 좌표를 그대로 씁니다.
+ * 아래 버튼은 bottom 기준이라 화면이 길어지면 서명란만 늘어납니다.
+ */
+
+.sign {
+  background: var(--vds-bg-2);
+}
+
+.sign__notice {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--vds-bg-2);
+}
+
+.sign__notice-text {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sign__notice-title {
+  margin: 0;
+  color: var(--vds-text-focus);
+}
+
+.sign__notice-sub {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.sign__price {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 184px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.sign__price-label {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.sign__price-amount {
+  margin: 0;
+  color: var(--vds-text-primary-100);
+}
+
+.sign__label {
+  position: absolute;
+  left: 20px;
+  top: 256px;
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.sign__dropdown {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 278px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--vds-border-25);
+  border-radius: var(--vds-radius-button-lg);
+  background: var(--vds-surface-1);
+  color: var(--vds-text-primary-100);
+}
+
+.sign__dropdown-value {
+  flex: 1 0 0;
+  min-width: 0;
+  text-align: left;
+}
+
+/* 서명란 — 위는 드롭다운 아래(358), 아래는 버튼 바 위(646)에 맞춰 늘어납니다. */
+.sign__pad {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 358px;
+  bottom: 102px;
+  border: 2px solid var(--vds-border-primary);
+  border-radius: var(--vds-radius-button-lg);
+  background: var(--vds-bg-2);
+  overflow: hidden;
+  touch-action: none;
+}
+
+.sign__pad-placeholder {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  margin: 0;
+  text-align: center;
+  color: var(--vds-text-disabled-30);
+  pointer-events: none;
+}
+
+/* Lottie sign-here-gesture의 첫 프레임 — 서명란 가운데 아래쪽 */
+.sign__guide {
+  position: absolute;
+  left: 102px;
+  top: 50%;
+  width: 111px;
+  height: 102px;
+  margin-top: -29px;
+  pointer-events: none;
+}
+
+.sign__guide-stroke {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 54px;
+  height: 64px;
+  opacity: 0.5;
+}
+
+.sign__guide-hand {
+  position: absolute;
+  left: 58px;
+  top: 62px;
+  width: 53px;
+  height: 40px;
+}
+
+.sign__ink {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sign__reset {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--vds-radius-sm);
+}
+
+.sign__action {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  padding: 20px;
+  background: var(--vds-bg-1);
+}
+
+.sign__action .btn-primary {
+  width: 100%;
+}
+
+/* ============================================ 할부 선택 시트 (1730:197143)
+ * 시트 높이 641. 목록만 스크롤되고 아래 버튼 두 개는 고정입니다.
+ */
+
+.is__sheet {
+  height: min(641px, calc(100% - 40px));
+  z-index: 80;
+}
+
+.is__header {
+  flex: none;
+  height: 56px;
+}
+
+.is__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 20px 0;
+}
+
+.is__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 48px;
+  color: var(--vds-text-primary-100);
+  text-align: left;
+}
+
+.is__actions {
+  margin-top: 0;
+}
+
+/* ================================================== 수행목록 (1730:196848) */
+
+.tl {
+  background: var(--vds-bg-1);
+}
+
+.tl__scroll {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  bottom: 56px;
+  overflow-y: auto;
+}
+
+/* 접힌 지점 한 줄 (64px) */
+.tl__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding: 0 20px 0 16px;
+  border-bottom: 1px solid var(--vds-border-10);
+}
+
+.tl__row--done {
+  color: var(--vds-text-disabled-30);
+}
+
+.tl__row-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tl__row-title {
+  margin: 0;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tl__row--done .tl__row-title {
+  color: var(--vds-text-disabled-30);
+}
+
+.tl__row-sub {
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.tl__row-sub--ready {
+  color: var(--vds-text-success);
+}
+
+/*
+ * 지점 핀. 디자인에서는 아이콘이 아니라 도형(둥근 사각형 + 아래로 뾰족한 꼬리)에
+ * 글자가 들어간 형태라 CSS로 그렸습니다. 글자는 실제 텍스트라 폰트도 함께 맞습니다.
+ */
+.tl__pin {
+  --pin: var(--vds-surface-7);
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 5px;
+  border-radius: 13px;
+  background: var(--pin);
+  color: var(--vds-text-inverse-100);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: -0.3px;
+}
+
+/* 아래로 뾰족한 꼬리 */
+.tl__pin::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-top: -3px;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--pin);
+}
+
+.tl__pin--ready {
+  --pin: var(--vds-success);
+}
+
+.tl__pin--done {
+  --pin: var(--vds-surface-8);
+}
+
+.tl__chevron {
+  flex: none;
+  display: flex;
+  color: var(--vds-text-tertiary-60);
+}
+
+.tl__chevron--down {
+  transform: rotate(90deg);
+}
+
+.tl__chevron--up {
+  transform: rotate(-90deg);
+}
+
+/* 펼쳐진 배달 항목 (332px) */
+.tl__order {
+  border-bottom: 1px solid var(--vds-border-10);
+}
+
+.tl__order-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px 8px 16px;
+  text-align: left;
+  color: var(--vds-text-primary-100);
+}
+
+.tl__order-body {
+  padding: 0 20px 16px 52px;
+}
+
+.tl__address {
+  color: var(--vds-text-primary-100);
+}
+
+.tl__meta {
+  margin-top: 8px;
+  color: var(--vds-text-tertiary-60);
+}
+
+.tl__meta-label {
+  display: inline-block;
+  width: 56px;
+}
+
+.tl__pay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  margin-top: 8px;
+  padding: 0 12px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-10);
+  color: var(--vds-text-primary-100);
+}
+
+.tl__pay .badge {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tl__buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tl__buttons .btn-outline {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* 결제내역 버튼은 한 줄에 하나라 반쪽 폭입니다 */
+.tl__buttons:last-child .btn-outline {
+  flex: 0 0 calc(50% - 4px);
+}
+
+.tl__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 20px;
+  background: var(--vds-bg-1);
+  border-top: 1px solid var(--vds-border-10);
+  color: var(--vds-text-primary-100);
+}
+
+/* ================================================ 결제 내역 (1730:196892) */
+
+.ph {
+  background: var(--vds-bg-3);
+}
+
+.ph__summary {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  height: 121px;
+  background: var(--vds-surface-1);
+  border-bottom: 1px solid var(--vds-border-10);
+}
+
+.ph__summary-row {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--vds-text-primary-100);
+}
+
+.ph__summary-row:first-of-type {
+  top: 18px;
+}
+
+.ph__summary-row:last-of-type {
+  top: 79px;
+}
+
+.ph__summary-divider {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 60px;
+  height: 1px;
+  background: var(--vds-divider);
+  opacity: 0.1;
+}
+
+.ph__remaining {
+  color: var(--vds-text-critical);
+}
+
+.ph__list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 209px;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+/* 결제 한 건 — 결제 188 / 취소 212 (1730:196901 / 1730:198262) */
+.ph__record {
+  position: relative;
+  height: 188px;
+  background: var(--vds-surface-1);
+  border-bottom: 1px solid var(--vds-border-10);
+}
+
+.ph__record--cancelled {
+  height: 212px;
+}
+
+.ph__amount {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  margin: 0;
+  color: var(--vds-text-primary-100);
+}
+
+.ph__amount--cancelled {
+  color: var(--vds-text-critical);
+  text-decoration: line-through;
+}
+
+.ph__method {
+  position: absolute;
+  right: 20px;
+  top: 44px;
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.ph__method--cancelled {
+  color: var(--vds-text-critical);
+}
+
+.ph__rows {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 179px;
+  margin: 0;
+}
+
+.ph__row {
+  display: flex;
+  align-items: baseline;
+  height: 24px;
+}
+
+.ph__row dt {
+  flex: none;
+  width: 60px;
+  color: var(--vds-text-primary-100);
+}
+
+.ph__row dd {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  text-align: right;
+  color: var(--vds-text-tertiary-60);
+}
+
+.ph__buttons {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.ph__buttons .btn-outline {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+}
+
+/* ========================================= 결제 취소 완료 시트 (1730:197701) */
+
+.cc__sheet {
+  height: min(388px, calc(100% - 40px));
+  z-index: 80;
+}
+
+.cc__check {
+  position: absolute;
+  left: 150px;
+  top: 32px;
+  width: 60px;
+  height: 60px;
+  animation: check-pop 0.32s ease-out both;
+}
+
+.cc__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 108px;
+  margin: 0;
+  text-align: center;
+  color: var(--vds-text-primary-100);
+}
+
+.cc__price {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 174px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-10);
+  color: var(--vds-text-primary-100);
+}
+
+.cc__price-value {
+  color: var(--vds-text-critical);
+}
+
+.cc__receipt {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 228px;
+}
+
+.cc__actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top: 1px solid var(--vds-border-10);
 }

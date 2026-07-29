@@ -1,75 +1,59 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-// 디자인의 NFC 일러스트는 4초 루프 애니메이션입니다. Figma 타임라인을 MP4로 렌더한 뒤
-// 일러스트 영역만 잘라 애니메이션 WebP(498×400, 96프레임)로 변환해 넣었습니다.
 import nfcIllustration from '../assets/nfc-illustration.webp'
 import payApple from '../assets/pay-apple.png'
 import paySamsung from '../assets/pay-samsung.png'
-import {
-  AppBar,
-  CardTotal,
-  PaymentProgress,
-  useEnsureCardMethod,
-  usePaymentSettle,
-  useNeedsSignature,
-} from '../components/CardChrome'
+import { AppBar, CardTotal, PaymentProgress } from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { Ic123, IcNfc } from '../components/Icon'
 import { useNfcTap } from '../hooks/useNfc'
+import { useOrder } from '../state/OrderContext'
 
-/* 카드 결제 · NFC (1723:157653 기본 / 1723:157654 툴팁 노출)
+/* 카드 결제 취소 (1730:197613)
  *
- * 카드 결제를 고르면 기본으로 나오는 화면입니다.
+ * 결제 내역에서 카드 결제 취소를 확인하면 나옵니다. 카드 결제 화면과 같은 화면인데
+ * 금액 라벨이 `취소할 금액`이고 빨간색입니다. 결제했던 카드를 다시 대야 취소됩니다.
+ *
+ * 취소가 끝나면 결제 내역으로 돌아가 취소 완료 시트가 뜹니다 (1730:197701).
  */
 
-export function CardNfc() {
+export function CardCancel() {
   const navigate = useNavigate()
-  useEnsureCardMethod()
-  const settle = usePaymentSettle('card')
-  const needsSignature = useNeedsSignature()
-  const [tooltipVisible, setTooltipVisible] = useState(false)
-  const [paying, setPaying] = useState(false)
+  const location = useLocation()
+  const { cancelPayment } = useOrder()
+  const [cancelling, setCancelling] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
 
-  // 툴팁은 잠시 기다린 뒤 나타납니다 (디자인에 노출 시점이 없어 2.5초로 뒀습니다).
-  useEffect(() => {
-    const timer = window.setTimeout(() => setTooltipVisible(true), 2500)
-    return () => window.clearTimeout(timer)
-  }, [])
+  const index = (location.state as { index?: number } | null)?.index ?? 0
 
   function showNotice(text: string) {
     setNotice(text)
     window.setTimeout(() => setNotice(null), 2600)
   }
 
-  /* 카드를 폰 뒷면에 대면 진행됩니다.
-   * 안드로이드 크롬에서는 실제 태그 감지로, 그 외에는 일러스트를 눌러 대신합니다. */
   function handleTag() {
-    if (paying) return
-    setTooltipVisible(false)
-    // 5만원 이상이면 결제 진행 전에 서명을 받습니다 (1730:197571).
-    if (needsSignature) {
-      navigate('/sign')
-      return
-    }
-    setPaying(true)
-    window.setTimeout(settle, 1500)
+    if (cancelling) return
+    setCancelling(true)
+    window.setTimeout(() => {
+      cancelPayment(index)
+      navigate('/tasks/payment', { replace: true, state: { cancelled: index } })
+    }, 1500)
   }
 
-  useNfcTap(!paying, handleTag)
+  useNfcTap(!cancelling, handleTag)
 
   return (
     <div className="card-screen">
       <AppBar
         title="카드 결제"
-        onBack={() => navigate('/delivery')}
+        onBack={() => navigate('/tasks/payment')}
         onAction={() => showNotice('카드 리더기 결제 화면은 디자인 범위 밖이에요')}
       />
 
       <div className="card-body">
         <span className="spacer spacer--a" />
-        <CardTotal />
+        <CardTotal cancel />
         <span className="spacer spacer--b" />
 
         <button
@@ -98,15 +82,10 @@ export function CardNfc() {
         <span className="spacer spacer--d" />
 
         <div className="nfc__keyin-wrap">
-          {tooltipVisible && (
-            <button
-              className="nfc__tooltip t-caption1-12-medium"
-              onClick={() => setTooltipVisible(false)}
-            >
-              카드번호를 직접 입력할 수도 있어요
-            </button>
-          )}
-          <button className="btn-chip t-body3-14-medium" onClick={() => navigate('/card/keyin')}>
+          <button
+            className="btn-chip t-body3-14-medium"
+            onClick={() => showNotice('취소는 결제했던 카드를 대주세요')}
+          >
             <Ic123 />
             카드 직접 입력
           </button>
@@ -116,7 +95,7 @@ export function CardNfc() {
       </div>
 
       {notice && <Snackbar text={notice} />}
-      {paying && <PaymentProgress />}
+      {cancelling && <PaymentProgress label="취소 진행중" />}
     </div>
   )
 }

@@ -14,7 +14,14 @@ import {
   IcVcc,
   IcWarning,
 } from '../components/Icon'
-import { ORDER, PAYMENT_METHOD_LABEL, formatWon, splitProgress } from '../data/order'
+import {
+  ORDER,
+  PAYMENT_METHOD_LABEL,
+  PAYMENT_TIME,
+  SPLIT,
+  formatWon,
+  splitProgress,
+} from '../data/order'
 import type { PaymentMethod, SplitPayment } from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { CashConfirmDialog } from './CashConfirmDialog'
@@ -68,7 +75,7 @@ export function DeliveryDetail() {
 
   /** 분할 결제 한 건을 기록하고, 남았으면 이 화면에 머물고 다 받았으면 완료 화면으로 갑니다. */
   function completeSplitPart(payMethod: SplitPayment['method'], part: Omit<SplitPayment, 'method'>) {
-    addSplitPayment({ method: payMethod, ...part })
+    addSplitPayment({ method: payMethod, ...part, paidAt: PAYMENT_TIME.paid })
     setOverlay(null)
     setSplitPart(null)
     const next = splitProgress([...splitPayments, { method: payMethod, ...part }])
@@ -118,7 +125,7 @@ export function DeliveryDetail() {
 
   return (
     <div className="screen">
-      <MapPickupBackground />
+      <MapPickupBackground onTasks={() => navigate('/tasks')} />
 
       <div className="dd__sheet">
         <div className="dd__scroll">
@@ -258,7 +265,16 @@ export function DeliveryDetail() {
       {overlay === 'cash-confirm' && (
         <CashConfirmDialog
           onCancel={() => setOverlay(null)}
-          onConfirm={() => navigate('/complete')}
+          onConfirm={() => {
+            // 한 번에 전액을 현금으로 받은 것도 결제 내역에 남습니다 (1730:196892).
+            addSplitPayment({
+              method: 'cash',
+              product: SPLIT.productAmount,
+              cup: SPLIT.cupDeposit,
+              paidAt: PAYMENT_TIME.paid,
+            })
+            navigate('/complete')
+          }}
         />
       )}
 

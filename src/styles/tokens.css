@@ -50,6 +50,10 @@
 
   --vds-bg-1: #ffffff;
   --vds-bg-2: #f7f7f8;
+  --vds-bg-3: #ebedef; /* 결제 내역 화면 배경 (1730:196892) */
+
+  --vds-surface-7: #8e959c; /* 수행목록 지점 핀 */
+  --vds-success: #00b06b; /* 준비완료 */
 
   --vds-dimmed: #000000;
   --vds-divider: #000000;
@@ -71,6 +75,8 @@
   --vds-text-critical: #e0433e; /* 잔여 금액 · 입력 오류 */
   --vds-text-accent: #073c78;
   --vds-text-focus: #2786f2;
+  --vds-text-disabled-30: rgba(18, 20, 23, 0.3); /* 서명란 플레이스홀더 */
+  --vds-text-success: #00875a; /* 준비완료 */
 
   /* ---- Spot / Base palette ---- */
   --vds-badge-2: #0e9694; /* 후불현금 / 현금 */
@@ -132,6 +138,10 @@
   font: 700 16px / 20px var(--vds-font-family);
   letter-spacing: -0.05px;
 }
+.t-subtitle2-16-medium {
+  font: 500 16px / 20px var(--vds-font-family);
+  letter-spacing: -0.05px;
+}
 .t-body1-18-bold {
   font: 700 18px / 24px var(--vds-font-family);
   letter-spacing: -0.1px;
@@ -178,6 +188,10 @@
 }
 .t-caption1-12-medium {
   font: 500 12px / 18px var(--vds-font-family);
+  letter-spacing: 0;
+}
+.t-caption1-12-regular {
+  font: 400 12px / 18px var(--vds-font-family);
   letter-spacing: 0;
 }
 .t-caption2-10-bold {

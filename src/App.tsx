@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
+import { CardCancel } from './screens/CardCancel'
 import { CardKeyin } from './screens/CardKeyin'
 import { CardNfc } from './screens/CardNfc'
 import { CardScan } from './screens/CardScan'
 import { Complete } from './screens/Complete'
 import { DeliveryDetail } from './screens/DeliveryDetail'
 import { MainMap } from './screens/MainMap'
+import { PaymentHistory } from './screens/PaymentHistory'
 import { QrScan } from './screens/QrScan'
+import { SignatureScreen } from './screens/SignatureScreen'
 import { SmsApp } from './screens/SmsApp'
+import { TaskList } from './screens/TaskList'
 import { useImmersive } from './hooks/useImmersive'
 import { OrderProvider, useOrder } from './state/OrderContext'
 
@@ -17,7 +21,11 @@ const SCREEN_NAMES: Record<string, string> = {
   '/card': '카드 결제 · NFC',
   '/card/keyin': '카드 결제 · 카드 직접 입력',
   '/card/scan': '카드 결제 · 카드 스캔 (OCR)',
+  '/card/cancel': '카드 결제 취소',
   '/qr': 'QR 간편 결제 · 스캔',
+  '/sign': '서명 등록 (5만원 이상)',
+  '/tasks': '수행목록',
+  '/tasks/payment': '결제 내역',
   '/complete': '결제·배달 완료',
   '/sms': '문자 앱 (영수증 발송) · 디자인 없음',
   '/main': '메인 지도 · 신규배차 ON',
@@ -187,7 +195,11 @@ export default function App() {
               <Route path="/card" element={<CardNfc />} />
               <Route path="/card/keyin" element={<CardKeyin />} />
               <Route path="/card/scan" element={<CardScan />} />
+              <Route path="/card/cancel" element={<CardCancel />} />
               <Route path="/qr" element={<QrScan />} />
+              <Route path="/sign" element={<SignatureScreen />} />
+              <Route path="/tasks" element={<TaskList />} />
+              <Route path="/tasks/payment" element={<PaymentHistory />} />
               <Route path="/complete" element={<Complete />} />
               <Route path="/sms" element={<SmsApp />} />
               <Route path="/main" element={<MainMap />} />

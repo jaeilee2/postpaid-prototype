@@ -24,7 +24,7 @@ export function StatusBar() {
 }
 
 /** 오더 받기 토글 (항상 ON 상태로 디자인돼 있습니다) */
-function OrderToggle() {
+export function OrderToggle() {
   return (
     <span className="toggle">
       <span className="toggle__surface" />
@@ -45,7 +45,7 @@ function OrderReceiveFab() {
 }
 
 /** 배달지 상세 화면의 지도 배경 — 상단 FAB 3개 (1723:158379) */
-export function MapPickupBackground() {
+export function MapPickupBackground({ onTasks }: { onTasks?: () => void }) {
   return (
     <div className="map">
       <img className="map__image" src={mapImg} alt="" />
@@ -53,9 +53,10 @@ export function MapPickupBackground() {
       <div className="fab fab--icon" style={{ right: 107, top: 32 }}>
         <IcMypage />
       </div>
-      <div className="fab fab--label" style={{ right: 12, top: 32 }}>
+      {/* 수행목록으로 들어가는 입구입니다 (1765:130135 → 1730:196848) */}
+      <button className="fab fab--label" style={{ right: 12, top: 32 }} onClick={onTasks}>
         <span className="t-body3-14-medium">수행목록</span>
-      </div>
+      </button>
       <StatusBar />
     </div>
   )

@@ -9,6 +9,7 @@ import {
   PaymentProgress,
   useEnsureCardMethod,
   usePaymentSettle,
+  useNeedsSignature,
 } from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { IcCamera, IcCreditCard } from '../components/Icon'
@@ -66,6 +67,7 @@ export function CardKeyin() {
   const navigate = useNavigate()
   useEnsureCardMethod()
   const settle = usePaymentSettle('card')
+  const needsSignature = useNeedsSignature()
 
   const [card, setCard] = useState('')
   const [expiry, setExpiry] = useState('')
@@ -132,6 +134,11 @@ export function CardKeyin() {
   function pay() {
     if (paying) return
     setKeypadOpen(false)
+    // 5만원 이상이면 결제 진행 전에 서명을 받습니다 (1730:197571).
+    if (needsSignature) {
+      navigate('/sign')
+      return
+    }
     setPaying(true)
     window.setTimeout(settle, 1500)
   }

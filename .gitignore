@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 폰트 서브셋용 파이썬 venv (scripts/subset-fonts.mjs)
+.venv-fonts/

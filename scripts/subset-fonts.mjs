@@ -6,14 +6,20 @@
  *
  *   npm run build && node scripts/subset-fonts.mjs && npm run build
  *
- * 준비물: pyftsubset (`pip install fonttools brotli`) 과
- *         ~/Library/Fonts/NotoSansCJKkr-{Regular,Medium,Bold}.otf
+ * 준비물: pyftsubset 과 ~/Library/Fonts/NotoSansCJKkr-{Regular,Medium,Bold}.otf
+ *
+ * 맥 기본 파이썬은 PEP 668로 전역 설치가 막혀 있어서 저장소 안에 venv를 만들어 씁니다.
+ *   python3 -m venv .venv-fonts && .venv-fonts/bin/pip install fonttools brotli
+ * (전역에 pyftsubset이 있으면 그걸 씁니다.)
  */
 
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
+
+const VENV = '.venv-fonts/bin/pyftsubset'
+const PYFTSUBSET = existsSync(VENV) ? VENV : 'pyftsubset'
 
 const WEIGHTS = [
   { file: 'NotoSansCJKkr-Regular.otf', out: 'noto-sans-kr-400.woff2' },
@@ -46,7 +52,7 @@ writeFileSync(textFile, text, 'utf8')
 console.log(`고유 문자 ${glyphs.size}자`)
 
 for (const { file, out } of WEIGHTS) {
-  execFileSync('pyftsubset', [
+  execFileSync(PYFTSUBSET, [
     join(homedir(), 'Library/Fonts', file),
     `--text-file=${textFile}`,
     '--layout-features=',

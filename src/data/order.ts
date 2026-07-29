@@ -46,23 +46,61 @@ export const SPLIT = {
   cupStep: 300,
 }
 
-/** 한 번의 분할 결제 내역 */
+/**
+ * 결제 한 건. 분할 결제는 여러 건이 되고, 한 번에 다 받으면 한 건입니다.
+ * 결제 내역 화면(1730:196892)과 취소(1730:198254)가 이 기록을 씁니다.
+ */
 export type SplitPayment = {
   method: Exclude<PaymentMethod, 'split'>
   /** 이번에 받은 상품가액 */
   product: number
   /** 이번에 받은 컵 보증금 */
   cup: number
+  /** 결제일시 — 결제 내역에 찍힙니다 */
+  paidAt?: string
+  /** 취소일시 — 있으면 취소된 결제입니다 */
+  cancelledAt?: string
+  /** 카드 결제일 때 고른 할부 (1730:197143) */
+  installment?: string
 }
 
 export function splitPaymentAmount(payment: SplitPayment) {
   return payment.product + payment.cup
 }
 
-/** 분할 결제 진행 상황 — 남은 금액과 완료 여부 */
+/**
+ * 5만원 이상 카드로 결제하면 서명을 등록해야 합니다 (1730:197571).
+ * 안내 문구("5만원 이상 결제할 때 서명을 등록해야 해요")에 적힌 기준입니다.
+ */
+export const SIGNATURE_THRESHOLD = 50000
+
+/**
+ * 할부 개월 (1730:197143)
+ * 디자인 목록은 일시불 + 2~11개월까지입니다.
+ */
+export const INSTALLMENTS = [
+  '일시불',
+  ...Array.from({ length: 10 }, (_, index) => `${index + 2}개월`),
+]
+
+/** VAN 승인 결과 — 결제 내역에 찍히는 값. 디자인(1730:196892)에 적힌 값 그대로입니다. */
+export const CARD_APPROVAL = {
+  type: '신한',
+  number: '5050-37**-****-****',
+  approval: '24872930',
+}
+
+/** 결제 내역의 결제일시·취소일시 (목업이라 고정값, 1730:196892 / 1730:198254) */
+export const PAYMENT_TIME = {
+  paid: '2025.12.15 10:37:16',
+  cancelled: '2025.12.15 10:50:16',
+}
+
+/** 분할 결제 진행 상황 — 남은 금액과 완료 여부. 취소된 결제는 받지 않은 것으로 봅니다. */
 export function splitProgress(payments: SplitPayment[]) {
-  const paidProduct = payments.reduce((sum, p) => sum + p.product, 0)
-  const paidCup = payments.reduce((sum, p) => sum + p.cup, 0)
+  const active = payments.filter((payment) => !payment.cancelledAt)
+  const paidProduct = active.reduce((sum, p) => sum + p.product, 0)
+  const paidCup = active.reduce((sum, p) => sum + p.cup, 0)
   const remainingProduct = SPLIT.productAmount - paidProduct
   const remainingCup = SPLIT.cupDeposit - paidCup
   return {

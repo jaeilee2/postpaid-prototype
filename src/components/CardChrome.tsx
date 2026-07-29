@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import {
   ORDER,
   PAYMENT_METHOD_LABEL,
+  PAYMENT_TIME,
+  SIGNATURE_THRESHOLD,
+  SPLIT,
   formatWon,
   splitPaymentAmount,
   splitProgress,
@@ -66,31 +69,48 @@ export function useCardAmount() {
   return pendingSplit ? pendingSplit.product + pendingSplit.cup : ORDER.amount
 }
 
-export function CardTotal() {
+/**
+ * 총 결제 금액. 카드 결제 취소로 들어오면 라벨과 색이 바뀝니다 (1730:197613).
+ */
+export function CardTotal({ cancel = false }: { cancel?: boolean }) {
   const amount = useCardAmount()
 
   return (
     <div className="card-total">
-      <p className="card-total__label t-body2-16-medium">총 결제 금액</p>
-      <p className="card-total__amount t-h2-28-bold">{formatWon(amount)}원</p>
+      <p className="card-total__label t-body2-16-medium">
+        {cancel ? '취소할 금액' : '총 결제 금액'}
+      </p>
+      <p className={`card-total__amount t-h2-28-bold ${cancel ? 'card-total__amount--cancel' : ''}`}>
+        {formatWon(amount)}원
+      </p>
     </div>
   )
 }
 
+/** 5만원 이상 카드 결제는 서명을 먼저 받습니다 (1730:197571). */
+export function useNeedsSignature() {
+  const amount = useCardAmount()
+  const { signature } = useOrder()
+  return amount >= SIGNATURE_THRESHOLD && signature === null
+}
+
 /**
  * 결제가 끝난 뒤 어디로 갈지 결정합니다.
- * 분할 결제의 한 회차였다면 내역을 기록하고, 남았으면 배달지 상세로 돌아가 토스트를 띄웁니다.
+ * 분할 결제의 한 회차였다면 그 금액만, 아니면 주문 전액을 결제 내역에 기록합니다.
+ * 남은 금액이 있으면 배달지 상세로 돌아가 토스트를 띄웁니다.
  */
 export function usePaymentSettle(payMethod: SplitPayment['method']) {
   const navigate = useNavigate()
-  const { pendingSplit, splitPayments, addSplitPayment } = useOrder()
+  const { pendingSplit, splitPayments, addSplitPayment, installment } = useOrder()
 
   return function settle() {
-    if (!pendingSplit) {
-      navigate('/complete')
-      return
+    const part = pendingSplit ?? { product: SPLIT.productAmount, cup: SPLIT.cupDeposit }
+    const payment: SplitPayment = {
+      method: payMethod,
+      ...part,
+      paidAt: PAYMENT_TIME.paid,
+      ...(payMethod === 'card' ? { installment } : {}),
     }
-    const payment: SplitPayment = { method: payMethod, ...pendingSplit }
     addSplitPayment(payment)
     if (splitProgress([...splitPayments, payment]).done) {
       navigate('/complete')
@@ -137,13 +157,13 @@ function Spinner() {
   )
 }
 
-export function PaymentProgress() {
+export function PaymentProgress({ label = '결제 진행중' }: { label?: string }) {
   return (
     <>
       <div className="dimmed" />
       <div className="progress-dialog" role="status" aria-live="polite">
         <Spinner />
-        <p className="progress-dialog__label t-subtitle1-18-bold">결제 진행중</p>
+        <p className="progress-dialog__label t-subtitle1-18-bold">{label}</p>
       </div>
     </>
   )

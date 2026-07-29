@@ -12,6 +12,7 @@ import {
   PaymentProgress,
   useEnsureCardMethod,
   usePaymentSettle,
+  useNeedsSignature,
 } from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { Ic123, IcClose, IcCreditCard } from '../components/Icon'
@@ -40,6 +41,7 @@ export function CardScan() {
   const { cameraAllowed, allowCamera } = useOrder()
   useEnsureCardMethod()
   const settle = usePaymentSettle('card')
+  const needsSignature = useNeedsSignature()
 
   const [step, setStep] = useState<Step>(cameraAllowed ? 'scanning' : 'permission')
   const [notice, setNotice] = useState<string | null>(null)
@@ -66,6 +68,11 @@ export function CardScan() {
   }, [step])
 
   function pay() {
+    // 5만원 이상이면 결제 진행 전에 서명을 받습니다 (1730:197571).
+    if (needsSignature) {
+      navigate('/sign')
+      return
+    }
     setStep('paying')
     window.setTimeout(settle, 1500)
   }
