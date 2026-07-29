@@ -593,7 +593,8 @@ input {
 .sheet {
   position: absolute;
   left: 0;
-  bottom: 0;
+  /* OS 키보드가 올라오면 그만큼 위로 — useKeyboardInset.ts */
+  bottom: var(--keyboard-inset, 0px);
   width: 360px;
   background: var(--vds-bg-1);
   border-top-left-radius: var(--vds-radius-sheet);

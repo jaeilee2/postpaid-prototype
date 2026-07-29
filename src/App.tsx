@@ -10,6 +10,7 @@ import { MainMap } from './screens/MainMap'
 import { QrScan } from './screens/QrScan'
 import { SmsApp } from './screens/SmsApp'
 import { useImmersive } from './hooks/useImmersive'
+import { useKeyboardInset } from './hooks/useKeyboardInset'
 import { OrderProvider, useOrder } from './state/OrderContext'
 
 const SCREEN_NAMES: Record<string, string> = {
@@ -168,6 +169,7 @@ function Caption({
 export default function App() {
   const { immersive, canFullscreen, toggleFullscreen } = useImmersive()
   useDeviceScale(immersive)
+  useKeyboardInset()
 
   // 몰입 모드에서는 문서가 스크롤되지 않아야 흰 여백이 비치지 않습니다.
   useEffect(() => {
