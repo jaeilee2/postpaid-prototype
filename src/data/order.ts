@@ -32,12 +32,56 @@ export const ORDER = {
   paidAt: '2026. 07. 28. 19:42',
 }
 
+/*
+ * 분할 결제 (1730:197705)
+ *
+ * 상품가액과 컵 보증금을 나눠서 여러 번에 걸쳐 받습니다. 두 값의 합이 총 결제 금액입니다.
+ * 디자인의 분할 결제 시트는 60,000원 + 900원 = 60,900원으로 그려져 있는데, 프로토타입은
+ * 금액을 58,500원으로 통일했으므로 컵 보증금 900원을 뺀 57,600원을 상품가액으로 둡니다.
+ */
+export const SPLIT = {
+  productAmount: 57600,
+  cupDeposit: 900,
+  /** 컵 보증금 스테퍼 단위 — 컵 1개(300원)씩 올리고 내립니다. 디자인 값(300 / 900)에서 유추했습니다. */
+  cupStep: 300,
+}
+
+/** 한 번의 분할 결제 내역 */
+export type SplitPayment = {
+  method: Exclude<PaymentMethod, 'split'>
+  /** 이번에 받은 상품가액 */
+  product: number
+  /** 이번에 받은 컵 보증금 */
+  cup: number
+}
+
+export function splitPaymentAmount(payment: SplitPayment) {
+  return payment.product + payment.cup
+}
+
+/** 분할 결제 진행 상황 — 남은 금액과 완료 여부 */
+export function splitProgress(payments: SplitPayment[]) {
+  const paidProduct = payments.reduce((sum, p) => sum + p.product, 0)
+  const paidCup = payments.reduce((sum, p) => sum + p.cup, 0)
+  const remainingProduct = SPLIT.productAmount - paidProduct
+  const remainingCup = SPLIT.cupDeposit - paidCup
+  return {
+    paidProduct,
+    paidCup,
+    remainingProduct,
+    remainingCup,
+    remainingTotal: remainingProduct + remainingCup,
+    done: remainingProduct === 0 && remainingCup === 0,
+  }
+}
+
 /** 완료 화면의 결제 금액 라벨 (1723:157236 현금 / 1723:157270 카드 / 1730:197353 QR) */
 export const COMPLETE_PRICE_LABEL: Record<PaymentMethod, string> = {
   cash: '현금 결제 금액 (M캐시 차감)',
   card: '카드 결제 금액',
   qr: 'QR 결제 금액',
-  split: '분할 결제 금액',
+  /* 분할은 총액 아래에 결제 내역이 줄줄이 붙습니다 (1730:197859) */
+  split: '총 결제 금액',
 }
 
 /**

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-import type { PaymentMethod } from '../data/order'
+import type { PaymentMethod, SplitPayment } from '../data/order'
 
 type OrderState = {
   /** 선택된 결제 방법. 디자인 기본값은 현금입니다. */
@@ -23,6 +23,15 @@ type OrderState = {
    */
   cameraAllowed: boolean
   allowCamera: () => void
+  /** 분할 결제로 지금까지 받은 내역 (1730:197705) */
+  splitPayments: SplitPayment[]
+  addSplitPayment: (payment: SplitPayment) => void
+  /**
+   * 분할 결제에서 카드·QR을 골라 그 화면으로 넘어간 상태.
+   * 카드/QR 화면이 "이번에 받을 금액"을 알아야 하고, 결제되면 이 값으로 내역을 추가합니다.
+   */
+  pendingSplit: Omit<SplitPayment, 'method'> | null
+  setPendingSplit: (value: Omit<SplitPayment, 'method'> | null) => void
   /** 프로토타입을 처음 상태로 되돌립니다. */
   reset: () => void
 }
@@ -34,16 +43,24 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const [cashReceiptIssued, setCashReceiptIssued] = useState(false)
   const [feeToastShown, setFeeToastShown] = useState(false)
   const [cameraAllowed, setCameraAllowed] = useState(false)
+  const [splitPayments, setSplitPayments] = useState<SplitPayment[]>([])
+  const [pendingSplit, setPendingSplit] = useState<Omit<SplitPayment, 'method'> | null>(null)
 
   const issueCashReceipt = useCallback(() => setCashReceiptIssued(true), [])
   const markFeeToastShown = useCallback(() => setFeeToastShown(true), [])
   const allowCamera = useCallback(() => setCameraAllowed(true), [])
+  const addSplitPayment = useCallback((payment: SplitPayment) => {
+    setSplitPayments((current) => [...current, payment])
+    setPendingSplit(null)
+  }, [])
 
   const reset = useCallback(() => {
     setMethod('cash')
     setCashReceiptIssued(false)
     setFeeToastShown(false)
     setCameraAllowed(false)
+    setSplitPayments([])
+    setPendingSplit(null)
   }, [])
 
   const value = useMemo(
@@ -56,6 +73,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       markFeeToastShown,
       cameraAllowed,
       allowCamera,
+      splitPayments,
+      addSplitPayment,
+      pendingSplit,
+      setPendingSplit,
       reset,
     }),
     [
@@ -66,6 +87,9 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       markFeeToastShown,
       cameraAllowed,
       allowCamera,
+      splitPayments,
+      addSplitPayment,
+      pendingSplit,
       reset,
     ],
   )

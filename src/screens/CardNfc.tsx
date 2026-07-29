@@ -6,7 +6,13 @@ import { useNavigate } from 'react-router-dom'
 import nfcIllustration from '../assets/nfc-illustration.webp'
 import payApple from '../assets/pay-apple.png'
 import paySamsung from '../assets/pay-samsung.png'
-import { AppBar, CardTotal, PaymentProgress, useEnsureCardMethod } from '../components/CardChrome'
+import {
+  AppBar,
+  CardTotal,
+  PaymentProgress,
+  useEnsureCardMethod,
+  usePaymentSettle,
+} from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { Ic123, IcNfc } from '../components/Icon'
 import { useNfcTap } from '../hooks/useNfc'
@@ -19,6 +25,7 @@ import { useNfcTap } from '../hooks/useNfc'
 export function CardNfc() {
   const navigate = useNavigate()
   useEnsureCardMethod()
+  const settle = usePaymentSettle('card')
   const [tooltipVisible, setTooltipVisible] = useState(false)
   const [paying, setPaying] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
@@ -40,7 +47,7 @@ export function CardNfc() {
     if (paying) return
     setTooltipVisible(false)
     setPaying(true)
-    window.setTimeout(() => navigate('/complete'), 1500)
+    window.setTimeout(settle, 1500)
   }
 
   useNfcTap(!paying, handleTag)

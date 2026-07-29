@@ -113,6 +113,22 @@ export function MapMainBackground() {
  * 지도 화면의 "주변 오더를 찾고 있어요"(1730:197354)에는 `...` 아이콘이 붙어 있지만,
  * 그건 오더를 찾는 중이라는 표시입니다. 결과를 알리는 안내에는 아이콘 없이 문구만 가운데 둡니다.
  */
+/**
+ * 화면 가운데 토스트 (1730:196202) — 분할 결제로 일부를 받은 뒤 배달지 상세로 돌아올 때 뜹니다.
+ * 두 줄이고 232×56, 화면 세로 가운데입니다.
+ */
+export function CenterToast({ lines }: { lines: [string, string] }) {
+  return (
+    <div className="toast-center" role="status" aria-live="polite">
+      {lines.map((line) => (
+        <p key={line} className="t-body4-13-regular" style={{ margin: 0 }}>
+          {line}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 export function Snackbar({ text, bottom = 60 }: { text: string; bottom?: number }) {
   return (
     <div className="snackbar snackbar--notice" style={{ top: 'auto', bottom, zIndex: 90 }}>

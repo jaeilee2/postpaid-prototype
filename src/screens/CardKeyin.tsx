@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom'
 
 import icClearRing from '../assets/ic-clear-ring.svg'
 import icClearX from '../assets/ic-clear-x.svg'
-import { AppBar, CardTotal, PaymentProgress, useEnsureCardMethod } from '../components/CardChrome'
+import {
+  AppBar,
+  CardTotal,
+  PaymentProgress,
+  useEnsureCardMethod,
+  usePaymentSettle,
+} from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { IcCamera, IcCreditCard } from '../components/Icon'
 import { SecurityKeypad } from '../components/SecurityKeypad'
@@ -59,6 +65,7 @@ function Caret({
 export function CardKeyin() {
   const navigate = useNavigate()
   useEnsureCardMethod()
+  const settle = usePaymentSettle('card')
 
   const [card, setCard] = useState('')
   const [expiry, setExpiry] = useState('')
@@ -126,7 +133,7 @@ export function CardKeyin() {
     if (paying) return
     setKeypadOpen(false)
     setPaying(true)
-    window.setTimeout(() => navigate('/complete'), 1500)
+    window.setTimeout(settle, 1500)
   }
 
   function clearExpiry() {

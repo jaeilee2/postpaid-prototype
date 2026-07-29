@@ -7,7 +7,12 @@ import {
   CameraViewport,
   FlashlightButton,
 } from '../components/CameraChrome'
-import { AppBar, PaymentProgress, useEnsureCardMethod } from '../components/CardChrome'
+import {
+  AppBar,
+  PaymentProgress,
+  useEnsureCardMethod,
+  usePaymentSettle,
+} from '../components/CardChrome'
 import { Snackbar } from '../components/Chrome'
 import { Ic123, IcClose, IcCreditCard } from '../components/Icon'
 import { SCANNED_CARD } from '../data/order'
@@ -34,6 +39,7 @@ export function CardScan() {
   const navigate = useNavigate()
   const { cameraAllowed, allowCamera } = useOrder()
   useEnsureCardMethod()
+  const settle = usePaymentSettle('card')
 
   const [step, setStep] = useState<Step>(cameraAllowed ? 'scanning' : 'permission')
   const [notice, setNotice] = useState<string | null>(null)
@@ -61,7 +67,7 @@ export function CardScan() {
 
   function pay() {
     setStep('paying')
-    window.setTimeout(() => navigate('/complete'), 1500)
+    window.setTimeout(settle, 1500)
   }
 
   const scanned = step === 'reading' || step === 'confirm' || step === 'paying'

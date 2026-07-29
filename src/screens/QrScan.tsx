@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { CameraPermissionDialog, CameraViewport } from '../components/CameraChrome'
-import { AppBar, PaymentProgress } from '../components/CardChrome'
+import { AppBar, PaymentProgress, usePaymentSettle } from '../components/CardChrome'
 import { IcCloseWhite } from '../components/Icon'
 import { ORDER, formatWon } from '../data/order'
 import { useCamera, useQrDetection } from '../hooks/useCamera'
@@ -25,19 +25,22 @@ const FRAME = { offsetY: -43, width: 230, height: 230 }
 export function QrScan() {
   const navigate = useNavigate()
   const { cameraAllowed, allowCamera, setMethod, method } = useOrder()
+  const settle = usePaymentSettle('qr')
 
   const [step, setStep] = useState<Step>(cameraAllowed ? 'scanning' : 'permission')
   const cameraOn = step !== 'permission'
   const { videoRef, state: cameraState } = useCamera(cameraOn)
 
   // 링크로 바로 들어온 경우에도 완료 화면 문구가 어긋나지 않게 맞춥니다.
+  // 분할 결제의 한 회차라면 결제 방법이 '분할'로 남아야 합니다.
   useEffect(() => {
-    if (method !== 'qr') setMethod('qr')
+    if (method === 'split' || method === 'qr') return
+    setMethod('qr')
   }, [method, setMethod])
 
   function complete() {
     setStep('paying')
-    window.setTimeout(() => navigate('/complete'), 1500)
+    window.setTimeout(settle, 1500)
   }
 
   // BarcodeDetector가 있는 브라우저에서는 실제 QR을 읽습니다.

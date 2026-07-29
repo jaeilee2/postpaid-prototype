@@ -180,6 +180,31 @@
   top: 52px;
 }
 
+/* 분할 결제로 일부만 받은 상태 — 안내 한 줄이 들어가 하단 바가 18px 높아집니다 (1730:196158) */
+.dd__action--remaining {
+  height: 142px;
+}
+
+.dd__action--remaining .dd__cta {
+  top: 70px;
+}
+
+.dd__remaining {
+  position: absolute;
+  left: 20px;
+  top: 46px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--vds-text-warning);
+}
+
+.dd__remaining-mark {
+  font-size: 13px;
+  line-height: 1;
+}
+
 /* ============================================ 결제 방법 선택 (1723:157638) */
 
 .pm__sheet {
@@ -344,6 +369,15 @@
 /* 금액은 숫자만 Bold, "원"은 Regular */
 .cp__price-value .unit {
   font-weight: 400;
+}
+
+/* 분할 결제의 건별 내역 — 총액보다 한 단계 작은 글자입니다 (1730:197859) */
+.cp__price-row--sub .cp__price-label {
+  color: var(--vds-text-tertiary-60);
+}
+
+.cp__price-value--sub {
+  color: var(--vds-text-primary-100);
 }
 
 .cp__price-divider {
@@ -1264,6 +1298,333 @@
 
 .textfield:focus {
   border-color: var(--vds-primary);
+}
+
+/* ============================================ 영수증 발송 시트 (1730:198565)
+ * 시트 높이 321. 완료 화면 위에 쌓입니다.
+ */
+
+.rs__sheet {
+  height: min(321px, calc(100% - 40px));
+  z-index: 80;
+}
+
+.rs__header {
+  flex: none;
+  height: 56px;
+  /* 디자인의 list는 시트 y=68에서 시작합니다 (헤더 56 + 12) */
+  margin-bottom: 12px;
+}
+
+.rs__row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 20px;
+  color: var(--vds-text-primary-100);
+}
+
+.rs__send {
+  flex: none;
+  width: 50px;
+  height: 36px;
+  border-radius: var(--vds-radius-sm);
+}
+
+.rs__divider {
+  flex: none;
+  margin: 8px 0;
+  height: 1px;
+  background: var(--vds-divider);
+  opacity: 0.1;
+}
+
+.rs__list {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.rs__action {
+  flex: none;
+  margin-top: auto;
+  padding: 16px 20px;
+  background: var(--vds-bg-1);
+}
+
+.rs__action .btn-tertiary {
+  width: 100%;
+}
+
+/* ============================================== 분할 결제 시트 (1730:197705)
+ * 시트 높이 476, 좌표는 모두 시트 기준입니다.
+ */
+
+.sp__sheet {
+  height: min(476px, calc(100% - 40px));
+}
+
+.sp__header {
+  flex: none;
+  height: 56px;
+}
+
+.sp__total-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 68px;
+  margin: 0;
+  text-align: center;
+  color: var(--vds-text-tertiary-60);
+}
+
+.sp__total-amount {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 92px;
+  margin: 0;
+  text-align: center;
+  color: var(--vds-text-primary-100);
+}
+
+.sp__summary {
+  position: absolute;
+  left: 20px;
+  top: 146px;
+  width: 320px;
+  height: 74px;
+  padding: 13px 18px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-10);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sp__summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 20px;
+}
+
+.sp__summary-label {
+  color: var(--vds-text-option-45);
+}
+
+/* 잔여 금액은 Critical 색입니다 — 단위(원)만 Regular. */
+.sp__summary-value {
+  color: var(--vds-text-critical);
+}
+
+.sp__summary-value .unit {
+  font-weight: 400;
+}
+
+.sp__divider {
+  position: absolute;
+  left: 20px;
+  top: 240px;
+  width: 320px;
+  height: 1px;
+  /* 디자인에 토큰이 아닌 리터럴(#ececec)로 들어가 있습니다. */
+  background: #ececec;
+}
+
+.sp__field-label {
+  position: absolute;
+  left: 20px;
+  margin: 0;
+  color: var(--vds-text-tertiary-60);
+}
+
+.sp__field-label--product {
+  top: 274px;
+}
+
+.sp__field-label--cup {
+  top: 345px;
+}
+
+/* 상품가액 입력 필드 */
+.sp__field {
+  position: absolute;
+  left: 124px;
+  top: 261px;
+  width: 193px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px;
+  border: 1px solid var(--vds-border-25);
+  border-radius: var(--vds-radius-button-md);
+  background: var(--vds-surface-1);
+}
+
+.sp__field--error {
+  border-color: var(--vds-text-critical);
+}
+
+.sp__field--disabled {
+  background: var(--vds-surface-10);
+}
+
+.sp__input {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--vds-text-primary-100);
+  caret-color: var(--vds-text-focus);
+}
+
+.sp__input::placeholder {
+  color: var(--vds-text-option-45);
+}
+
+.sp__input:disabled {
+  color: var(--vds-text-option-45);
+  -webkit-text-fill-color: var(--vds-text-option-45);
+}
+
+.sp__clear {
+  flex: none;
+  display: flex;
+  width: 20px;
+  height: 20px;
+  opacity: 0.35;
+}
+
+.sp__clear .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.sp__error {
+  position: absolute;
+  right: 43px;
+  top: 313px;
+  margin: 0;
+  color: var(--vds-text-critical);
+}
+
+.sp__unit {
+  position: absolute;
+  right: 20px;
+  color: var(--vds-text-tertiary-60);
+}
+
+.sp__unit--product {
+  top: 274px;
+}
+
+.sp__unit--cup {
+  top: 345px;
+}
+
+/* 컵 보증금 스테퍼 — 디자인의 +/− 는 1px 막대 도형이라 CSS로 그립니다. */
+.sp__step {
+  position: absolute;
+  top: 339px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--vds-radius-sm);
+  border: 1px solid var(--vds-border-15);
+  background: var(--vds-surface-1);
+  color: var(--vds-text-primary-100);
+}
+
+.sp__step--minus {
+  left: 124px;
+  border-color: var(--vds-border-10);
+}
+
+.sp__step--plus {
+  right: 43px;
+}
+
+.sp__step:disabled {
+  color: var(--vds-text-option-45);
+}
+
+.sp__step-glyph {
+  position: relative;
+  display: block;
+  width: 8.67px;
+  height: 1px;
+  background: currentColor;
+}
+
+.sp__step-glyph--plus::after {
+  content: "";
+  position: absolute;
+  left: 3.83px;
+  top: -3.83px;
+  width: 1px;
+  height: 8.67px;
+  background: currentColor;
+}
+
+.sp__cup-value {
+  position: absolute;
+  left: 221px;
+  top: 344px;
+  transform: translateX(-50%);
+  color: var(--vds-text-primary-100);
+  white-space: nowrap;
+}
+
+/* 결제 방법 버튼 3개 — QR은 아이콘만 있는 정사각형입니다. */
+.sp__buttons {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--vds-bg-1);
+}
+
+.sp__btn {
+  flex: 1 0 0;
+  min-width: 0;
+  gap: 4px;
+  height: 56px;
+  padding: 17px 12px;
+  border-radius: var(--vds-radius-button-lg);
+}
+
+.sp__btn--qr {
+  flex: none;
+  width: 56px;
+  padding: 16px;
+}
+
+.sp__btn--qr .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.sp__btn:disabled {
+  background: var(--vds-surface-8);
+  color: var(--vds-text-option-45);
+}
+
+.sp__btn:disabled .icon {
+  opacity: 0.45;
 }
 
 /* ======================================= 카드 스캔 (OCR) / QR 간편 결제 · 카메라 화면

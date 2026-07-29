@@ -1,6 +1,14 @@
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { ORDER, formatWon } from '../data/order'
+import {
+  ORDER,
+  PAYMENT_METHOD_LABEL,
+  formatWon,
+  splitPaymentAmount,
+  splitProgress,
+} from '../data/order'
+import type { SplitPayment } from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { StatusBar } from './Chrome'
 import { IcBack } from './Icon'
@@ -15,6 +23,8 @@ export function useEnsureCardMethod() {
   const { method, setMethod } = useOrder()
 
   useEffect(() => {
+    // 분할 결제의 한 회차로 들어온 경우에는 결제 방법이 '분할'로 남아야 합니다.
+    if (method === 'split') return
     if (method !== 'card') setMethod('card')
   }, [method, setMethod])
 }
@@ -50,13 +60,52 @@ export function AppBar({
   )
 }
 
+/** 분할 결제의 한 회차로 들어왔으면 그 금액을, 아니면 주문 총액을 보여줍니다. */
+export function useCardAmount() {
+  const { pendingSplit } = useOrder()
+  return pendingSplit ? pendingSplit.product + pendingSplit.cup : ORDER.amount
+}
+
 export function CardTotal() {
+  const amount = useCardAmount()
+
   return (
     <div className="card-total">
       <p className="card-total__label t-body2-16-medium">총 결제 금액</p>
-      <p className="card-total__amount t-h2-28-bold">{formatWon(ORDER.amount)}원</p>
+      <p className="card-total__amount t-h2-28-bold">{formatWon(amount)}원</p>
     </div>
   )
+}
+
+/**
+ * 결제가 끝난 뒤 어디로 갈지 결정합니다.
+ * 분할 결제의 한 회차였다면 내역을 기록하고, 남았으면 배달지 상세로 돌아가 토스트를 띄웁니다.
+ */
+export function usePaymentSettle(payMethod: SplitPayment['method']) {
+  const navigate = useNavigate()
+  const { pendingSplit, splitPayments, addSplitPayment } = useOrder()
+
+  return function settle() {
+    if (!pendingSplit) {
+      navigate('/complete')
+      return
+    }
+    const payment: SplitPayment = { method: payMethod, ...pendingSplit }
+    addSplitPayment(payment)
+    if (splitProgress([...splitPayments, payment]).done) {
+      navigate('/complete')
+      return
+    }
+    navigate('/delivery', {
+      replace: true,
+      state: {
+        splitToast: [
+          `${PAYMENT_METHOD_LABEL[payMethod]} ${formatWon(splitPaymentAmount(payment))}원이 결제되었어요`,
+          '전체 결제 후 영수증 발송이 가능해요',
+        ],
+      },
+    })
+  }
 }
 
 /*

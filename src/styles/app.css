@@ -353,6 +353,27 @@ input {
   text-align: center;
 }
 
+/* 화면 가운데 두 줄 토스트 (1730:196202) */
+.toast-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 232px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-5);
+  opacity: 0.95;
+  color: var(--vds-text-inverse-100);
+  text-align: center;
+  z-index: 95;
+}
+
 .banner {
   position: absolute;
   left: 20px;
@@ -403,6 +424,16 @@ input {
   justify-content: center;
   background: var(--vds-tertiary);
   color: var(--vds-text-accent);
+  text-align: center;
+}
+
+/* Button_Secondary — 영수증 발송 시트의 "전체 결제 내역" 발송 버튼 (1730:198733) */
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vds-surface-6);
+  color: var(--vds-text-inverse-100);
   text-align: center;
 }
 

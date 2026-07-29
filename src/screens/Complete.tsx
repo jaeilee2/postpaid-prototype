@@ -11,9 +11,18 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import check from '../assets/check.png'
 import { MapMainBackground, Snackbar } from '../components/Chrome'
 import { IcCashReceipt, IcMission, IcReceipt } from '../components/Icon'
-import { COMPLETE_PRICE_LABEL, MISSIONS, MISSION_COUNT, ORDER, formatWon } from '../data/order'
+import {
+  COMPLETE_PRICE_LABEL,
+  MISSIONS,
+  MISSION_COUNT,
+  ORDER,
+  PAYMENT_METHOD_LABEL,
+  formatWon,
+  splitPaymentAmount,
+} from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { CashReceiptSheet } from './CashReceiptSheet'
+import { ReceiptSendSheet } from './ReceiptSendSheet'
 
 /* 결제·배달 완료 (1723:157236 = 발급 가능 / 1723:157237 = 발급 완료로 disabled) */
 
@@ -29,12 +38,23 @@ function Amount({ value, focus = false }: { value: number; focus?: boolean }) {
 export function Complete() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { method, cashReceiptIssued, issueCashReceipt, feeToastShown, markFeeToastShown } =
-    useOrder()
-  const isCash = method === 'cash'
+  const {
+    method,
+    cashReceiptIssued,
+    issueCashReceipt,
+    feeToastShown,
+    markFeeToastShown,
+    splitPayments,
+  } = useOrder()
+  const isSplit = method === 'split'
+  /*
+   * M캐시가 차감되는 건 현금으로 받은 금액입니다 — 그래서 "배송수수료 입금" 알림과
+   * 현금영수증 발급은 현금이 섞여 있을 때만 나옵니다 (분할 결제 포함, 1730:197859).
+   */
+  const hasCash = method === 'cash' || (isSplit && splitPayments.some((p) => p.method === 'cash'))
   const [sheetOpen, setSheetOpen] = useState(false)
-  // "배송수수료 입금" 알림은 현금 결제일 때만 옵니다 (카드는 M캐시 차감이 없습니다).
-  const [toastVisible, setToastVisible] = useState(!feeToastShown && isCash)
+  const [receiptSheetOpen, setReceiptSheetOpen] = useState(false)
+  const [toastVisible, setToastVisible] = useState(!feeToastShown && hasCash)
   const [notice, setNotice] = useState<string | null>(null)
 
   function showNotice(text: string) {
@@ -50,11 +70,11 @@ export function Complete() {
   // 배송수수료 입금 헤드업 알림은 잠시 뜬 뒤 사라집니다.
   // 문자 앱에 다녀와 다시 이 화면으로 돌아올 때는 뜨지 않습니다.
   useEffect(() => {
-    if (feeToastShown || !isCash) return
+    if (feeToastShown || !hasCash) return
     const timer = window.setTimeout(dismissToast, 4500)
     return () => window.clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feeToastShown, isCash])
+  }, [feeToastShown, hasCash])
 
   // 문자 앱에서 영수증을 보내고 돌아오면 결과를 알려줍니다.
   const returnNotice = (location.state as { notice?: string } | null)?.notice
@@ -95,6 +115,20 @@ export function Complete() {
                   </span>
                   <Amount value={ORDER.amount} />
                 </div>
+                {/* 분할 결제는 총액 아래에 건별 내역이 붙습니다 (1730:197859) */}
+                {isSplit &&
+                  splitPayments.map((payment, index) => (
+                    <div className="cp__price-row cp__price-row--sub" key={index}>
+                      <span className="cp__price-label t-body3-14-medium">
+                        └ {PAYMENT_METHOD_LABEL[payment.method]} 결제 금액
+                        {payment.method === 'cash' && ' [M캐시 차감]'}
+                      </span>
+                      <span className="cp__price-value cp__price-value--sub t-body3-14-bold">
+                        {formatWon(splitPaymentAmount(payment))}
+                        <span className="unit">원</span>
+                      </span>
+                    </div>
+                  ))}
                 <div className="cp__price-divider" />
                 <div className="cp__price-row">
                   <span className="cp__price-label t-body3-14-medium">배송료</span>
@@ -107,16 +141,17 @@ export function Complete() {
                 버튼이 전체 폭으로 늘어납니다(1723:157270). 카드는 현금영수증 발급이 없습니다.
               */}
               <div className="cp__receipt-buttons">
-                {/* 영수증 발송은 단말의 문자 앱으로 넘어갑니다. */}
+                {/* 영수증 발송은 단말의 문자 앱으로 넘어갑니다.
+                    분할 결제는 건별로 보낼 수 있어 시트를 한 번 거칩니다 (1730:198565). */}
                 <button
                   className="btn-outline t-body2-16-medium"
                   style={{ padding: '13px 12px' }}
-                  onClick={() => navigate('/sms')}
+                  onClick={() => (isSplit ? setReceiptSheetOpen(true) : navigate('/sms'))}
                 >
                   <IcReceipt />
                   영수증 발송
                 </button>
-                {isCash && (
+                {hasCash && (
                   <button
                     className="btn-outline t-body2-16-medium"
                     style={{ padding: '13px 12px' }}
@@ -175,6 +210,17 @@ export function Complete() {
       )}
 
       {notice && <Snackbar text={notice} />}
+
+      {receiptSheetOpen && (
+        <ReceiptSendSheet
+          payments={splitPayments}
+          onClose={() => setReceiptSheetOpen(false)}
+          onSend={() => {
+            setReceiptSheetOpen(false)
+            navigate('/sms')
+          }}
+        />
+      )}
 
       {sheetOpen && (
         <CashReceiptSheet
