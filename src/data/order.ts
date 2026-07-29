@@ -76,11 +76,11 @@ export const SIGNATURE_THRESHOLD = 50000
 
 /**
  * 할부 개월 (1730:197143)
- * 디자인 목록은 일시불 + 2~11개월까지입니다.
+ * 디자인 목록은 11개월에서 잘려 있는데 **12개월까지**입니다 (2026-07-29 이재이 확인).
  */
 export const INSTALLMENTS = [
   '일시불',
-  ...Array.from({ length: 10 }, (_, index) => `${index + 2}개월`),
+  ...Array.from({ length: 11 }, (_, index) => `${index + 2}개월`),
 ]
 
 /** VAN 승인 결과 — 결제 내역에 찍히는 값. 디자인(1730:196892)에 적힌 값 그대로입니다. */
