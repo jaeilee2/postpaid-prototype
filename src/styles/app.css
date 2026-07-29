@@ -701,10 +701,7 @@ input {
   height: 24px;
 }
 
-/*
- * 버튼 한 줄. 왼쪽(다른 결제방법)이 길어서 남는 폭을 차지하고
- * 오른쪽(현금 결제)은 문구에 맞춰 고정입니다.
- */
+/* 버튼 한 줄 — 디자인의 다이얼로그처럼 반씩(124px) 나눠 씁니다 (1723:156090) */
 .dialog__actions {
   position: absolute;
   left: 20px;
@@ -714,15 +711,10 @@ input {
   gap: 8px;
 }
 
-.dialog__actions .btn-tertiary {
+.dialog__actions button {
   flex: 1 0 0;
   min-width: 0;
   white-space: nowrap;
-}
-
-.dialog__actions-confirm {
-  flex: none;
-  width: 100px;
 }
 
 .dialog__body {

@@ -34,10 +34,7 @@ export function CashConfirmDialog({
           <button className="btn-tertiary btn--h48 t-body2-16-medium" onClick={onOtherMethod}>
             다른 결제방법
           </button>
-          <button
-            className="dialog__actions-confirm btn-primary btn--h48 t-body2-16-medium"
-            onClick={onConfirm}
-          >
+          <button className="btn-primary btn--h48 t-body2-16-medium" onClick={onConfirm}>
             현금 결제
           </button>
         </div>
