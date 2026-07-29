@@ -41,15 +41,20 @@ export function usePaymentFlow() {
     window.setTimeout(() => setToast(null), 3000)
   }
 
-  /** 결제 한 건을 기록하고, 남았으면 이 화면에 머물고 다 받았으면 완료 화면으로 갑니다. */
+  /**
+   * 결제 한 건을 기록합니다. 다 받았으면 완료 화면으로 가고,
+   * **분할 결제로 아직 남았으면 분할 결제 시트를 다시 엽니다** (1730:196227) —
+   * 이어서 다음 회차를 받는 흐름이라 `결제하기`를 다시 누르지 않아도 됩니다.
+   */
   function record(payMethod: SplitPayment['method'], part: Omit<SplitPayment, 'method'>) {
     addSplitPayment({ method: payMethod, ...part, paidAt: PAYMENT_TIME.paid })
-    setOverlay(null)
     setSplitPart(null)
     if (splitProgress([...splitPayments, { method: payMethod, ...part }]).done) {
+      setOverlay(null)
       navigate('/complete')
       return
     }
+    setOverlay(method === 'split' ? 'split' : null)
     showToast([
       `${PAYMENT_METHOD_LABEL[payMethod]} ${formatWon(part.product + part.cup)}원이 결제되었어요`,
       '전체 결제 후 영수증 발송이 가능해요',
@@ -140,6 +145,8 @@ export function usePaymentFlow() {
   return {
     /** 결제 방법 시트를 엽니다 (`어떻게 결제하시겠어요?`) */
     openMethodSheet: () => setOverlay('method'),
+    /** 분할 결제 시트를 엽니다 (카드·QR 회차를 마치고 돌아왔을 때) */
+    openSplitSheet: () => setOverlay('split'),
     /**
      * 남은 금액이 있을 때의 `결제하기`.
      *

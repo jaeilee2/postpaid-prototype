@@ -32,7 +32,7 @@ export function DeliveryDetail() {
   const navigate = useNavigate()
   const location = useLocation()
   const { method, splitPayments } = useOrder()
-  const { openMethodSheet, payRemaining, overlays } = usePaymentFlow()
+  const { openMethodSheet, openSplitSheet, payRemaining, overlays } = usePaymentFlow()
   const [notice, setNotice] = useState<string | null>(null)
   const [toast, setToast] = useState<[string, string] | null>(null)
 
@@ -49,13 +49,19 @@ export function DeliveryDetail() {
     window.setTimeout(() => setToast(null), 3000)
   }
 
-  const state = location.state as { notice?: string; splitToast?: [string, string] } | null
+  const state = location.state as {
+    notice?: string
+    splitToast?: [string, string]
+    reopenSplit?: boolean
+  } | null
   // 카메라 권한을 허용하지 않아 결제를 못 하고 돌아온 경우 (1747:121729의 "허용 안함")
   // 또는 분할 결제로 일부를 받고 돌아온 경우 (1730:196158)
   useEffect(() => {
     if (!state?.notice && !state?.splitToast) return
     if (state.notice) showNotice(state.notice)
     if (state.splitToast) showReturnToast(state.splitToast)
+    // 카드·QR 회차를 마치고 돌아왔으면 남은 금액을 받을 시트를 다시 엽니다.
+    if (state.reopenSplit && method === 'split') openSplitSheet()
     navigate('/delivery', { replace: true, state: null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.notice, state?.splitToast])

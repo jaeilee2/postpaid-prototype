@@ -120,6 +120,8 @@ export function usePaymentSettle(payMethod: SplitPayment['method']) {
     navigate('/delivery', {
       replace: true,
       state: {
+        // 남은 금액이 있으면 배달지 상세에서 분할 결제 시트를 다시 엽니다 (1730:196227).
+        reopenSplit: true,
         splitToast: [
           `${PAYMENT_METHOD_LABEL[payMethod]} ${formatWon(splitPaymentAmount(payment))}원이 결제되었어요`,
           '전체 결제 후 영수증 발송이 가능해요',
