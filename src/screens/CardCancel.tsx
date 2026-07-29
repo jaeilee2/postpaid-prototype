@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import nfcIllustration from '../assets/nfc-illustration.webp'
 import payApple from '../assets/pay-apple.png'
 import paySamsung from '../assets/pay-samsung.png'
 import { AppBar, CardTotal, PaymentProgress } from '../components/CardChrome'
-import { Snackbar } from '../components/Chrome'
 import { Ic123, IcNfc } from '../components/Icon'
 import { useNfcTap } from '../hooks/useNfc'
 import { useOrder } from '../state/OrderContext'
@@ -20,17 +19,10 @@ import { useOrder } from '../state/OrderContext'
 
 export function CardCancel() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const { cancelPayment } = useOrder()
+  const { cancelPayment, cancelTarget } = useOrder()
   const [cancelling, setCancelling] = useState(false)
-  const [notice, setNotice] = useState<string | null>(null)
 
-  const index = (location.state as { index?: number } | null)?.index ?? 0
-
-  function showNotice(text: string) {
-    setNotice(text)
-    window.setTimeout(() => setNotice(null), 2600)
-  }
+  const index = cancelTarget ?? 0
 
   function handleTag() {
     if (cancelling) return
@@ -82,10 +74,8 @@ export function CardCancel() {
         <span className="spacer spacer--d" />
 
         <div className="nfc__keyin-wrap">
-          <button
-            className="btn-chip t-body3-14-medium"
-            onClick={() => showNotice('취소는 결제했던 카드를 대주세요')}
-          >
+          {/* 태그가 안 되면 카드번호를 직접 입력해서도 취소할 수 있습니다. */}
+          <button className="btn-chip t-body3-14-medium" onClick={() => navigate('/card/cancel/keyin')}>
             <Ic123 />
             카드 직접 입력
           </button>
@@ -94,7 +84,6 @@ export function CardCancel() {
         <span className="spacer spacer--e" />
       </div>
 
-      {notice && <Snackbar text={notice} />}
       {cancelling && <PaymentProgress label="취소 진행중" />}
     </div>
   )

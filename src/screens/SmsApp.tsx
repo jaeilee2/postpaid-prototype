@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { StatusBar } from '../components/Chrome'
 import { ORDER, formatWon } from '../data/order'
@@ -41,10 +41,14 @@ function ReceiptThumbnail() {
 
 export function SmsApp() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [sending, setSending] = useState(false)
 
+  /* 완료 화면에서도, 결제 내역에서도 넘어오므로 온 곳으로 돌아갑니다. */
+  const from = (location.state as { from?: string } | null)?.from ?? '/complete'
+
   function backToApp(notice?: string) {
-    navigate('/complete', { state: notice ? { notice } : undefined })
+    navigate(from, { state: notice ? { notice } : undefined })
   }
 
   function handleSend() {

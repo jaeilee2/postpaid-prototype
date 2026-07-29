@@ -2515,16 +2515,37 @@
   overflow-y: auto;
 }
 
-/* 결제 한 건 — 결제 188 / 취소 212 (1730:196901 / 1730:198262) */
+/*
+ * 결제 한 건. 결제 방법과 상태마다 높이가 다릅니다 —
+ * 카드 188 / 카드 취소 212 (1730:196901 · 198262)
+ * 현금 138 / 현금+영수증 176 / 현금 취소 82 (1730:197003 · 196861 · 197003)
+ */
 .ph__record {
   position: relative;
-  height: 188px;
   background: var(--vds-surface-1);
   border-bottom: 1px solid var(--vds-border-10);
 }
 
-.ph__record--cancelled {
+.ph__record--card {
+  height: 188px;
+}
+
+.ph__record--card.ph__record--cancelled {
   height: 212px;
+}
+
+.ph__record--cash {
+  height: 138px;
+}
+
+/* 현금영수증을 발급하면 `영수증 확인` 줄이 하나 더 붙습니다 (1730:196850) */
+.ph__record--cash-issued {
+  height: 176px;
+}
+
+/* 현금 취소는 VCC가 처리하므로 버튼이 없습니다 (1730:197002) */
+.ph__record--cash.ph__record--cancelled {
+  height: 82px;
 }
 
 .ph__amount {
@@ -2584,9 +2605,28 @@
   position: absolute;
   left: 20px;
   right: 20px;
-  bottom: 20px;
   display: flex;
   gap: 8px;
+}
+
+.ph__record--card .ph__buttons {
+  top: 131px;
+}
+
+.ph__record--card.ph__record--cancelled .ph__buttons {
+  top: 156px;
+}
+
+.ph__record--cash .ph__buttons {
+  top: 82px;
+}
+
+.ph__record--cash-issued .ph__buttons--view {
+  top: 82px;
+}
+
+.ph__record--cash-issued .ph__buttons:not(.ph__buttons--view) {
+  top: 126px;
 }
 
 .ph__buttons .btn-outline {
@@ -2656,16 +2696,16 @@
   border-top: 1px solid var(--vds-border-10);
 }
 
-/* ============================================= KIS Pay 캡처 (1772:130317)
- * 폰으로 찍은 플레이스토어 화면이라 이미지 한 장입니다. 캡처는 360×800 기준인데
- * 프레임 높이는 기기마다 달라서 폭을 채우고 위를 기준으로 맞춥니다(아래는 잘립니다).
+/* ================== 외부 앱 캡처 — KIS Pay(1772:130317) / 전화 앱(1773:130318)
+ * 폰으로 찍은 화면이라 이미지 한 장입니다. 캡처 비율이 프레임과 달라서
+ * 폭을 채우고 위를 기준으로 맞춥니다(아래는 조금 잘립니다).
  */
 
-.kis {
+.capture {
   background: #ffffff;
 }
 
-.kis__shot {
+.capture__shot {
   position: absolute;
   left: 0;
   top: 0;
@@ -2675,14 +2715,27 @@
   object-position: top center;
 }
 
-/* 캡처 안의 ← 화살표 위에 얹은 투명 히트 영역 */
-.kis__back {
+/*
+ * 캡처 안의 뒤로가기 자리에 얹은 투명 히트 영역.
+ * KIS Pay는 왼쪽 위 ← 화살표, 전화 앱은 아래 내비게이션 바의 ‹ 라서 두 곳 다 둡니다.
+ */
+.capture__back {
   position: absolute;
+  background: none;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.capture__back--top {
   left: 6px;
   top: 34px;
   width: 44px;
   height: 44px;
-  background: none;
-  border: 0;
-  -webkit-tap-highlight-color: transparent;
+}
+
+.capture__back--bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 44px;
 }

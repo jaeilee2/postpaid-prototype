@@ -32,6 +32,12 @@ type OrderState = {
   addSplitPayment: (payment: SplitPayment) => void
   /** 결제 취소 (1730:197134 → 1730:198254) — 기록을 지우지 않고 취소일시를 남깁니다. */
   cancelPayment: (index: number) => void
+  /**
+   * 취소하려고 카드 태그·키인 화면으로 넘어간 결제의 번호.
+   * 카드 취소는 결제했던 카드를 다시 대야 하므로 화면을 거쳐 오는 동안 들고 있습니다.
+   */
+  cancelTarget: number | null
+  setCancelTarget: (index: number | null) => void
   /** 서명 등록 결과 — 고객이 그린 서명 (1730:197573). null이면 아직 안 받았습니다. */
   signature: string | null
   setSignature: (value: string | null) => void
@@ -57,6 +63,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const [cameraAllowed, setCameraAllowed] = useState(false)
   const [splitPayments, setSplitPayments] = useState<SplitPayment[]>([])
   const [pendingSplit, setPendingSplit] = useState<Omit<SplitPayment, 'method'> | null>(null)
+  const [cancelTarget, setCancelTarget] = useState<number | null>(null)
   const [signature, setSignature] = useState<string | null>(null)
   const [installment, setInstallment] = useState(INSTALLMENTS[0])
 
@@ -82,6 +89,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     setCameraAllowed(false)
     setSplitPayments([])
     setPendingSplit(null)
+    setCancelTarget(null)
     setSignature(null)
     setInstallment(INSTALLMENTS[0])
   }, [])
@@ -99,6 +107,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       splitPayments,
       addSplitPayment,
       cancelPayment,
+      cancelTarget,
+      setCancelTarget,
       signature,
       setSignature,
       installment,
@@ -118,6 +128,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       splitPayments,
       addSplitPayment,
       cancelPayment,
+      cancelTarget,
       signature,
       installment,
       pendingSplit,

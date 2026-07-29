@@ -87,11 +87,12 @@ export function CardTotal({ cancel = false }: { cancel?: boolean }) {
   )
 }
 
-/** 5만원 이상 카드 결제는 서명을 먼저 받습니다 (1730:197571). */
+/**
+ * 5만원 이상 카드 결제는 서명을 먼저 받습니다 (1730:197571).
+ * **결제할 때마다** 받습니다 — 한 번 받은 서명을 재사용하지 않습니다.
+ */
 export function useNeedsSignature() {
-  const amount = useCardAmount()
-  const { signature } = useOrder()
-  return amount >= SIGNATURE_THRESHOLD && signature === null
+  return useCardAmount() >= SIGNATURE_THRESHOLD
 }
 
 /**

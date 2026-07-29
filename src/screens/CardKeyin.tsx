@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import icClearRing from '../assets/ic-clear-ring.svg'
 import icClearX from '../assets/ic-clear-x.svg'
@@ -14,12 +14,16 @@ import {
 import { Snackbar } from '../components/Chrome'
 import { IcCamera, IcCreditCard } from '../components/Icon'
 import { SecurityKeypad } from '../components/SecurityKeypad'
+import { useOrder } from '../state/OrderContext'
 
 /* 카드 직접 입력 (1723:157655 입력 전 / 1723:157657 입력 완료)
  *
  * 화면에 들어오면 카드번호 필드가 활성화되고 보안키패드가 바로 올라옵니다.
  * 카드번호 16자리를 채우면 유효기간으로 넘어가고, 유효기간 4자리를 채우면
  * 키패드가 내려가면서 결제하기 버튼이 나옵니다.
+ *
+ * `/card/cancel/keyin`으로 들어오면 **취소 모드**입니다 — 카드를 태그하지 못할 때
+ * 카드번호를 직접 입력해서 결제를 취소합니다. 금액 라벨과 버튼 문구만 달라집니다.
  */
 
 const CARD_DIGITS = 16
@@ -65,6 +69,10 @@ function Caret({
 
 export function CardKeyin() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { cancelPayment, cancelTarget } = useOrder()
+  /** 취소 모드 — 결제가 아니라 결제 취소를 위해 카드번호를 입력합니다. */
+  const cancelMode = location.pathname === '/card/cancel/keyin'
   useEnsureCardMethod()
   const settle = usePaymentSettle('card')
   const needsSignature = useNeedsSignature()
@@ -90,34 +98,41 @@ export function CardKeyin() {
     setKeypadOpen(true)
   }
 
+  /*
+   * 입력은 이전 값을 함수로 받아 이어붙입니다 — 빠르게 여러 번 눌려도 숫자가 빠지지 않습니다.
+   * 필드 전환과 키패드 내리기는 값이 다 찬 것을 보고 따라갑니다.
+   */
   function handleDigit(digit: number) {
     if (field === 'card') {
-      const next = (card + digit).slice(0, CARD_DIGITS)
-      setCard(next)
-      // 카드번호가 다 차면 유효기간으로 자동 이동합니다.
-      if (next.length === CARD_DIGITS) setField('expiry')
+      setCard((current) => (current + digit).slice(0, CARD_DIGITS))
       return
     }
-
-    const next = (expiry + digit).slice(0, EXPIRY_DIGITS)
-    setExpiry(next)
-    // 유효기간까지 채우면 키패드를 내리고 결제하기를 노출합니다.
-    if (next.length === EXPIRY_DIGITS) setKeypadOpen(false)
+    setExpiry((current) => (current + digit).slice(0, EXPIRY_DIGITS))
   }
 
   function handleBackspace() {
     if (field === 'expiry') {
       if (expiry.length > 0) {
-        setExpiry(expiry.slice(0, -1))
+        setExpiry((current) => current.slice(0, -1))
         return
       }
       // 유효기간이 비어 있으면 카드번호로 돌아갑니다.
       setField('card')
-      setCard(card.slice(0, -1))
+      setCard((current) => current.slice(0, -1))
       return
     }
-    setCard(card.slice(0, -1))
+    setCard((current) => current.slice(0, -1))
   }
+
+  // 카드번호가 다 차면 유효기간으로 자동 이동합니다.
+  useEffect(() => {
+    if (cardDone && field === 'card') setField('expiry')
+  }, [cardDone, field])
+
+  // 유효기간까지 채우면 키패드가 내려가고 결제하기가 나옵니다.
+  useEffect(() => {
+    if (expiryDone) setKeypadOpen(false)
+  }, [expiryDone])
 
   function handleEnter() {
     if (field === 'card' && cardDone) {
@@ -134,6 +149,18 @@ export function CardKeyin() {
   function pay() {
     if (paying) return
     setKeypadOpen(false)
+
+    // 취소 모드는 서명 없이 바로 취소합니다 (1730:197613의 카드 직접 입력 경로).
+    if (cancelMode) {
+      const index = cancelTarget ?? 0
+      setPaying(true)
+      window.setTimeout(() => {
+        cancelPayment(index)
+        navigate('/tasks/payment', { replace: true, state: { cancelled: index } })
+      }, 1500)
+      return
+    }
+
     // 5만원 이상이면 결제 진행 전에 서명을 받습니다 (1730:197571).
     if (needsSignature) {
       navigate('/sign')
@@ -152,7 +179,7 @@ export function CardKeyin() {
     <div className="card-screen">
       <AppBar
         title="카드 직접 입력"
-        onBack={() => navigate('/card')}
+        onBack={() => navigate(cancelMode ? '/card/cancel' : '/card')}
         onAction={() => navigate('/kispay')}
       />
 
@@ -161,7 +188,7 @@ export function CardKeyin() {
         style={{ paddingBottom: keypadOpen && !paying ? 250 : 96 }}
       >
         <span className="spacer spacer--k1" />
-        <CardTotal />
+        <CardTotal cancel={cancelMode} />
         <span className="spacer spacer--k2" />
 
         {/* 카드번호 */}
@@ -222,8 +249,9 @@ export function CardKeyin() {
           </div>
         )}
 
-        {/* 카드 스캔하기는 카드번호를 입력하는 동안만 보입니다 (1723:157655). */}
-        {!cardDone && (
+        {/* 카드 스캔하기는 카드번호를 입력하는 동안만 보입니다 (1723:157655).
+            취소 모드에는 스캔으로 취소하는 화면이 없어 숨깁니다. */}
+        {!cardDone && !cancelMode && (
           <button
             className="keyin__scan btn-chip t-body3-14-medium"
             onClick={() => navigate('/card/scan')}
@@ -244,7 +272,7 @@ export function CardKeyin() {
             disabled={!canPay}
             onClick={pay}
           >
-            결제하기
+            {cancelMode ? '카드 결제 취소' : '결제하기'}
           </button>
         </div>
       )}
@@ -258,7 +286,7 @@ export function CardKeyin() {
       )}
 
       {notice && <Snackbar text={notice} />}
-      {paying && <PaymentProgress />}
+      {paying && <PaymentProgress label={cancelMode ? '취소 진행중' : '결제 진행중'} />}
     </div>
   )
 }

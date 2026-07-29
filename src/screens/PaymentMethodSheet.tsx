@@ -2,7 +2,7 @@ import { IcCard, IcCash, IcClose, IcQr, IcSplit } from '../components/Icon'
 import { PAYMENT_METHOD_LABEL, formatWon } from '../data/order'
 import type { PaymentMethod } from '../data/order'
 
-/* 결제 방법 선택 (1723:157638 / 1723:158481)
+/* 결제 방법 선택 (1723:157638 / 1723:158481, 문구는 1737:24157)
  * 상단 배지는 "현재 선택된 결제 방법"입니다 — 157638은 현금, 158481은 카드 상태.
  */
 
@@ -29,7 +29,7 @@ export function PaymentMethodSheet({
       <div className="dimmed" onClick={onClose} />
       <div className="sheet pm__sheet">
         <div className="sheet__header pm__header">
-          <span className="t-subtitle1-18-bold">결제 방법 선택</span>
+          <span className="t-subtitle1-18-bold">어떻게 결제하시겠어요?</span>
           <button className="sheet__close" onClick={onClose} aria-label="닫기">
             <IcClose />
           </button>

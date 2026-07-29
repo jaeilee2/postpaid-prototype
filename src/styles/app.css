@@ -708,6 +708,23 @@ input {
   width: 124px;
 }
 
+/*
+ * 제목 없이 본문만 있는 얼럿 — 현금 결제 취소 요청 (1730:196990 / 196997).
+ * 문구 길이에 따라 높이가 달라집니다(현금영수증 안내가 붙으면 두 줄 더).
+ */
+.dialog--body-only {
+  height: auto;
+  /* 아래 80 = 버튼 48 + 위아래 16 */
+  padding: 24px 20px 80px;
+}
+
+.dialog--body-only .dialog__body {
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+}
+
 /* 문구가 긴 확인 버튼 — "카드 결제 취소"(1730:197134) */
 .dialog__confirm--wide {
   right: 20px;

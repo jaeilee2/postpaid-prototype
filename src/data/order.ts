@@ -101,8 +101,9 @@ export function splitProgress(payments: SplitPayment[]) {
   const active = payments.filter((payment) => !payment.cancelledAt)
   const paidProduct = active.reduce((sum, p) => sum + p.product, 0)
   const paidCup = active.reduce((sum, p) => sum + p.cup, 0)
-  const remainingProduct = SPLIT.productAmount - paidProduct
-  const remainingCup = SPLIT.cupDeposit - paidCup
+  // 과결제는 정상 흐름에서 나오지 않지만, 음수가 되면 화면 문구가 깨지므로 0에서 멈춥니다.
+  const remainingProduct = Math.max(0, SPLIT.productAmount - paidProduct)
+  const remainingCup = Math.max(0, SPLIT.cupDeposit - paidCup)
   return {
     paidProduct,
     paidCup,
