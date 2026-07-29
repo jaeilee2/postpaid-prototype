@@ -77,7 +77,7 @@ function CollapsedStop({ stop }: { stop: Stop }) {
 export function TaskList() {
   const navigate = useNavigate()
   const { method, splitPayments } = useOrder()
-  const { openMethodSheet, overlays } = usePaymentFlow()
+  const { payRemaining, overlays } = usePaymentFlow()
   const [expanded, setExpanded] = useState(true)
 
   const { remainingTotal } = splitProgress(splitPayments)
@@ -195,10 +195,8 @@ export function TaskList() {
                       <IcCashReceipt />
                       결제내역
                     </button>
-                    <button
-                      className="btn-outline btn--h38 t-body3-14-medium"
-                      onClick={openMethodSheet}
-                    >
+                    {/* 배달지 상세의 CTA와 같은 판단을 합니다 — 분할 중이면 분할 시트, 아니면 방법 시트 */}
+                    <button className="btn-outline btn--h38 t-body3-14-medium" onClick={payRemaining}>
                       <IcCard />
                       결제하기
                     </button>
