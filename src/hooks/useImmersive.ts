@@ -20,6 +20,13 @@ import { useCallback, useEffect, useState } from 'react'
 const APP_MODES = ['fullscreen', 'standalone', 'minimal-ui']
 
 function isStandalone() {
+  /*
+   * 주소창이 있는 **평범한 탭이면 앱 모드가 아닙니다.** 이걸 먼저 봅니다 —
+   * 일부 브라우저(사파리)는 일반 탭에서도 `minimal-ui`를 참으로 보고해서, 긍정 조건만
+   * 보면 브라우저에서 프레임이 전체화면처럼 늘어나 화면이 깨집니다.
+   */
+  if (window.matchMedia?.('(display-mode: browser)').matches === true) return false
+
   return (
     APP_MODES.some((mode) => window.matchMedia?.(`(display-mode: ${mode})`).matches === true) ||
     // iOS 사파리는 표준 display-mode 대신 navigator.standalone을 씁니다.
