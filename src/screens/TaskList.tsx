@@ -11,7 +11,7 @@ import {
   IcSms,
   IcWarning,
 } from '../components/Icon'
-import { ORDER, formatWon, splitProgress } from '../data/order'
+import { ORDER, POSTPAID_LABEL, formatWon, splitProgress } from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { usePaymentFlow } from './usePaymentFlow'
 
@@ -76,7 +76,7 @@ function CollapsedStop({ stop }: { stop: Stop }) {
 
 export function TaskList() {
   const navigate = useNavigate()
-  const { method, splitPayments } = useOrder()
+  const { splitPayments } = useOrder()
   const { payRemaining, overlays } = usePaymentFlow()
   const [expanded, setExpanded] = useState(true)
 
@@ -90,11 +90,11 @@ export function TaskList() {
    */
   const mapScreen = paid && splitPayments.length > 0 ? '/main' : '/delivery'
   /*
-   * 디자인(1730:196848)은 후불카드 예시입니다. 배지는 실제로 받은 수단을 따라갑니다 —
-   * 카드·QR이 한 건이라도 섞이면 후불카드, 전부 현금이면 후불현금.
+   * 배지는 **주문의 결제 수단**입니다 (디자인 1730:196848은 후불카드 예시).
+   * 어떤 방법으로 받았는지와 무관하게 주문에 붙은 값이라 바뀌지 않습니다
+   * (2026-07-29 이재이 확인).
    */
-  const byCard = splitPayments.some((p) => !p.cancelledAt && p.method !== 'cash')
-  const badge = byCard || method === 'card' || method === 'qr' ? '후불카드' : '후불현금'
+  const badge = POSTPAID_LABEL[ORDER.postpaid]
 
   return (
     <div className="screen tl">
@@ -150,11 +150,7 @@ export function TaskList() {
                   {paid ? `${formatWon(ORDER.amount)}원 결제완료` : '결제필요금액'}
                 </span>
                 {!paid && <span className="t-body2-16-bold">{formatWon(ORDER.amount)}원</span>}
-                <span
-                  className={`badge badge--md ${
-                    badge === '후불현금' ? 'badge--cash' : 'badge--card'
-                  } t-caption1-12-bold`}
-                >
+                <span className={`badge badge--md badge--${ORDER.postpaid} t-caption1-12-bold`}>
                   {badge}
                 </span>
               </div>

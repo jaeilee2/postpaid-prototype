@@ -108,7 +108,7 @@ export function usePaymentFlow() {
       {overlay === 'method' && (
         <PaymentMethodSheet
           total={ORDER.amount}
-          method={method}
+          postpaid={ORDER.postpaid}
           onSelect={(next) => {
             setMethod(next)
             // 시트에서 결제 방법을 고르면 곧바로 그 방법의 결제가 시작됩니다.

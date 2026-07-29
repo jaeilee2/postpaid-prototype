@@ -14,7 +14,13 @@ import {
   IcVcc,
   IcWarning,
 } from '../components/Icon'
-import { ORDER, PAYMENT_METHOD_LABEL, formatWon, splitProgress } from '../data/order'
+import {
+  ORDER,
+  PAYMENT_METHOD_LABEL,
+  POSTPAID_LABEL,
+  formatWon,
+  splitProgress,
+} from '../data/order'
 import type { PaymentMethod } from '../data/order'
 import { useOrder } from '../state/OrderContext'
 import { usePaymentFlow } from './usePaymentFlow'
@@ -135,7 +141,9 @@ export function DeliveryDetail() {
               <div className="dd__pay-card">
                 <span className="t-body3-14-bold">결제필요금액</span>
                 <span className="t-body2-16-bold">{formatWon(ORDER.amount)}원</span>
-                <span className="badge badge--md badge--cash t-caption1-12-bold">후불현금</span>
+                <span className={`badge badge--md badge--${ORDER.postpaid} t-caption1-12-bold`}>
+                  {POSTPAID_LABEL[ORDER.postpaid]}
+                </span>
               </div>
             </div>
 
@@ -170,10 +178,15 @@ export function DeliveryDetail() {
           ) : (
             <>
               <div className="dd__method">
-                {/* 디자인은 후불현금 상태(1723:158379)뿐이라 현금 아이콘만 있습니다 —
-                    결제 방법을 바꾸면 아이콘도 함께 바뀌는 게 맞아 시트와 같은 아이콘을 씁니다. */}
-                {METHOD_ICON[method]}
-                <span className="t-body3-14-medium">{PAYMENT_METHOD_LABEL[method]} 결제</span>
+                {/*
+                  이 줄은 **주문의 결제 수단**입니다 — 후불현금 주문이면 계속 `현금 결제`,
+                  후불카드 주문이면 `카드 결제`. `다른 결제방법`으로 이번에 받을 방법을 바꿔도
+                  여기는 바뀌지 않습니다 (2026-07-29 이재이 확인).
+                */}
+                {METHOD_ICON[ORDER.postpaid]}
+                <span className="t-body3-14-medium">
+                  {PAYMENT_METHOD_LABEL[ORDER.postpaid]} 결제
+                </span>
               </div>
               <button className="dd__method-change" onClick={openMethodSheet}>
                 <span className="t-body3-14-regular">다른 결제방법</span>

@@ -16,6 +16,21 @@ export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
   split: '분할',
 }
 
+/**
+ * 주문에 붙어 있는 결제 수단 — 후불현금 / 후불카드.
+ *
+ * **기사가 이번에 어떤 방법으로 받는지(`method`)와는 다른 값입니다.** `다른 결제방법`으로
+ * 받을 방법을 바꾸거나 분할로 나눠 받아도 주문의 결제 수단은 그대로입니다
+ * (2026-07-29 이재이 확인). 배달지 상세 하단 바, 수행목록 배지, 결제 방법 시트의 배지가
+ * 이 값을 보여줍니다.
+ */
+export type PostpaidType = 'cash' | 'card'
+
+export const POSTPAID_LABEL: Record<PostpaidType, string> = {
+  cash: '후불현금',
+  card: '후불카드',
+}
+
 export const ORDER = {
   store: '부릉치킨 선릉점',
   status: '배달지로 이동해주세요',
@@ -30,6 +45,8 @@ export const ORDER = {
   safeNumber: '050-7124-8836',
   /** 영수증에 찍히는 결제일시 (목업이라 고정값) */
   paidAt: '2026. 07. 28. 19:42',
+  /** 이 주문의 결제 수단 — 디자인(1723:158379)은 후불현금 주문입니다. */
+  postpaid: 'cash' as PostpaidType,
 }
 
 /*
