@@ -32,7 +32,7 @@ export function DeliveryDetail() {
   const navigate = useNavigate()
   const location = useLocation()
   const { method, splitPayments } = useOrder()
-  const { openMethodSheet, startPayment, overlays } = usePaymentFlow()
+  const { openMethodSheet, payRemaining, overlays } = usePaymentFlow()
   const [notice, setNotice] = useState<string | null>(null)
   const [toast, setToast] = useState<[string, string] | null>(null)
 
@@ -172,7 +172,7 @@ export function DeliveryDetail() {
           )}
           <button
             className="dd__cta btn-primary btn--h56 t-body2-16-medium"
-            onClick={() => startPayment()}
+            onClick={payRemaining}
           >
             {/*
               디자인은 `결제하기 (VAN)`이지만, 얼마를 더 받아야 하는지가 보여야 해서

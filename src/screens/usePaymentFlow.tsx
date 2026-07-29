@@ -28,6 +28,9 @@ type Overlay = null | 'method' | 'cash-confirm' | 'split' | 'split-cash-confirm'
 export function usePaymentFlow() {
   const navigate = useNavigate()
   const { method, setMethod, splitPayments, addSplitPayment, setPendingSplit } = useOrder()
+  const progress = splitProgress(splitPayments)
+  /** 일부만 받았거나 취소해서 남은 금액이 있는 상태 (1730:196113) */
+  const partial = splitPayments.length > 0 && progress.remainingTotal > 0
   const [overlay, setOverlay] = useState<Overlay>(null)
   const [toast, setToast] = useState<[string, string] | null>(null)
   /** 분할 결제 시트에서 고른 이번 회차 금액 (현금 확인 얼럿을 거칠 때 잠시 들고 있습니다) */
@@ -67,20 +70,26 @@ export function usePaymentFlow() {
     navigate(payMethod === 'card' ? '/card' : '/qr')
   }
 
+  /**
+   * 이번에 받을 금액. 남은 금액이 있으면 그만큼만 받습니다 —
+   * 전액을 다시 받으면 과결제가 되기 때문입니다.
+   */
+  function amountToCollect() {
+    if (partial) return { product: progress.remainingProduct, cup: progress.remainingCup }
+    return { product: SPLIT.productAmount, cup: SPLIT.cupDeposit }
+  }
+
   /** 선택된 결제 방법으로 결제를 시작합니다. */
   function startPayment(next: PaymentMethod = method) {
     if (next === 'cash') {
       setOverlay('cash-confirm')
       return
     }
-    if (next === 'card') {
-      // 카드는 NFC 화면이 기본입니다 (1723:157653).
-      navigate('/card')
-      return
-    }
-    if (next === 'qr') {
-      // QR은 카메라를 쓰므로 권한 확인부터 시작합니다 (1747:121729).
-      navigate('/qr')
+    if (next === 'card' || next === 'qr') {
+      // 남은 금액이 있으면 그 금액을 카드·QR 화면으로 실어 보냅니다.
+      setPendingSplit(partial ? amountToCollect() : null)
+      // 카드는 NFC 화면이 기본(1723:157653), QR은 카메라 권한 확인부터(1747:121729).
+      navigate(next === 'card' ? '/card' : '/qr')
       return
     }
     // 분할은 금액을 나눠 받는 시트가 뜹니다 (1730:197705).
@@ -109,7 +118,7 @@ export function usePaymentFlow() {
           onCancel={() => setOverlay(null)}
           onConfirm={() =>
             // 한 번에 전액을 현금으로 받은 것도 결제 내역에 남습니다 (1730:196850).
-            record('cash', { product: SPLIT.productAmount, cup: SPLIT.cupDeposit })
+            record('cash', amountToCollect())
           }
         />
       )}
@@ -131,6 +140,11 @@ export function usePaymentFlow() {
   return {
     /** 결제 방법 시트를 엽니다 (`어떻게 결제하시겠어요?`) */
     openMethodSheet: () => setOverlay('method'),
+    /**
+     * 남은 금액이 있으면 어떤 방법으로 받을지 다시 물어봅니다 (1730:196113 → 1730:196101).
+     * 바로 지난번 방법으로 넘어가지 않습니다.
+     */
+    payRemaining: () => (partial ? setOverlay('method') : startPayment()),
     /** 지금 선택된 방법으로 바로 결제를 시작합니다 */
     startPayment,
     showToast,

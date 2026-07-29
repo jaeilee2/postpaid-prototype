@@ -370,13 +370,9 @@
   font-weight: 400;
 }
 
-/* 분할 결제의 건별 내역 — 총액보다 한 단계 작은 글자입니다 (1730:197859) */
+/* 분할 결제의 건별 내역 — 총액과 같은 크기입니다 (1730:197859) */
 .cp__price-row--sub .cp__price-label {
   color: var(--vds-text-tertiary-60);
-}
-
-.cp__price-value--sub {
-  color: var(--vds-text-primary-100);
 }
 
 .cp__price-divider {
@@ -2773,4 +2769,16 @@
 .tl__pay--unpaid {
   gap: 8px;
   color: var(--vds-text-tertiary-60);
+}
+
+/*
+ * 전화 앱 캡처의 초록 통화 버튼 자리.
+ * 캡처(1080×2316)를 360폭으로 줄여 얹으므로 그 좌표로 잡았습니다.
+ */
+.capture__back--call {
+  left: 148px;
+  top: 590px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
 }

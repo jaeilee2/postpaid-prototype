@@ -46,12 +46,17 @@ export function Complete() {
     markFeeToastShown,
     splitPayments,
   } = useOrder()
-  const isSplit = method === 'split'
+  /*
+   * 결제 건이 둘 이상이면(분할이거나, 취소 후 다른 방법으로 다시 받았거나)
+   * 총액 아래에 건별 내역을 붙입니다 (1730:197859).
+   */
+  const activePayments = splitPayments.filter((p) => !p.cancelledAt)
+  const isSplit = method === 'split' || activePayments.length > 1
   /*
    * M캐시가 차감되는 건 현금으로 받은 금액입니다 — 그래서 "배송수수료 입금" 알림과
    * 현금영수증 발급은 현금이 섞여 있을 때만 나옵니다 (분할 결제 포함, 1730:197859).
    */
-  const hasCash = method === 'cash' || (isSplit && splitPayments.some((p) => p.method === 'cash'))
+  const hasCash = method === 'cash' || activePayments.some((p) => p.method === 'cash')
   const [sheetOpen, setSheetOpen] = useState(false)
   const [receiptSheetOpen, setReceiptSheetOpen] = useState(false)
   const [toastVisible, setToastVisible] = useState(!feeToastShown && hasCash)
@@ -111,22 +116,20 @@ export function Complete() {
                 <div className="cp__price-row">
                   {/* 결제 방법마다 라벨이 다릅니다 — 현금 157236 / 카드 157270 / QR 1730:197353 */}
                   <span className="cp__price-label t-body3-14-medium">
-                    {COMPLETE_PRICE_LABEL[method]}
+                    {isSplit ? COMPLETE_PRICE_LABEL.split : COMPLETE_PRICE_LABEL[method]}
                   </span>
                   <Amount value={ORDER.amount} />
                 </div>
                 {/* 분할 결제는 총액 아래에 건별 내역이 붙습니다 (1730:197859) */}
                 {isSplit &&
-                  splitPayments.map((payment, index) => (
+                  activePayments.map((payment, index) => (
                     <div className="cp__price-row cp__price-row--sub" key={index}>
                       <span className="cp__price-label t-body3-14-medium">
                         └ {PAYMENT_METHOD_LABEL[payment.method]} 결제 금액
-                        {payment.method === 'cash' && ' [M캐시 차감]'}
+                        {payment.method === 'cash' && ' (M캐시 차감)'}
                       </span>
-                      <span className="cp__price-value cp__price-value--sub t-body3-14-bold">
-                        {formatWon(splitPaymentAmount(payment))}
-                        <span className="unit">원</span>
-                      </span>
+                      {/* 건별 금액도 총액과 같은 크기입니다 (1730:197859) */}
+                      <Amount value={splitPaymentAmount(payment)} />
                     </div>
                   ))}
                 <div className="cp__price-divider" />
