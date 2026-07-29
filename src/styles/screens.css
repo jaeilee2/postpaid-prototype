@@ -2739,3 +2739,38 @@
   bottom: 0;
   height: 44px;
 }
+
+/* 잔여 결제 금액 안내 박스 (1730:196061) — 노란 박스 안에 결제내역·결제하기가 들어갑니다 */
+.tl__remaining {
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: var(--vds-radius-sm);
+  background: var(--vds-surface-warning);
+}
+
+.tl__remaining-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 8px;
+  color: var(--vds-text-warning);
+}
+
+.tl__remaining-amount {
+  color: var(--vds-text-primary-100);
+}
+
+.tl__remaining .tl__buttons {
+  margin-top: 0;
+}
+
+.tl__remaining .btn-outline {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* 아직 다 받지 못한 상태의 결제필요금액 줄 */
+.tl__pay--unpaid {
+  gap: 8px;
+  color: var(--vds-text-tertiary-60);
+}

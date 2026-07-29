@@ -24,6 +24,7 @@ const SCREEN_NAMES: Record<string, string> = {
   '/card/scan': '카드 결제 · 카드 스캔 (OCR)',
   '/card/cancel': '카드 결제 취소 (NFC)',
   '/card/cancel/keyin': '카드 결제 취소 (카드 직접 입력)',
+  '/card/cancel/scan': '카드 결제 취소 (카드 스캔)',
   '/kispay': 'KIS Pay (키스페이) · 카드 리더기로 결제',
   '/qr': 'QR 간편 결제 · 스캔',
   '/sign': '서명 등록 (5만원 이상)',
@@ -200,6 +201,7 @@ export default function App() {
               <Route path="/card/scan" element={<CardScan />} />
               <Route path="/card/cancel" element={<CardCancel />} />
               <Route path="/card/cancel/keyin" element={<CardKeyin />} />
+              <Route path="/card/cancel/scan" element={<CardScan />} />
               <Route path="/kispay" element={<KisPay />} />
               <Route path="/qr" element={<QrScan />} />
               <Route path="/sign" element={<SignatureScreen />} />

@@ -249,12 +249,11 @@ export function CardKeyin() {
           </div>
         )}
 
-        {/* 카드 스캔하기는 카드번호를 입력하는 동안만 보입니다 (1723:157655).
-            취소 모드에는 스캔으로 취소하는 화면이 없어 숨깁니다. */}
-        {!cardDone && !cancelMode && (
+        {/* 카드 스캔하기는 카드번호를 입력하는 동안만 보입니다 (1723:157655). */}
+        {!cardDone && (
           <button
             className="keyin__scan btn-chip t-body3-14-medium"
-            onClick={() => navigate('/card/scan')}
+            onClick={() => navigate(cancelMode ? '/card/cancel/scan' : '/card/scan')}
           >
             <IcCamera />
             카드 스캔하기

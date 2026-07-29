@@ -53,6 +53,7 @@
   --vds-bg-3: #ebedef; /* 결제 내역 화면 배경 (1730:196892) */
 
   --vds-surface-7: #8e959c; /* 수행목록 지점 핀 */
+  --vds-surface-warning: #fff4db; /* 수행목록 잔여 결제 금액 안내 (1730:196061) */
   --vds-success: #00b06b; /* 준비완료 */
 
   --vds-dimmed: #000000;

@@ -14,19 +14,10 @@ import {
   IcVcc,
   IcWarning,
 } from '../components/Icon'
-import {
-  ORDER,
-  PAYMENT_METHOD_LABEL,
-  PAYMENT_TIME,
-  SPLIT,
-  formatWon,
-  splitProgress,
-} from '../data/order'
-import type { PaymentMethod, SplitPayment } from '../data/order'
+import { ORDER, PAYMENT_METHOD_LABEL, formatWon, splitProgress } from '../data/order'
+import type { PaymentMethod } from '../data/order'
 import { useOrder } from '../state/OrderContext'
-import { CashConfirmDialog } from './CashConfirmDialog'
-import { PaymentMethodSheet } from './PaymentMethodSheet'
-import { SplitPaymentSheet } from './SplitPaymentSheet'
+import { usePaymentFlow } from './usePaymentFlow'
 
 /* 배달지 상세 · 픽업후 · 후불현금 (1723:158379) */
 
@@ -37,17 +28,13 @@ const METHOD_ICON: Record<PaymentMethod, React.ReactNode> = {
   split: <IcSplit />,
 }
 
-type Overlay = null | 'method' | 'cash-confirm' | 'split' | 'split-cash-confirm'
-
 export function DeliveryDetail() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { method, setMethod, splitPayments, addSplitPayment, setPendingSplit } = useOrder()
-  const [overlay, setOverlay] = useState<Overlay>(null)
+  const { method, splitPayments } = useOrder()
+  const { openMethodSheet, startPayment, overlays } = usePaymentFlow()
   const [notice, setNotice] = useState<string | null>(null)
   const [toast, setToast] = useState<[string, string] | null>(null)
-  /** 분할 결제 시트에서 고른 이번 회차 금액 (현금 확인 얼럿을 거칠 때 잠시 들고 있습니다) */
-  const [splitPart, setSplitPart] = useState<Omit<SplitPayment, 'method'> | null>(null)
 
   const split = splitProgress(splitPayments)
   const splitInProgress = splitPayments.length > 0 && !split.done
@@ -57,7 +44,7 @@ export function DeliveryDetail() {
     window.setTimeout(() => setNotice(null), 2600)
   }
 
-  function showToast(lines: [string, string]) {
+  function showReturnToast(lines: [string, string]) {
     setToast(lines)
     window.setTimeout(() => setToast(null), 3000)
   }
@@ -68,60 +55,10 @@ export function DeliveryDetail() {
   useEffect(() => {
     if (!state?.notice && !state?.splitToast) return
     if (state.notice) showNotice(state.notice)
-    if (state.splitToast) showToast(state.splitToast)
+    if (state.splitToast) showReturnToast(state.splitToast)
     navigate('/delivery', { replace: true, state: null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.notice, state?.splitToast])
-
-  /** 분할 결제 한 건을 기록하고, 남았으면 이 화면에 머물고 다 받았으면 완료 화면으로 갑니다. */
-  function completeSplitPart(payMethod: SplitPayment['method'], part: Omit<SplitPayment, 'method'>) {
-    addSplitPayment({ method: payMethod, ...part, paidAt: PAYMENT_TIME.paid })
-    setOverlay(null)
-    setSplitPart(null)
-    const next = splitProgress([...splitPayments, { method: payMethod, ...part }])
-    if (next.done) {
-      navigate('/complete')
-      return
-    }
-    showToast([
-      `${PAYMENT_METHOD_LABEL[payMethod]} ${formatWon(part.product + part.cup)}원이 결제되었어요`,
-      '전체 결제 후 영수증 발송이 가능해요',
-    ])
-  }
-
-  /** 카드·QR은 각자의 화면으로 넘어갑니다 — 이번 회차 금액을 컨텍스트에 실어 보냅니다. */
-  function handleSplitPay(
-    payMethod: SplitPayment['method'],
-    part: Omit<SplitPayment, 'method'>,
-  ) {
-    if (payMethod === 'cash') {
-      setSplitPart(part)
-      setOverlay('split-cash-confirm')
-      return
-    }
-    setPendingSplit(part)
-    navigate(payMethod === 'card' ? '/card' : '/qr')
-  }
-
-  /** 선택된 결제 방법으로 결제를 시작합니다. */
-  function startPayment(next = method) {
-    if (next === 'cash') {
-      setOverlay('cash-confirm')
-      return
-    }
-    if (next === 'card') {
-      // 카드는 NFC 화면이 기본입니다 (1723:157653).
-      navigate('/card')
-      return
-    }
-    if (next === 'qr') {
-      // QR은 카메라를 쓰므로 권한 확인부터 시작합니다 (1747:121729).
-      navigate('/qr')
-      return
-    }
-    // 분할은 금액을 나눠 받는 시트가 뜹니다 (1730:197705).
-    setOverlay('split')
-  }
 
   return (
     <div className="screen">
@@ -227,7 +164,7 @@ export function DeliveryDetail() {
                 {METHOD_ICON[method]}
                 <span className="t-body3-14-medium">{PAYMENT_METHOD_LABEL[method]} 결제</span>
               </div>
-              <button className="dd__method-change" onClick={() => setOverlay('method')}>
+              <button className="dd__method-change" onClick={openMethodSheet}>
                 <span className="t-body3-14-regular">다른 방법으로 결제</span>
                 <IcChevronRight />
               </button>
@@ -248,47 +185,7 @@ export function DeliveryDetail() {
 
       {notice && <Snackbar text={notice} />}
       {toast && <CenterToast lines={toast} />}
-
-      {overlay === 'method' && (
-        <PaymentMethodSheet
-          total={ORDER.amount}
-          method={method}
-          onSelect={(next) => {
-            setMethod(next)
-            // 시트에서 결제 방법을 고르면 곧바로 그 방법의 결제가 시작됩니다.
-            startPayment(next)
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-
-      {overlay === 'cash-confirm' && (
-        <CashConfirmDialog
-          onCancel={() => setOverlay(null)}
-          onConfirm={() => {
-            // 한 번에 전액을 현금으로 받은 것도 결제 내역에 남습니다 (1730:196892).
-            addSplitPayment({
-              method: 'cash',
-              product: SPLIT.productAmount,
-              cup: SPLIT.cupDeposit,
-              paidAt: PAYMENT_TIME.paid,
-            })
-            navigate('/complete')
-          }}
-        />
-      )}
-
-      {overlay === 'split' && (
-        <SplitPaymentSheet onClose={() => setOverlay(null)} onPay={handleSplitPay} />
-      )}
-
-      {/* 분할 결제에서 현금을 고르면 같은 확인 얼럿이 뜹니다 (1730:195338). */}
-      {overlay === 'split-cash-confirm' && splitPart && (
-        <CashConfirmDialog
-          onCancel={() => setOverlay('split')}
-          onConfirm={() => completeSplitPart('cash', splitPart)}
-        />
-      )}
+      {overlays}
     </div>
   )
 }

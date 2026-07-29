@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import cameraCard from '../assets/camera-card.webp'
 import {
@@ -38,7 +38,10 @@ const FRAME = { offsetY: -18.5, width: 328, height: 207 }
 
 export function CardScan() {
   const navigate = useNavigate()
-  const { cameraAllowed, allowCamera } = useOrder()
+  const location = useLocation()
+  const { cameraAllowed, allowCamera, cancelPayment, cancelTarget } = useOrder()
+  /** 취소 모드 — 결제가 아니라 결제 취소를 위해 카드를 스캔합니다. */
+  const cancelMode = location.pathname === '/card/cancel/scan'
   useEnsureCardMethod()
   const settle = usePaymentSettle('card')
   const needsSignature = useNeedsSignature()
@@ -68,6 +71,16 @@ export function CardScan() {
   }, [step])
 
   function pay() {
+    // 취소 모드는 서명 없이 바로 취소합니다.
+    if (cancelMode) {
+      const index = cancelTarget ?? 0
+      setStep('paying')
+      window.setTimeout(() => {
+        cancelPayment(index)
+        navigate('/tasks/payment', { replace: true, state: { cancelled: index } })
+      }, 1500)
+      return
+    }
     // 5만원 이상이면 결제 진행 전에 서명을 받습니다 (1730:197571).
     if (needsSignature) {
       navigate('/sign')
@@ -85,7 +98,7 @@ export function CardScan() {
           앱바의 "카드 리더기로 결제"는 KIS Pay로 넘어갑니다 (1772:130317). */}
       <AppBar
         title="카드 스캔"
-        onBack={() => navigate('/card/keyin')}
+        onBack={() => navigate(cancelMode ? '/card/cancel/keyin' : '/card/keyin')}
         onAction={() => navigate('/kispay')}
       />
 
@@ -113,7 +126,10 @@ export function CardScan() {
 
         <FlashlightButton bottom={209} onClick={() => showNotice('플래시는 디자인 범위 밖이에요')} />
 
-        <button className="scan__keyin btn-tertiary" onClick={() => navigate('/card/keyin')}>
+        <button
+          className="scan__keyin btn-tertiary"
+          onClick={() => navigate(cancelMode ? '/card/cancel/keyin' : '/card/keyin')}
+        >
           <span className="scan__keyin-inner t-body2-16-medium">
             <Ic123 />
             카드 직접 입력
@@ -165,7 +181,10 @@ export function CardScan() {
 
             <div className="cs__help">
               <span className="t-body3-14-regular">카드 인식이 안 되나요?</span>
-              <button className="cs__help-link t-body3-14-medium" onClick={() => navigate('/card/keyin')}>
+              <button
+                className="cs__help-link t-body3-14-medium"
+                onClick={() => navigate(cancelMode ? '/card/cancel/keyin' : '/card/keyin')}
+              >
                 카드 직접 입력
               </button>
             </div>
@@ -175,7 +194,7 @@ export function CardScan() {
                 다시 스캔하기
               </button>
               <button className="btn-primary btn--h56 t-body2-16-medium" onClick={pay}>
-                결제하기
+                {cancelMode ? '카드 결제 취소' : '결제하기'}
               </button>
             </div>
           </div>
@@ -185,7 +204,9 @@ export function CardScan() {
       {notice && <Snackbar text={notice} />}
 
       {/* 인식 중과 결제 중 모두 같은 "결제 진행중" 다이얼로그입니다 (1730:197562 / 1723:157658) */}
-      {(step === 'reading' || step === 'paying') && <PaymentProgress />}
+      {(step === 'reading' || step === 'paying') && (
+        <PaymentProgress label={cancelMode && step === 'paying' ? '취소 진행중' : '결제 진행중'} />
+      )}
     </div>
   )
 }

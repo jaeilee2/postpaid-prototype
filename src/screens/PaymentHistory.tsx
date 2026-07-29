@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import check from '../assets/check.png'
-import { Snackbar, StatusBar } from '../components/Chrome'
+import { CenterToast, Snackbar, StatusBar } from '../components/Chrome'
 import { IcBack, IcCall, IcCardCancel, IcCashReceipt, IcSms } from '../components/Icon'
 import {
   CARD_APPROVAL,
@@ -279,6 +279,8 @@ export function PaymentHistory() {
   /** 취소가 끝나면 완료 시트를 띄웁니다 — 카드 취소 화면에서 돌아올 때도 여기로 옵니다. */
   const [done, setDone] = useState<number | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  /** 현금 취소는 완료 시트 대신 토스트로 알려줍니다 (디자인에 시트가 없습니다). */
+  const [cancelToast, setCancelToast] = useState<string | null>(null)
 
   const { remainingTotal } = splitProgress(splitPayments)
 
@@ -312,8 +314,11 @@ export function PaymentHistory() {
 
   /** VCC 전화를 끊고 돌아오면 취소가 접수된 것으로 봅니다 (1730:197002). */
   function afterCall(index: number) {
+    const label = PAYMENT_METHOD_LABEL[splitPayments[index].method]
     cancelPayment(index)
     setOverlay(null)
+    setCancelToast(`${label} 결제 취소가 완료되었어요`)
+    window.setTimeout(() => setCancelToast(null), 3000)
   }
 
   const asking = overlay && typeof overlay === 'object' && overlay.kind === 'ask' ? overlay : null
@@ -389,6 +394,7 @@ export function PaymentHistory() {
       )}
 
       {notice && <Snackbar text={notice} />}
+      {cancelToast && <CenterToast lines={[cancelToast]} />}
 
       {donePayment && (
         <CancelCompleteSheet

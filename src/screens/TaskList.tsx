@@ -2,15 +2,27 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { OrderToggle, StatusBar } from '../components/Chrome'
-import { IcBack, IcCall, IcChevronRight, IcCashReceipt, IcSms } from '../components/Icon'
+import {
+  IcBack,
+  IcCall,
+  IcCard,
+  IcChevronRight,
+  IcCashReceipt,
+  IcSms,
+  IcWarning,
+} from '../components/Icon'
 import { ORDER, formatWon, splitProgress } from '../data/order'
 import { useOrder } from '../state/OrderContext'
+import { usePaymentFlow } from './usePaymentFlow'
 
 /* 수행목록 (1730:196848)
  *
  * 배달지 상세의 `수행목록` FAB(1765:130135)을 누르면 나옵니다.
  * 픽업·배달 지점이 순서대로 쌓여 있고, 지금 수행 중인 배달만 펼쳐져 있습니다.
  * 펼쳐진 항목의 `결제내역`으로 들어가 결제를 취소할 수 있습니다.
+ *
+ * 잔여 금액이 있으면(취소했거나 분할 중) 노란 안내 박스에 `결제내역` `결제하기`가 함께
+ * 들어갑니다 (1730:196061). `결제하기`는 배달지 상세와 같은 결제 방법 시트를 띄웁니다.
  *
  * 목록의 다른 지점들은 화면을 채우기 위한 목업입니다 — 디자인에 있는 그대로 두고 접힌 상태입니다.
  */
@@ -65,6 +77,7 @@ function CollapsedStop({ stop }: { stop: Stop }) {
 export function TaskList() {
   const navigate = useNavigate()
   const { method, splitPayments } = useOrder()
+  const { openMethodSheet, overlays } = usePaymentFlow()
   const [expanded, setExpanded] = useState(true)
 
   const { remainingTotal } = splitProgress(splitPayments)
@@ -125,10 +138,12 @@ export function TaskList() {
                 </p>
               </div>
 
-              <div className="tl__pay">
+              <div className={`tl__pay ${paid ? '' : 'tl__pay--unpaid'}`}>
+                {/* 다 받았으면 `58,500원 결제완료`, 남았으면 `결제필요금액 58,500원` (1730:196061) */}
                 <span className="t-body2-16-bold">
-                  {formatWon(ORDER.amount)}원 {paid ? '결제완료' : '결제필요'}
+                  {paid ? `${formatWon(ORDER.amount)}원 결제완료` : '결제필요금액'}
                 </span>
+                {!paid && <span className="t-body2-16-bold">{formatWon(ORDER.amount)}원</span>}
                 <span
                   className={`badge badge--md ${
                     badge === '후불현금' ? 'badge--cash' : 'badge--card'
@@ -148,15 +163,42 @@ export function TaskList() {
                   문자 전송
                 </button>
               </div>
-              <div className="tl__buttons">
-                <button
-                  className="btn-outline btn--h38 t-body3-14-medium"
-                  onClick={() => navigate('/tasks/payment')}
-                >
-                  <IcCashReceipt />
-                  결제내역
-                </button>
-              </div>
+              {/* 잔여 금액이 있으면 안내 박스 안에 결제내역·결제하기가 함께 들어갑니다 (1730:196061) */}
+              {paid ? (
+                <div className="tl__buttons">
+                  <button
+                    className="btn-outline btn--h38 t-body3-14-medium"
+                    onClick={() => navigate('/tasks/payment')}
+                  >
+                    <IcCashReceipt />
+                    결제내역
+                  </button>
+                </div>
+              ) : (
+                <div className="tl__remaining">
+                  <p className="tl__remaining-label t-body2-16-bold">
+                    <IcWarning />
+                    잔여 결제 금액:{' '}
+                    <span className="tl__remaining-amount">{formatWon(remainingTotal)}원</span>
+                  </p>
+                  <div className="tl__buttons">
+                    <button
+                      className="btn-outline btn--h38 t-body3-14-medium"
+                      onClick={() => navigate('/tasks/payment')}
+                    >
+                      <IcCashReceipt />
+                      결제내역
+                    </button>
+                    <button
+                      className="btn-outline btn--h38 t-body3-14-medium"
+                      onClick={openMethodSheet}
+                    >
+                      <IcCard />
+                      결제하기
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -171,6 +213,8 @@ export function TaskList() {
         <OrderToggle />
         <span className="t-body3-14-medium">오더 받기</span>
       </div>
+
+      {overlays}
     </div>
   )
 }
