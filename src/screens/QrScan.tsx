@@ -24,7 +24,7 @@ const FRAME = { offsetY: -43, width: 230, height: 230 }
 
 export function QrScan() {
   const navigate = useNavigate()
-  const { cameraAllowed, allowCamera, setMethod, method } = useOrder()
+  const { cameraAllowed, allowCamera, setMethod, method, abandonPayment } = useOrder()
   const settle = usePaymentSettle('qr')
 
   const [step, setStep] = useState<Step>(cameraAllowed ? 'scanning' : 'permission')
@@ -54,14 +54,16 @@ export function QrScan() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
+  /* 결제하지 않고 나오면 그냥 배달지 상세로 돌아갑니다 — 방법을 다시 묻지 않습니다
+     (2026-07-29 이재이 확인). 고른 방법은 되돌립니다. */
+  function leave() {
+    abandonPayment()
+    navigate('/delivery')
+  }
+
   return (
     <div className="card-screen">
-      {/* 결제하지 않고 나오면 어떤 방법으로 받을지 다시 물어봅니다 (1737:24157) */}
-      <AppBar
-        title="QR 간편 결제"
-        onBack={() => navigate('/delivery', { state: { openMethod: true } })}
-        actionLabel={null}
-      />
+      <AppBar title="QR 간편 결제" onBack={leave} actionLabel={null} />
 
       <CameraViewport
         bottomBand={0}
@@ -83,7 +85,7 @@ export function QrScan() {
         <button
           className="scan__flash"
           style={{ bottom: 40 }}
-          onClick={() => navigate('/delivery', { state: { openMethod: true } })}
+          onClick={leave}
           aria-label="닫기"
         >
           <IcCloseWhite />
@@ -97,12 +99,13 @@ export function QrScan() {
             setStep('scanning')
           }}
           onAllowOnce={() => setStep('scanning')}
-          onDeny={() =>
+          onDeny={() => {
+            abandonPayment()
             navigate('/delivery', {
               replace: true,
               state: { notice: '카메라 권한을 허용해야 QR 간편 결제를 할 수 있어요' },
             })
-          }
+          }}
         />
       )}
 

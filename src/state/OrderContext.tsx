@@ -1,13 +1,23 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-import { INSTALLMENTS, PAYMENT_TIME } from '../data/order'
+import { INSTALLMENTS, ORDER, PAYMENT_TIME } from '../data/order'
 import type { PaymentMethod, SplitPayment } from '../data/order'
 
 type OrderState = {
-  /** 선택된 결제 방법. 디자인 기본값은 현금입니다. */
+  /**
+   * **이번에 받을** 결제 방법. 기본값은 주문의 결제 수단입니다.
+   * `다른 결제방법`으로 고른 값이 여기 들어가고, 주문 자체의 결제 수단(후불현금 / 후불카드)은
+   * `ORDER.postpaid`입니다 — 이 값이 바뀌어도 그쪽은 바뀌지 않습니다.
+   */
   method: PaymentMethod
   setMethod: (method: PaymentMethod) => void
+  /**
+   * 결제하지 않고 결제 화면에서 나왔을 때 부릅니다.
+   * `다른 결제방법`은 이번 결제에만 적용되는 선택이라 주문의 결제 수단으로 되돌리고,
+   * 실어 보냈던 분할 회차 금액도 버립니다 (2026-07-29 이재이 확인).
+   */
+  abandonPayment: () => void
   /** 현금영수증 발급 완료 여부 — 완료되면 발급 버튼이 disabled 됩니다 (1723:157237) */
   cashReceiptIssued: boolean
   issueCashReceipt: () => void
@@ -57,7 +67,7 @@ type OrderState = {
 const OrderContext = createContext<OrderState | null>(null)
 
 export function OrderProvider({ children }: { children: ReactNode }) {
-  const [method, setMethod] = useState<PaymentMethod>('cash')
+  const [method, setMethod] = useState<PaymentMethod>(ORDER.postpaid)
   const [cashReceiptIssued, setCashReceiptIssued] = useState(false)
   const [feeToastShown, setFeeToastShown] = useState(false)
   const [cameraAllowed, setCameraAllowed] = useState(false)
@@ -70,6 +80,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const issueCashReceipt = useCallback(() => setCashReceiptIssued(true), [])
   const markFeeToastShown = useCallback(() => setFeeToastShown(true), [])
   const allowCamera = useCallback(() => setCameraAllowed(true), [])
+  const abandonPayment = useCallback(() => {
+    setMethod(ORDER.postpaid)
+    setPendingSplit(null)
+  }, [])
   const addSplitPayment = useCallback((payment: SplitPayment) => {
     setSplitPayments((current) => [...current, payment])
     setPendingSplit(null)
@@ -83,7 +97,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const reset = useCallback(() => {
-    setMethod('cash')
+    setMethod(ORDER.postpaid)
     setCashReceiptIssued(false)
     setFeeToastShown(false)
     setCameraAllowed(false)
@@ -98,6 +112,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     () => ({
       method,
       setMethod,
+      abandonPayment,
       cashReceiptIssued,
       issueCashReceipt,
       feeToastShown,
@@ -119,6 +134,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     }),
     [
       method,
+      abandonPayment,
       cashReceiptIssued,
       issueCashReceipt,
       feeToastShown,

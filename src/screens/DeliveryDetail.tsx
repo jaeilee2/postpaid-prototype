@@ -59,23 +59,23 @@ export function DeliveryDetail() {
     notice?: string
     splitToast?: [string, string]
     reopenSplit?: boolean
-    openMethod?: boolean
   } | null
   /*
    * 다른 화면에서 돌아온 이유를 처리합니다.
    *  - 카메라 권한을 허용하지 않아 결제를 못 한 경우 (1747:121729의 "허용 안함")
    *  - 분할 결제로 일부를 받고 돌아온 경우 (1730:196158) → 남은 금액 시트를 다시 엽니다
-   *  - 결제하지 않고 카드·QR 화면에서 나온 경우 → 결제 방법 시트를 엽니다
+   *
+   * 결제하지 않고 카드·QR 화면에서 나온 경우에는 아무것도 띄우지 않습니다
+   * (2026-07-29 이재이 확인).
    */
   useEffect(() => {
-    if (!state?.notice && !state?.splitToast && !state?.openMethod) return
+    if (!state?.notice && !state?.splitToast) return
     if (state.notice) showNotice(state.notice)
     if (state.splitToast) showReturnToast(state.splitToast)
     if (state.reopenSplit && method === 'split') openSplitSheet()
-    if (state.openMethod) openMethodSheet()
     navigate('/delivery', { replace: true, state: null })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state?.notice, state?.splitToast, state?.openMethod])
+  }, [state?.notice, state?.splitToast])
 
   return (
     <div className="screen">

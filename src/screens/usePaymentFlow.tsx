@@ -27,7 +27,8 @@ type Overlay = null | 'method' | 'cash-confirm' | 'split' | 'split-cash-confirm'
 
 export function usePaymentFlow() {
   const navigate = useNavigate()
-  const { method, setMethod, splitPayments, addSplitPayment, setPendingSplit } = useOrder()
+  const { method, setMethod, splitPayments, addSplitPayment, setPendingSplit, abandonPayment } =
+    useOrder()
   const progress = splitProgress(splitPayments)
   /** 일부만 받았거나 취소해서 남은 금액이 있는 상태 (1730:196113) */
   const partial = splitPayments.length > 0 && progress.remainingTotal > 0
@@ -84,8 +85,12 @@ export function usePaymentFlow() {
     return { product: SPLIT.productAmount, cup: SPLIT.cupDeposit }
   }
 
-  /** 선택된 결제 방법으로 결제를 시작합니다. */
-  function startPayment(next: PaymentMethod = method) {
+  /**
+   * 결제를 시작합니다. 기본값은 **주문의 결제 수단**입니다 —
+   * 지난번에 `다른 결제방법`으로 QR을 골랐더라도 `결제하기`는 후불현금 주문이면 현금부터
+   * 시작합니다 (2026-07-29 이재이 확인).
+   */
+  function startPayment(next: PaymentMethod = ORDER.postpaid) {
     if (next === 'cash') {
       setOverlay('cash-confirm')
       return
@@ -114,13 +119,19 @@ export function usePaymentFlow() {
             // 시트에서 결제 방법을 고르면 곧바로 그 방법의 결제가 시작됩니다.
             startPayment(next)
           }}
-          onClose={() => setOverlay(null)}
+          onClose={() => {
+            setOverlay(null)
+            abandonPayment()
+          }}
         />
       )}
 
       {overlay === 'cash-confirm' && (
         <CashConfirmDialog
-          onClose={() => setOverlay(null)}
+          onClose={() => {
+            setOverlay(null)
+            abandonPayment()
+          }}
           onOtherMethod={() => setOverlay('method')}
           onConfirm={() =>
             // 한 번에 전액을 현금으로 받은 것도 결제 내역에 남습니다 (1730:196850).
@@ -132,10 +143,11 @@ export function usePaymentFlow() {
       {overlay === 'split' && (
         <SplitPaymentSheet
           initial={splitPart}
-          /* 닫으면 어떤 방법으로 받을지 다시 물어봅니다 (1737:24157) */
+          /* 닫으면 그냥 닫힙니다 — 방법을 다시 묻지 않습니다 (2026-07-29 이재이 확인) */
           onClose={() => {
             setSplitPart(null)
-            setOverlay('method')
+            setOverlay(null)
+            abandonPayment()
           }}
           onPay={handleSplitPay}
         />
@@ -153,22 +165,34 @@ export function usePaymentFlow() {
     </>
   )
 
+  /**
+   * `결제하기`를 눌렀을 때.
+   *
+   * - **분할 결제 중**이면 분할 결제 시트를 바로 엽니다 (1730:196227 — 상품가액을 다 받았으면
+   *   금액 필드가 비활성되고 컵 보증금만 남은 상태로 뜹니다).
+   * - 일부만 받았거나 취소해서 **남은 금액이 있으면** 어떤 방법으로 받을지 물어봅니다
+   *   (1730:196113 → 1730:196101).
+   * - 그 밖에는 **주문의 결제 수단**으로 시작합니다 — 후불현금 주문이면 현금 확인 얼럿입니다.
+   */
+  function payRemaining() {
+    if (method === 'split') {
+      startPayment('split')
+      return
+    }
+    if (partial) {
+      setOverlay('method')
+      return
+    }
+    startPayment(ORDER.postpaid)
+  }
+
   return {
     /** 결제 방법 시트를 엽니다 (`어떻게 결제하시겠어요?`) */
     openMethodSheet: () => setOverlay('method'),
     /** 분할 결제 시트를 엽니다 (카드·QR 회차를 마치고 돌아왔을 때) */
     openSplitSheet: () => setOverlay('split'),
-    /**
-     * 남은 금액이 있을 때의 `결제하기`.
-     *
-     * - **분할 결제 중**이면 분할 결제 시트를 바로 엽니다 (1730:196227 — 상품가액을 다 받았으면
-     *   금액 필드가 비활성되고 컵 보증금만 남은 상태로 뜹니다).
-     * - 그 밖에(취소해서 남은 경우 등)는 어떤 방법으로 받을지 다시 물어봅니다
-     *   (1730:196113 → 1730:196101) — 지난번 방법으로 바로 넘어가지 않습니다.
-     */
-    payRemaining: () =>
-      partial && method !== 'split' ? setOverlay('method') : startPayment(),
-    /** 지금 선택된 방법으로 바로 결제를 시작합니다 */
+    payRemaining,
+    /** 주어진 방법으로 바로 결제를 시작합니다 (기본값은 주문의 결제 수단) */
     startPayment,
     showToast,
     overlays,

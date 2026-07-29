@@ -16,6 +16,7 @@ import {
 } from '../components/CardChrome'
 import { Ic123, IcNfc } from '../components/Icon'
 import { useNfcTap } from '../hooks/useNfc'
+import { useOrder } from '../state/OrderContext'
 
 /* 카드 결제 · NFC (1723:157653 기본 / 1723:157654 툴팁 노출)
  *
@@ -24,6 +25,7 @@ import { useNfcTap } from '../hooks/useNfc'
 
 export function CardNfc() {
   const navigate = useNavigate()
+  const { abandonPayment } = useOrder()
   useEnsureCardMethod()
   const settle = usePaymentSettle('card')
   const needsSignature = useNeedsSignature()
@@ -57,8 +59,13 @@ export function CardNfc() {
     <div className="card-screen">
       <AppBar
         title="카드 결제"
-        /* 결제하지 않고 나오면 어떤 방법으로 받을지 다시 물어봅니다 (1737:24157) */
-        onBack={() => navigate('/delivery', { state: { openMethod: true } })}
+        /* 결제하지 않고 나오면 그냥 배달지 상세로 돌아갑니다 — 방법을 다시 묻지 않습니다
+           (2026-07-29 이재이 확인). 고른 방법은 되돌려서 `결제하기`가 다시 주문의
+           결제 수단으로 시작하게 합니다. */
+        onBack={() => {
+          abandonPayment()
+          navigate('/delivery')
+        }}
         onAction={() => navigate('/kispay')}
       />
 
