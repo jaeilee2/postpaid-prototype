@@ -868,6 +868,72 @@
   top: 20px;
 }
 
+/* ---- 숫자 키패드 (NumberKeypad.tsx) ----------------------------------------
+ * 금액·발급번호 입력용. OS 키보드 모양을 따르는 요소라 DS 토큰을 쓰지 않습니다.
+ */
+
+.numpad {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 250px;
+  z-index: 85;
+  display: flex;
+  flex-direction: column;
+  background: #d3d6db;
+}
+
+.numpad__bar {
+  flex: none;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
+  background: #f7f7f8;
+  border-bottom: 1px solid rgba(18, 20, 23, 0.1);
+}
+
+.numpad__done {
+  padding: 6px 10px;
+  color: var(--vds-primary);
+}
+
+.numpad__grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 7px 6px;
+  padding: 7px 5px;
+}
+
+.numpad__key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #121417;
+  font: 400 24px / 1 var(--vds-font-family);
+  box-shadow: 0 1px 0 rgba(18, 20, 23, 0.25);
+}
+
+.numpad__key:active {
+  background: #e6e8ea;
+}
+
+.numpad__key--empty,
+.numpad__key--fn {
+  background: none;
+  box-shadow: none;
+}
+
+.numpad__key--fn:active {
+  background: rgba(18, 20, 23, 0.08);
+}
+
 /* ---- 보안키패드 -------------------------------------------------------------
  * 앱이 그리지만 OS 키패드 모양을 따르는 요소라 DS 토큰을 쓰지 않습니다.
  * 숫자는 보안키패드 특성대로 무작위 배치되고, 셔플 키로 재배치됩니다.
@@ -1295,8 +1361,20 @@
   color: var(--vds-text-option-45);
 }
 
-.textfield:focus {
+.textfield:focus,
+.textfield--active {
   border-color: var(--vds-primary);
+}
+
+/* 앱이 그리는 키패드로 입력하므로 실제 input이 아닙니다 — 캐럿도 직접 그립니다. */
+.textfield--tap {
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.textfield__placeholder {
+  color: var(--vds-text-option-45);
 }
 
 /* ============================================ 영수증 발송 시트 (1730:198565)
@@ -1478,24 +1556,30 @@
   background: var(--vds-surface-10);
 }
 
+/* 키패드가 올라와 있는 동안은 입력 중 표시 */
+.sp__field--active:not(.sp__field--error) {
+  border-color: var(--vds-primary);
+}
+
+/* 앱이 그리는 키패드로 입력하므로 실제 input이 아닙니다 (NumberKeypad.tsx) */
 .sp__input {
   flex: 1 0 0;
   min-width: 0;
   height: 100%;
+  display: flex;
+  align-items: center;
   border: none;
   outline: none;
   background: none;
   color: var(--vds-text-primary-100);
-  caret-color: var(--vds-text-focus);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.sp__input::placeholder {
-  color: var(--vds-text-option-45);
-}
-
+.sp__placeholder,
 .sp__input:disabled {
   color: var(--vds-text-option-45);
-  -webkit-text-fill-color: var(--vds-text-option-45);
 }
 
 .sp__clear {

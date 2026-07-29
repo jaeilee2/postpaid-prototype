@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { IcClose } from '../components/Icon'
+import { NumberKeypad } from '../components/NumberKeypad'
 import { CASH_RECEIPT_PLACEHOLDER } from '../data/order'
 import radioOffA from '../assets/radio-off-a.svg'
 import radioOffB from '../assets/radio-off-b.svg'
@@ -43,11 +44,15 @@ export function CashReceiptSheet({
 }) {
   const [type, setType] = useState<ReceiptType>('personal')
   const [number, setNumber] = useState('')
+  /* 카드번호 입력(1723:157655)처럼 앱이 그리는 키패드가 바로 올라옵니다. */
+  const [keypadOpen, setKeypadOpen] = useState(true)
+
+  const MAX_DIGITS = 13
 
   return (
     <>
       <div className="dimmed dimmed--top" onClick={onCancel} />
-      <div className="sheet cr__sheet">
+      <div className={`sheet cr__sheet ${keypadOpen ? 'sheet--lifted' : ''}`}>
         <div className="sheet__header cr__header">
           <span className="t-subtitle1-18-bold">현금영수증 발급번호 입력</span>
           <button className="sheet__close" onClick={onCancel} aria-label="닫기">
@@ -70,13 +75,24 @@ export function CashReceiptSheet({
         </div>
 
         <div className="cr__field">
-          <input
-            className="textfield t-body2-16-regular"
-            placeholder={CASH_RECEIPT_PLACEHOLDER[type]}
-            inputMode="numeric"
-            value={number}
-            onChange={(event) => setNumber(event.target.value)}
-          />
+          <button
+            className={`textfield textfield--tap t-body2-16-regular ${
+              keypadOpen ? 'textfield--active' : ''
+            }`}
+            onClick={() => setKeypadOpen(true)}
+          >
+            {number === '' ? (
+              <>
+                {keypadOpen && <span className="caret" />}
+                <span className="textfield__placeholder">{CASH_RECEIPT_PLACEHOLDER[type]}</span>
+              </>
+            ) : (
+              <>
+                <span>{number}</span>
+                {keypadOpen && <span className="caret" />}
+              </>
+            )}
+          </button>
         </div>
 
         <div className="sheet__actions" style={{ marginTop: 'auto' }}>
@@ -85,13 +101,21 @@ export function CashReceiptSheet({
           </button>
           <button
             className="btn-primary btn--h48 t-body2-16-medium"
-            disabled={number.trim().length === 0}
+            disabled={number.length === 0}
             onClick={onConfirm}
           >
             확인
           </button>
         </div>
       </div>
+
+      {keypadOpen && (
+        <NumberKeypad
+          onDigit={(digit) => setNumber((v) => (v.length >= MAX_DIGITS ? v : v + digit))}
+          onBackspace={() => setNumber((v) => v.slice(0, -1))}
+          onDone={() => setKeypadOpen(false)}
+        />
+      )}
     </>
   )
 }

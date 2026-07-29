@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { IcCard, IcCash, IcClose, IcQr } from '../components/Icon'
+import { NumberKeypad } from '../components/NumberKeypad'
 import { SPLIT, formatWon, splitProgress } from '../data/order'
 import type { SplitPayment } from '../data/order'
 import { useOrder } from '../state/OrderContext'
@@ -31,6 +32,8 @@ export function SplitPaymentSheet({
 
   const [productText, setProductText] = useState('')
   const [cup, setCup] = useState(0)
+  /* OS 키보드 대신 앱이 그리는 키패드를 씁니다 — NumberKeypad.tsx의 주석 참고. */
+  const [keypadOpen, setKeypadOpen] = useState(false)
 
   const product = toNumber(productText) ?? 0
   const productOverflow = product > remainingProduct
@@ -39,15 +42,21 @@ export function SplitPaymentSheet({
   // 상품가액을 다 받으면 필드가 비활성되고 컵 보증금만 남습니다 (1730:196227).
   const productDone = remainingProduct === 0
 
-  function handleProductChange(value: string) {
-    const next = toNumber(value)
-    setProductText(next === null ? '' : formatWon(next))
+  function pushDigit(digit: number) {
+    const next = product * 10 + digit
+    if (next > 99_999_999) return
+    setProductText(formatWon(next))
+  }
+
+  function popDigit() {
+    const next = Math.floor(product / 10)
+    setProductText(next === 0 ? '' : formatWon(next))
   }
 
   return (
     <>
       <div className="dimmed" onClick={onClose} />
-      <div className="sheet sp__sheet">
+      <div className={`sheet sp__sheet ${keypadOpen ? 'sheet--lifted' : ''}`}>
         <div className="sheet__header sp__header">
           <span className="t-subtitle1-18-bold">분할 결제</span>
           <button className="sheet__close" onClick={onClose} aria-label="닫기">
@@ -85,16 +94,27 @@ export function SplitPaymentSheet({
         <div
           className={`sp__field ${productOverflow ? 'sp__field--error' : ''} ${
             productDone ? 'sp__field--disabled' : ''
-          }`}
+          } ${keypadOpen ? 'sp__field--active' : ''}`}
         >
-          <input
+          <button
             className="sp__input t-body2-16-regular"
-            inputMode="numeric"
-            placeholder="입력하세요"
-            value={productDone ? '0' : productText}
             disabled={productDone}
-            onChange={(event) => handleProductChange(event.target.value)}
-          />
+            onClick={() => setKeypadOpen(true)}
+          >
+            {productDone ? (
+              <span>0</span>
+            ) : productText === '' ? (
+              <>
+                {keypadOpen && <span className="caret" />}
+                <span className="sp__placeholder">입력하세요</span>
+              </>
+            ) : (
+              <>
+                <span>{productText}</span>
+                {keypadOpen && <span className="caret" />}
+              </>
+            )}
+          </button>
           {productOverflow && (
             <button className="sp__clear" onClick={() => setProductText('')} aria-label="지우기">
               <IcClose />
@@ -154,6 +174,14 @@ export function SplitPaymentSheet({
           </button>
         </div>
       </div>
+
+      {keypadOpen && (
+        <NumberKeypad
+          onDigit={pushDigit}
+          onBackspace={popDigit}
+          onDone={() => setKeypadOpen(false)}
+        />
+      )}
     </>
   )
 }

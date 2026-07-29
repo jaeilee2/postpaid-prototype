@@ -593,8 +593,7 @@ input {
 .sheet {
   position: absolute;
   left: 0;
-  /* OS 키보드가 올라오면 그만큼 위로 — useKeyboardInset.ts */
-  bottom: var(--keyboard-inset, 0px);
+  bottom: 0;
   width: 360px;
   background: var(--vds-bg-1);
   border-top-left-radius: var(--vds-radius-sheet);
@@ -624,6 +623,30 @@ input {
   top: 12px;
   width: 24px;
   height: 24px;
+}
+
+/*
+ * 앱이 그리는 숫자 키패드가 올라오면 시트를 그만큼 위로 올립니다 — NumberKeypad.tsx
+ * OS 키보드를 안 쓰므로 높이가 정해져 있어서 시트가 잘리지 않습니다.
+ */
+.sheet--lifted {
+  bottom: 250px;
+}
+
+/* 입력 캐럿 — 실제 input이 아니라 직접 그립니다. */
+.caret {
+  display: inline-block;
+  vertical-align: -3px;
+  width: 1px;
+  height: 19px;
+  background: var(--vds-text-focus);
+  animation: caret-blink 1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
 }
 
 .sheet__actions {
