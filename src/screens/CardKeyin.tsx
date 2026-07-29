@@ -153,7 +153,7 @@ export function CardKeyin() {
       <AppBar
         title="카드 직접 입력"
         onBack={() => navigate('/card')}
-        onAction={() => showNotice('카드 리더기 결제 화면은 디자인 범위 밖이에요')}
+        onAction={() => navigate('/kispay')}
       />
 
       <div

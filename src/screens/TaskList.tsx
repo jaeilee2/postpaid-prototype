@@ -79,7 +79,8 @@ export function TaskList() {
   return (
     <div className="screen tl">
       <div className="appbar">
-        <button className="appbar__back" onClick={() => navigate('/delivery')} aria-label="뒤로">
+        {/* 배달지 상세에서도, 완료 후 메인 지도에서도 들어오므로 온 곳으로 돌아갑니다. */}
+        <button className="appbar__back" onClick={() => navigate(-1)} aria-label="뒤로">
           <IcBack />
         </button>
         <p className="appbar__title t-subtitle2-16-bold">수행목록</p>

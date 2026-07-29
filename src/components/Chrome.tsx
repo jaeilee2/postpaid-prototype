@@ -63,7 +63,7 @@ export function MapPickupBackground({ onTasks }: { onTasks?: () => void }) {
 }
 
 /** 메인 지도 화면 — 완료 화면과 현금영수증 시트의 배경 (1723:157212 / 1723:157236) */
-export function MapMainBackground() {
+export function MapMainBackground({ onTasks }: { onTasks?: () => void }) {
   return (
     <div className="map">
       <img className="map__image" src={mapImg} alt="" />
@@ -79,9 +79,17 @@ export function MapMainBackground() {
       </div>
 
       <OrderReceiveFab />
-      <div className="fab fab--icon" style={{ left: 300, top: 32 }}>
+      {/*
+        디자인의 메인 지도에는 마이페이지 아이콘만 오른쪽에 있고 수행목록 FAB이 없습니다.
+        하지만 결제를 마치고 이 화면으로 오면 수행목록에 들어갈 방법이 사라져서
+        결제 취소를 볼 수 없으므로, 배달지 상세와 같은 배치(마이페이지 + 수행목록)로 뒀습니다.
+      */}
+      <div className="fab fab--icon" style={{ right: 107, top: 32 }}>
         <IcMypage />
       </div>
+      <button className="fab fab--label" style={{ right: 12, top: 32 }} onClick={onTasks}>
+        <span className="t-body3-14-medium">수행목록</span>
+      </button>
       {/* 화면 높이가 달라져도 하단에 붙어 있도록 bottom 기준으로 둡니다 (디자인 740에서 top 672). */}
       <div className="fab fab--icon" style={{ left: 16, bottom: 24 }}>
         <IcMyLocation />

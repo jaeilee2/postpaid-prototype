@@ -14,7 +14,6 @@ import {
   usePaymentSettle,
   useNeedsSignature,
 } from '../components/CardChrome'
-import { Snackbar } from '../components/Chrome'
 import { Ic123, IcNfc } from '../components/Icon'
 import { useNfcTap } from '../hooks/useNfc'
 
@@ -30,7 +29,6 @@ export function CardNfc() {
   const needsSignature = useNeedsSignature()
   const [tooltipVisible, setTooltipVisible] = useState(false)
   const [paying, setPaying] = useState(false)
-  const [notice, setNotice] = useState<string | null>(null)
 
   // 툴팁은 잠시 기다린 뒤 나타납니다 (디자인에 노출 시점이 없어 2.5초로 뒀습니다).
   useEffect(() => {
@@ -38,10 +36,6 @@ export function CardNfc() {
     return () => window.clearTimeout(timer)
   }, [])
 
-  function showNotice(text: string) {
-    setNotice(text)
-    window.setTimeout(() => setNotice(null), 2600)
-  }
 
   /* 카드를 폰 뒷면에 대면 진행됩니다.
    * 안드로이드 크롬에서는 실제 태그 감지로, 그 외에는 일러스트를 눌러 대신합니다. */
@@ -64,7 +58,7 @@ export function CardNfc() {
       <AppBar
         title="카드 결제"
         onBack={() => navigate('/delivery')}
-        onAction={() => showNotice('카드 리더기 결제 화면은 디자인 범위 밖이에요')}
+        onAction={() => navigate('/kispay')}
       />
 
       <div className="card-body">
@@ -115,7 +109,6 @@ export function CardNfc() {
         <span className="spacer spacer--e" />
       </div>
 
-      {notice && <Snackbar text={notice} />}
       {paying && <PaymentProgress />}
     </div>
   )

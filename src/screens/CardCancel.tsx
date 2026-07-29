@@ -48,7 +48,7 @@ export function CardCancel() {
       <AppBar
         title="카드 결제"
         onBack={() => navigate('/tasks/payment')}
-        onAction={() => showNotice('카드 리더기 결제 화면은 디자인 범위 밖이에요')}
+        onAction={() => navigate('/kispay')}
       />
 
       <div className="card-body">

@@ -2052,8 +2052,12 @@
  * 아래 버튼은 bottom 기준이라 화면이 길어지면 서명란만 늘어납니다.
  */
 
+/*
+ * 화면 자체는 흰색입니다 — 회색(bg_2)은 위쪽 안내 띠와 서명란 안쪽뿐입니다.
+ * 디자인에서 프레임 배경이 bg_2인데 y=80부터 흰 컨테이너가 덮고 있습니다.
+ */
 .sign {
-  background: var(--vds-bg-2);
+  background: var(--vds-bg-1);
 }
 
 .sign__notice {
@@ -2650,4 +2654,35 @@
   right: 0;
   bottom: 0;
   border-top: 1px solid var(--vds-border-10);
+}
+
+/* ============================================= KIS Pay 캡처 (1772:130317)
+ * 폰으로 찍은 플레이스토어 화면이라 이미지 한 장입니다. 캡처는 360×800 기준인데
+ * 프레임 높이는 기기마다 달라서 폭을 채우고 위를 기준으로 맞춥니다(아래는 잘립니다).
+ */
+
+.kis {
+  background: #ffffff;
+}
+
+.kis__shot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* 캡처 안의 ← 화살표 위에 얹은 투명 히트 영역 */
+.kis__back {
+  position: absolute;
+  left: 6px;
+  top: 34px;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
 }

@@ -7,6 +7,7 @@ import { CardNfc } from './screens/CardNfc'
 import { CardScan } from './screens/CardScan'
 import { Complete } from './screens/Complete'
 import { DeliveryDetail } from './screens/DeliveryDetail'
+import { KisPay } from './screens/KisPay'
 import { MainMap } from './screens/MainMap'
 import { PaymentHistory } from './screens/PaymentHistory'
 import { QrScan } from './screens/QrScan'
@@ -22,6 +23,7 @@ const SCREEN_NAMES: Record<string, string> = {
   '/card/keyin': '카드 결제 · 카드 직접 입력',
   '/card/scan': '카드 결제 · 카드 스캔 (OCR)',
   '/card/cancel': '카드 결제 취소',
+  '/kispay': 'KIS Pay (키스페이) · 카드 리더기로 결제',
   '/qr': 'QR 간편 결제 · 스캔',
   '/sign': '서명 등록 (5만원 이상)',
   '/tasks': '수행목록',
@@ -196,6 +198,7 @@ export default function App() {
               <Route path="/card/keyin" element={<CardKeyin />} />
               <Route path="/card/scan" element={<CardScan />} />
               <Route path="/card/cancel" element={<CardCancel />} />
+              <Route path="/kispay" element={<KisPay />} />
               <Route path="/qr" element={<QrScan />} />
               <Route path="/sign" element={<SignatureScreen />} />
               <Route path="/tasks" element={<TaskList />} />
