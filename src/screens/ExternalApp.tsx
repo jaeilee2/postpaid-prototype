@@ -15,21 +15,21 @@ import { CenterToast } from '../components/Chrome'
  */
 
 const BACK_HINT = '테스트를 위해 뒤로가기를 다시 눌러주세요'
-const CALL_HINT = '통화 버튼이나 뒤로가기를 누르면 취소가 접수돼요'
+const CALL_HINT = '아무 곳이나 누르면 취소가 접수돼요'
 
 function CaptureScreen({
   src,
   alt,
   onBack,
   hintText,
-  /** 전화 앱의 초록 통화 버튼 자리에도 히트 영역을 둡니다 */
-  call = false,
+  /** 화면 아무 곳이나 눌러도 넘어갑니다 (전화 앱처럼 눌러볼 게 없는 캡처) */
+  anywhere = false,
 }: {
   src: string
   alt: string
   onBack: () => void
   hintText: string
-  call?: boolean
+  anywhere?: boolean
 }) {
   const [hint, setHint] = useState(true)
 
@@ -41,11 +41,19 @@ function CaptureScreen({
   return (
     <div className="screen capture">
       <img className="capture__shot" src={src} alt={alt} />
-      {/* KIS Pay는 왼쪽 위 ←, 전화 앱은 아래 내비게이션 바의 ‹ 라서 두 곳 다 둡니다. */}
-      <button className="capture__back capture__back--top" onClick={onBack} aria-label="뒤로" />
-      <button className="capture__back capture__back--bottom" onClick={onBack} aria-label="뒤로" />
-      {call && (
-        <button className="capture__back capture__back--call" onClick={onBack} aria-label="전화 걸기" />
+      {anywhere ? (
+        /* 캡처라 눌러볼 게 없으니 어디를 눌러도 넘어갑니다 */
+        <button className="capture__back capture__back--all" onClick={onBack} aria-label="계속" />
+      ) : (
+        <>
+          {/* KIS Pay는 왼쪽 위 ←, 아래 내비게이션 바의 ‹ 두 곳입니다. */}
+          <button className="capture__back capture__back--top" onClick={onBack} aria-label="뒤로" />
+          <button
+            className="capture__back capture__back--bottom"
+            onClick={onBack}
+            aria-label="뒤로"
+          />
+        </>
       )}
       {hint && <CenterToast lines={[hintText]} />}
     </div>
@@ -69,7 +77,7 @@ export function KisPay() {
  * 전화 앱 — VCC 연결 (1773:130318)
  *
  * 현금 결제 취소는 VCC(상담)를 거쳐야 하므로 전화를 걸고 돌아옵니다.
- * 통화 버튼을 누르든 뒤로가기를 누르든 취소가 접수된 것으로 보고
+ * 캡처 화면이라 눌러볼 게 없으니 **아무 곳이나 누르면** 취소가 접수된 것으로 보고
  * 결제 내역에 취소일시를 남깁니다 (1730:197002).
  */
 export function VccCall({ onHangUp }: { onHangUp: () => void }) {
@@ -78,7 +86,7 @@ export function VccCall({ onHangUp }: { onHangUp: () => void }) {
       src={vccDialer}
       alt="전화 앱 — VCC 1800-8255"
       hintText={CALL_HINT}
-      call
+      anywhere
       onBack={onHangUp}
     />
   )

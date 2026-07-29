@@ -2771,14 +2771,7 @@
   color: var(--vds-text-tertiary-60);
 }
 
-/*
- * 전화 앱 캡처의 초록 통화 버튼 자리.
- * 캡처(1080×2316)를 360폭으로 줄여 얹으므로 그 좌표로 잡았습니다.
- */
-.capture__back--call {
-  left: 148px;
-  top: 590px;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
+/* 전화 앱처럼 눌러볼 게 없는 캡처는 화면 전체가 히트 영역입니다 */
+.capture__back--all {
+  inset: 0;
 }
