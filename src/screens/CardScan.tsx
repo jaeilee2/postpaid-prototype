@@ -175,7 +175,7 @@ export function CardScan() {
         </>
       )}
 
-      {notice && <Snackbar text={notice} bottom={120} />}
+      {notice && <Snackbar text={notice} />}
 
       {/* 인식 중과 결제 중 모두 같은 "결제 진행중" 다이얼로그입니다 (1730:197562 / 1723:157658) */}
       {(step === 'reading' || step === 'paying') && <PaymentProgress />}

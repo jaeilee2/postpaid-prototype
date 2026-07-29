@@ -250,7 +250,7 @@ export function CardKeyin() {
         />
       )}
 
-      {notice && <Snackbar text={notice} bottom={270} />}
+      {notice && <Snackbar text={notice} />}
       {paying && <PaymentProgress />}
     </div>
   )

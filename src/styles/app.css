@@ -347,28 +347,24 @@ input {
   white-space: nowrap;
 }
 
-/* 안내 문구는 아이콘 없이 가운데 정렬입니다. */
-.snackbar--notice {
-  justify-content: center;
-  text-align: center;
-}
-
-/* 화면 가운데 두 줄 토스트 (1730:196202) */
+/* 화면 가운데 토스트 (1730:196202) — 결과를 알리는 안내는 모두 이 형태입니다.
+ * 문구 길이에 맞춰 늘어나고, 디자인의 두 줄 토스트에서는 232×56이 됩니다. */
 .toast-center {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 232px;
-  height: 56px;
+  width: max-content;
+  max-width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
+  padding: 8px 12px;
   border-radius: var(--vds-radius-sm);
   background: var(--vds-surface-5);
   opacity: 0.95;
+  box-shadow: var(--vds-elev-100);
   color: var(--vds-text-inverse-100);
   text-align: center;
   z-index: 95;

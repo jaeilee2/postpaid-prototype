@@ -180,29 +180,28 @@
   top: 52px;
 }
 
-/* 분할 결제로 일부만 받은 상태 — 안내 한 줄이 들어가 하단 바가 18px 높아집니다 (1730:196158) */
+/* 분할 결제로 일부만 받은 상태 (1730:196158) — 결제 방법 줄이 빠지고 안내 한 줄만 남아
+ * 하단 바가 124 → 106으로 낮아집니다. 버튼은 아래에서 16px 띄웁니다. */
 .dd__action--remaining {
-  height: 142px;
+  height: 106px;
 }
 
 .dd__action--remaining .dd__cta {
-  top: 70px;
+  top: auto;
+  bottom: 16px;
 }
 
 .dd__remaining {
   position: absolute;
-  left: 20px;
-  top: 46px;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%);
   margin: 0;
   display: flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
   color: var(--vds-text-warning);
-}
-
-.dd__remaining-mark {
-  font-size: 13px;
-  line-height: 1;
 }
 
 /* ============================================ 결제 방법 선택 (1723:157638) */
@@ -1301,11 +1300,13 @@
 }
 
 /* ============================================ 영수증 발송 시트 (1730:198565)
- * 시트 높이 321. 완료 화면 위에 쌓입니다.
+ * 디자인은 2건(높이 321)이지만 회차 수는 정해져 있지 않아서, 내역 줄 수에 따라
+ * 시트가 늘어나고 취소 버튼이 항상 맨 아래에 붙게 했습니다. 완료 화면 위에 쌓입니다.
  */
 
 .rs__sheet {
-  height: min(321px, calc(100% - 40px));
+  height: auto;
+  max-height: calc(100% - 40px);
   z-index: 80;
 }
 
@@ -1342,7 +1343,9 @@
 }
 
 .rs__list {
-  flex: none;
+  /* 회차가 많아 화면을 넘기면 이 목록만 스크롤됩니다. */
+  flex: 0 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;

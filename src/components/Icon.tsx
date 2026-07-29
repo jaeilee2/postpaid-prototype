@@ -27,6 +27,7 @@ import icSms from '../assets/ic-sms.svg'
 import icSplitA from '../assets/ic-split-a.svg'
 import icSplitB from '../assets/ic-split-b.svg'
 import icVcc from '../assets/ic-vcc.svg'
+import icWarning from '../assets/ic-warning.svg'
 import icWeatherA from '../assets/ic-weather-a.svg'
 import icWeatherB from '../assets/ic-weather-b.svg'
 
@@ -76,6 +77,11 @@ export const IcSms = () => <IconBase layers={[{ src: icSms, style: inset(18.75, 
 
 export const IcVcc = () => (
   <IconBase layers={[{ src: icVcc, style: inset(10.42, 14.58, 7.53, 14.58) }]} />
+)
+
+/** 경고 삼각형 — 잔여 결제 금액 안내 (I1730:196200;9653:65211) */
+export const IcWarning = () => (
+  <IconBase layers={[{ src: icWarning, style: inset(16.27, 10.52, 14.58, 10.52) }]} />
 )
 
 /** 현금 아이콘 — 지폐(Union) + 가운데 원(Vector Stroke) */

@@ -107,21 +107,17 @@ export function MapMainBackground() {
 }
 
 /**
- * 안내 스낵바 — DS Snackbar 스타일 그대로, 프로토타입 안내 문구에 씁니다.
- * 화면 높이가 달라져도 자리가 유지되도록 하단 기준으로 띄웁니다.
+ * 화면 가운데 토스트 (1730:196202) — 결과를 알리는 안내는 모두 이 형태입니다.
+ * 분할 결제 회차 안내는 두 줄(232×56)이고, 나머지는 한 줄입니다.
  *
- * 지도 화면의 "주변 오더를 찾고 있어요"(1730:197354)에는 `...` 아이콘이 붙어 있지만,
- * 그건 오더를 찾는 중이라는 표시입니다. 결과를 알리는 안내에는 아이콘 없이 문구만 가운데 둡니다.
+ * 지도 화면의 "주변 오더를 찾고 있어요"(1730:197354)는 `...` 아이콘이 붙은 스낵바인데,
+ * 그건 오더를 찾는 중이라는 진행 표시라서 다른 컴포넌트로 남겨뒀습니다.
  */
-/**
- * 화면 가운데 토스트 (1730:196202) — 분할 결제로 일부를 받은 뒤 배달지 상세로 돌아올 때 뜹니다.
- * 두 줄이고 232×56, 화면 세로 가운데입니다.
- */
-export function CenterToast({ lines }: { lines: [string, string] }) {
+export function CenterToast({ lines }: { lines: string[] }) {
   return (
     <div className="toast-center" role="status" aria-live="polite">
       {lines.map((line) => (
-        <p key={line} className="t-body4-13-regular" style={{ margin: 0 }}>
+        <p key={line} className="t-body3-14-regular" style={{ margin: 0 }}>
           {line}
         </p>
       ))}
@@ -129,10 +125,7 @@ export function CenterToast({ lines }: { lines: [string, string] }) {
   )
 }
 
-export function Snackbar({ text, bottom = 60 }: { text: string; bottom?: number }) {
-  return (
-    <div className="snackbar snackbar--notice" style={{ top: 'auto', bottom, zIndex: 90 }}>
-      <span className="t-body3-14-medium">{text}</span>
-    </div>
-  )
+/** 한 줄 안내 토스트 */
+export function Snackbar({ text }: { text: string }) {
+  return <CenterToast lines={[text]} />
 }

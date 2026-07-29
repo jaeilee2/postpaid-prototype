@@ -12,6 +12,7 @@ import {
   IcSms,
   IcSplit,
   IcVcc,
+  IcWarning,
 } from '../components/Icon'
 import { ORDER, PAYMENT_METHOD_LABEL, formatWon, splitProgress } from '../data/order'
 import type { PaymentMethod, SplitPayment } from '../data/order'
@@ -202,28 +203,38 @@ export function DeliveryDetail() {
         {/* 하단 결제 바 */}
         <div className={`dd__action ${splitInProgress ? 'dd__action--remaining' : ''}`}>
           <div className="dd__divider" />
-          <div className="dd__method">
-            {/* 디자인은 후불현금 상태(1723:158379)뿐이라 현금 아이콘만 있습니다 —
-                결제 방법을 바꾸면 아이콘도 함께 바뀌는 게 맞아 시트와 같은 아이콘을 씁니다. */}
-            {METHOD_ICON[method]}
-            <span className="t-body3-14-medium">{PAYMENT_METHOD_LABEL[method]} 결제</span>
-          </div>
-          <button className="dd__method-change" onClick={() => setOverlay('method')}>
-            <span className="t-body3-14-regular">결제 방법 변경</span>
-            <IcChevronRight />
-          </button>
-          {/* 분할 결제로 일부만 받은 상태 (1730:196158) */}
-          {splitInProgress && (
-            <p className="dd__remaining t-body3-14-bold">
-              <span className="dd__remaining-mark">⚠</span> 잔여 결제 금액 있음
+          {/*
+            분할 결제를 일부만 받은 상태(1730:196158)에는 결제 방법을 바꿀 수 없습니다 —
+            결제 방법 줄 대신 잔여 안내 한 줄만 들어갑니다.
+          */}
+          {splitInProgress ? (
+            <p className="dd__remaining t-body4-13-medium">
+              <IcWarning />
+              잔여 결제 금액 있음
             </p>
+          ) : (
+            <>
+              <div className="dd__method">
+                {/* 디자인은 후불현금 상태(1723:158379)뿐이라 현금 아이콘만 있습니다 —
+                    결제 방법을 바꾸면 아이콘도 함께 바뀌는 게 맞아 시트와 같은 아이콘을 씁니다. */}
+                {METHOD_ICON[method]}
+                <span className="t-body3-14-medium">{PAYMENT_METHOD_LABEL[method]} 결제</span>
+              </div>
+              <button className="dd__method-change" onClick={() => setOverlay('method')}>
+                <span className="t-body3-14-regular">결제 방법 변경</span>
+                <IcChevronRight />
+              </button>
+            </>
           )}
           <button
             className="dd__cta btn-primary btn--h56 t-body2-16-medium"
             onClick={() => startPayment()}
           >
-            {/* 분할 결제는 VAN 단말로 나눠 받으므로 라벨이 다릅니다 (1730:195840). */}
-            {method === 'split' ? '결제하기 (VAN)' : `${formatWon(ORDER.amount)}원 결제하기`}
+            {/*
+              디자인은 `결제하기 (VAN)`이지만, 얼마를 더 받아야 하는지가 보여야 해서
+              남은 금액을 라벨에 넣습니다 (2026-07-29 이재이 확인).
+            */}
+            {formatWon(splitInProgress ? split.remainingTotal : ORDER.amount)}원 결제하기
           </button>
         </div>
       </div>

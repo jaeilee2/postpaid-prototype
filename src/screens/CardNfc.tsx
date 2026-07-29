@@ -108,7 +108,7 @@ export function CardNfc() {
         <span className="spacer spacer--e" />
       </div>
 
-      {notice && <Snackbar text={notice} bottom={120} />}
+      {notice && <Snackbar text={notice} />}
       {paying && <PaymentProgress />}
     </div>
   )
