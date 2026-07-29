@@ -3,7 +3,7 @@ import { IcClose } from '../components/Icon'
 /* 현금 결제 확인 다이얼로그 (1723:156090)
  *
  * 디자인의 왼쪽 버튼은 `취소`인데, 여기서 다른 결제 방법으로 바로 갈 수 있어야 해서
- * `다른 방법으로 결제`로 바꾸고 닫기는 오른쪽 위 X로 옮겼습니다 (2026-07-29 이재이 확인).
+ * `다른 결제방법`으로 바꾸고 닫기는 오른쪽 위 X로 옮겼습니다 (2026-07-29 이재이 확인).
  */
 
 export function CashConfirmDialog({
@@ -32,7 +32,7 @@ export function CashConfirmDialog({
 
         <div className="dialog__actions">
           <button className="btn-tertiary btn--h48 t-body2-16-medium" onClick={onOtherMethod}>
-            다른 방법으로 결제
+            다른 결제방법
           </button>
           <button
             className="dialog__actions-confirm btn-primary btn--h48 t-body2-16-medium"

@@ -171,7 +171,7 @@ export function DeliveryDetail() {
                 <span className="t-body3-14-medium">{PAYMENT_METHOD_LABEL[method]} 결제</span>
               </div>
               <button className="dd__method-change" onClick={openMethodSheet}>
-                <span className="t-body3-14-regular">다른 방법으로 결제</span>
+                <span className="t-body3-14-regular">다른 결제방법</span>
                 <IcChevronRight />
               </button>
             </>
