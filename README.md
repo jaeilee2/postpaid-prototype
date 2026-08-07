@@ -109,6 +109,19 @@ npm run build && npm run subset:fonts && npm run build
 Claude Artifact 링크로 볼 때는 claude.ai의 헤더가 화면 위쪽을 차지하고 iframe이라 전체화면도
 막힙니다. 완전히 앱처럼 보려면 **GitHub Pages 링크**를 쓰세요.
 
+## 버전
+
+분할 결제를 다시 만드는 동안 **직전 버전을 그대로 볼 수 있게** 사본을 고정해 뒀습니다.
+
+| | 주소 | 갱신 |
+| --- | --- | --- |
+| 지금 작업 중 | https://jaeilee2.github.io/postpaid-prototype/ | 고칠 때마다 |
+| v1 (2026-07-29 · `0a32cd7`) | https://jaeilee2.github.io/postpaid-prototype/v1/ | **고정** |
+
+`docs/v1/`은 그 시점의 빌드를 손대지 않고 복사한 것이라 빌드 스크립트가 건드리지 않습니다
+(하위 경로에서는 루트의 매니페스트·서비스 워커를 못 찾으므로 그 두 줄만 빼뒀습니다).
+다음 버전을 또 고정하려면 `docs/v2/`로 같은 방식으로 복사하면 됩니다.
+
 ## 스토리보드
 
 화면별 구성·동작·분기는 [후불결제-스토리보드.md](후불결제-스토리보드.md)에 정리해 두었습니다
